@@ -1,0 +1,566 @@
+*** Settings ***
+Library                                 SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
+Library                                 String     WITH NAME    STR
+Resource                                ../../selenium/Status/SeleniumStatusDeviceInfoLib.txt
+Resource                                ../../selenium/Network/SeleniumNetworkWLAN24GHzLib.txt
+Resource                                ../../variables/AllVariables.txt
+
+*** Variables ***
+
+
+*** Keywords ***
+
+### Open 5GHz wireless configure Tab
+Open 5GHz Wireless Configure Page
+    # [Arguments]                                ${url}=https://192.168.1.1/cgi-bin/home_wireless_5g.asp
+
+    # SL.Go To                                   ${url}
+
+    Click Element                                   xpath=//*[@id="net-wanset"]
+    Click Element                                   xpath=//*[@id="net-wlan11ac"]
+
+    SL.Wait Until Page Contains                SSID Setting
+    ...                                        timeout=20s
+    ...                                        error=\nNetwork Settings Wireless 5GHz Configure Page Not Found
+    SL.Page Should Contain                     SSID Setting
+
+    SL.Select Frame                                 xpath=//frame[@name="contentfrm"]
+
+Select SSID 5G Index
+	[Documentation]                              Select SSID Index
+	[Arguments]                                  ${ssid_index}
+	Log To Console                               \nSelect SSID index ${ssid_index}
+
+    SL.Wait Until Element Is Visible             xpath=//select[@name="SSID_INDEX"]
+    ...                                          timeout=15s
+    ...                                          error=\nSelect SSID Index Dropdown Does Not Show Up
+    
+    ${ssid_index_value}=      SL.Get Value       xpath=//select[@name="SSID_INDEX"]/option[contains(text(), "${ssid_index}")]
+    SL.Select From List By Value                 xpath=//select[@name="SSID_INDEX"]     ${ssid_index_value}
+
+Enable/Disable SSID 5G
+    [Documentation]                               On/Off
+    [Arguments]                                   ${ssid_mode}
+
+    SL.Wait Until Element Is Visible              xpath=//input[@name="wlEnable"]    timeout=10s
+    ...                                           error=\nEnable SSID Checkbox Does Not Show Up
+    
+    Log To Console                                \nSelect ${ssid_mode} SSID
+    ${status}=        SL.Execute Javascript        return document.querySelector("#wlEnable").checked
+    
+    Run Keyword If        '${ssid_mode}' == 'On' and '${status}' == 'False'        SL.Execute Javascript        document.querySelector("#wlEnable").click();
+    ...   ELSE IF         '${ssid_mode}' == 'Off' and '${status}' == 'True'        SL.Execute Javascript        document.querySelector("#wlEnable").click();
+
+Input SSID 5G Name
+    [Arguments]                                  ${ssid}
+    Log To Console                               \nInput SSID Name
+    SL.Wait Until Element Is Visible             xpath=//input[@name="ESSID"]
+    ...                                          timeout=10s
+    ...                                          error=\nSSID Text Box Not Found
+    SL.Input Text                                xpath=//input[@name="ESSID"]        ${ssid}
+
+Select 5G Security Mode
+    [Documentation]                              OPEN 
+    ...                                          WEP
+    ...                                          WPA-PSK 
+    ...                                          WPA2-PSK   		
+    ...                                          WPA-PSK/WPA2-PSK 
+    ...                                          WPA3-PSK   		
+    ...                                          WPA2-PSK/WPA3-PSK 
+    [Arguments]                                  ${secu_mode}=OPEN
+
+    Log To Console                               \nSelect Security Mode ${secu_mode}
+    SL.Wait Until Element Is Visible             xpath=//select[@name="WEP_Selection"]/option[contains(text(), "${secu_mode}")]
+    ...                                          timeout=20s
+    ...                                          error=\nNetwork Authentication Dropdown Does Not Show Up
+    
+    ${secu_value}=             SL.Get Value      xpath=//select[@name="WEP_Selection"]/option[contains(text(), "${secu_mode}")]
+    SL.Select From List By Value                 xpath=//select[@name="WEP_Selection"]     ${secu_value}
+
+###### Config WEP_64-bit/WEP_128-bit
+Configure 5G Security Mode WEP
+	[Documentation]                             wep_mode = 64-bit/128-bit
+    ...                                         key = Key1/Key2/Key3/Key4
+    
+    [Arguments]                                 ${wep_mode}=64-bit
+    ...                                         ${key}=Key1
+    ...                                         ${password}=1234567890		                              
+    
+    Log To Console                               Select WEP Mode ${wep_mode}
+    SL.Wait Until Element Is Visible             xpath=//select[@name="wlKeyBit"]/option[contains(text(), "${wep_mode}")]
+    ...                                          timeout=20s
+    ...                                          error=\nWEP Mode Dropdown Does Not Show Up
+    
+    ${wep_value}=             SL.Get Value      xpath=//select[@name="wlKeyBit"]/option[contains(text(), "${wep_mode}")]
+    SL.Select From List By Value                 xpath=//select[@name="wlKeyBit"]     ${wep_value}
+
+    Run Keyword If   '${key}' == 'Key1'         	Config 5G WEP Key1		${password}
+    ...    ELSE IF   '${key}' == 'Key2'        		Config 5G WEP Key2		${password}
+    ...    ELSE IF   '${key}' == 'Key3'        		Config 5G WEP Key3		${password}
+    ...    ELSE IF   '${key}' == 'Key4'        		Config 5G WEP Key4		${password}
+
+Config 5G WEP Key1
+	[Arguments]                                 ${password}=1234567890
+	
+	Log To Console								\Select and Config WEP Key1
+    SL.Wait Until Element Is Visible            xpath=//input[@id="WEP_Key13"]
+    ...                                         timeout=2s
+    ...                                         error=\nWEP Key phrase Does Not Show Up    
+	
+    SL.Click Element							xpath=//input[@id="WEP_Key13"]
+    SL.Input Password                           xpath=//input[@id="WEP_Key13"]       ${password}
+
+Config 5G WEP Key2
+	[Arguments]                                 ${password}=1234567890
+	
+	Log To Console								\Select and Config WEP Key2
+    SL.Wait Until Element Is Visible            xpath=//input[@id="WEP_Key23"]
+    ...                                         timeout=2s
+    ...                                         error=\nWEP Key phrase Does Not Show Up    
+	
+    SL.Click Element							xpath=//input[@id="WEP_Key23"]
+    SL.Input Password                           xpath=//input[@id="WEP_Key23"]       ${password}
+
+Config 5G WEP Key3
+	[Arguments]                                 ${password}=1234567890
+	
+	Log To Console								\Select and Config WEP Key3
+    SL.Wait Until Element Is Visible            xpath=//input[@id="WEP_Key33"]
+    ...                                         timeout=2s
+    ...                                         error=\nWEP Key phrase Does Not Show Up    
+	
+    SL.Click Element							xpath=//input[@id="WEP_Key33"]
+    SL.Input Password                           xpath=//input[@id="WEP_Key33"]       ${password}
+
+Config 5G WEP Key4
+	[Arguments]                                 ${password}=1234567890
+	
+	Log To Console								\Select and Config WEP Key4
+    SL.Wait Until Element Is Visible            xpath=//input[@id="WEP_Key43"]
+    ...                                         timeout=2s
+    ...                                         error=\nWEP Key phrase Does Not Show Up    
+	
+    SL.Click Element							xpath=//input[@id="WEP_Key43"]
+    SL.Input Password                           xpath=//input[@id="WEP_Key43"]       ${password}
+
+Configure 5G Security Mode WPA-PSK
+    [Arguments]                                 
+    ...                                         ${password}=12345678
+    ...                                         ${encry_type}=AES
+    ...                                         ${key_renew}=3600			
+    
+    # Input Password
+    SL.Wait Until Element Is Visible            xpath=//input[@name="PreSharedKey2"]
+    ...                                         timeout=2s
+    ...                                         error=\nWPA Password Input Does Not Show Up
+    SL.Input Password                           xpath=//input[@name="PreSharedKey2"]          ${password}
+
+    # Select Encryption Type
+    SL.Wait Until Element Is Visible            xpath=//select[@name="TKIP_Selection5"]/option[contains(text(), "${encry_type}")]
+    ...                                         timeout=2s
+    ...                                         error=\nWPA Encryption Dropdown Does Not Show Up
+    ${encry_value}=        SL.Get Value         xpath=//select[@name="TKIP_Selection5"]/option[contains(text(), "${encry_type}")]
+    SL.Select From List By Value                xpath=//select[@name="TKIP_Selection5"]        ${encry_value}
+
+    # Input Key Renewal Interval
+    SL.Wait Until Element Is Visible            xpath=//input[@name="keyRenewalInterval2"]
+    ...                                         timeout=2s
+    ...                                         error=\nWPA Key Renewal Interval Input Does Not Show Up
+    SL.Input Password                           xpath=//input[@name="keyRenewalInterval2"]          ${key_renew}
+
+Configure 5G Security Mode WPA2-PSK
+    [Arguments]                                 
+    ...                                         ${password}=12345678
+    ...                                         ${encry_type}=AES
+    ...                                         ${key_renew}=3600			
+    
+    # Input Password
+    SL.Wait Until Element Is Visible            xpath=//input[@name="PreSharedKey1"]
+    ...                                         timeout=2s
+    ...                                         error=\nWPA Password Input Does Not Show Up
+    SL.Input Password                           xpath=//input[@name="PreSharedKey1"]          ${password}
+
+    # Select Encryption Type
+    SL.Wait Until Element Is Visible            xpath=//select[@name="TKIP_Selection4"]/option[contains(text(), "${encry_type}")]
+    ...                                         timeout=2s
+    ...                                         error=\nWPA Encryption Dropdown Does Not Show Up
+    ${encry_value}=        SL.Get Value         xpath=//select[@name="TKIP_Selection4"]/option[contains(text(), "${encry_type}")]
+    SL.Select From List By Value                xpath=//select[@name="TKIP_Selection4"]        ${encry_value}
+
+    # Input Key Renewal Interval
+    SL.Wait Until Element Is Visible            xpath=//input[@name="keyRenewalInterval1"]
+    ...                                         timeout=2s
+    ...                                         error=\nWPA Key Renewal Interval Input Does Not Show Up
+    SL.Input Password                           xpath=//input[@name="keyRenewalInterval1"]          ${key_renew}
+
+Configure 5G Security Mode WPA-PSK/WPA2-PSK
+    [Arguments]                                 
+    ...                                         ${password}=12345678
+    ...                                         ${encry_type}=AES
+    ...                                         ${key_renew}=3600			
+    
+    # Input Password
+    SL.Wait Until Element Is Visible            xpath=//input[@name="PreSharedKey3"]
+    ...                                         timeout=2s
+    ...                                         error=\nWPA Password Input Does Not Show Up
+    SL.Input Password                           xpath=//input[@name="PreSharedKey3"]          ${password}
+
+    # Select Encryption Type
+    SL.Wait Until Element Is Visible            xpath=//select[@name="TKIP_Selection6"]/option[contains(text(), "${encry_type}")]
+    ...                                         timeout=2s
+    ...                                         error=\nWPA Encryption Dropdown Does Not Show Up
+    ${encry_value}=        SL.Get Value         xpath=//select[@name="TKIP_Selection6"]/option[contains(text(), "${encry_type}")]
+    SL.Select From List By Value                xpath=//select[@name="TKIP_Selection6"]        ${encry_value}
+
+    # Input Key Renewal Interval
+    SL.Wait Until Element Is Visible            xpath=//input[@name="keyRenewalInterval3"]
+    ...                                         timeout=2s
+    ...                                         error=\nWPA Key Renewal Interval Input Does Not Show Up
+    SL.Input Password                           xpath=//input[@name="keyRenewalInterval3"]          ${key_renew}
+
+Configure 5G Security Mode WPA3-PSK
+    [Arguments]                                 
+    ...                                         ${password}=12345678
+    ...                                         ${encry_type}=AES
+    ...                                         ${key_renew}=3600			
+    
+    # Input Password
+    SL.Wait Until Element Is Visible            xpath=//input[@name="PreSharedKey_WPA3"]
+    ...                                         timeout=2s
+    ...                                         error=\nWPA Password Input Does Not Show Up
+    SL.Input Password                           xpath=//input[@name="PreSharedKey_WPA3"]          ${password}
+
+    # Select Encryption Type
+    SL.Wait Until Element Is Visible            xpath=//select[@name="TKIP_Selection_WPA3"]/option[contains(text(), "${encry_type}")]
+    ...                                         timeout=2s
+    ...                                         error=\nWPA Encryption Dropdown Does Not Show Up
+    ${encry_value}=        SL.Get Value         xpath=//select[@name="TKIP_Selection_WPA3"]/option[contains(text(), "${encry_type}")]
+    SL.Select From List By Value                xpath=//select[@name="TKIP_Selection_WPA3"]        ${encry_value}
+
+    # Input Key Renewal Interval
+    SL.Wait Until Element Is Visible            xpath=//input[@name="keyRenewalInterval_WPA3"]
+    ...                                         timeout=2s
+    ...                                         error=\nWPA Key Renewal Interval Input Does Not Show Up
+    SL.Input Password                           xpath=//input[@name="keyRenewalInterval_WPA3"]          ${key_renew}
+
+
+
+
+#################
+Get SSID 5G
+    SL.Wait Until Element Is Visible              xpath=//input[@name="ESSID"] 
+    ...                                           timeout=10s
+    ...                                           error=\nSelect SSID Index Dropdown Does Not Show Up
+    ${ssid_value}=     SL.Get Value               xpath=//input[@name="ESSID"] 
+    # ${ssid}=           SL.Get Text              xpath=//option[@value="${ssid_value}"]
+    Return From Keyword                           ${ssid_value}    
+
+##################
+Compare SSID in 5GHz With BSSID
+    ${ssid}=                                       Get SSID 5G
+    ${bssid}=                                      Get BSSID
+    Log To Console                                 \nSSID= ${ssid}
+    Log To Console                                 MAC Address= ${bssid}
+    ${ssidLastSixDigit}=                           STR.Fetch From Right           ${ssid}      _
+    ${bssidSplitedList}                            STR.Get Substring              ${bssid}     -8
+    ${bssidSplitedList}=                           STR.Remove String Using Regexp    ${bssidSplitedList}     :
+    Log To Console      SSID Last Six Digit= ${ssidLastSixDigit}
+    Log To Console      MAC Address Last Six Digit= ${bssidSplitedList}
+    Run Keyword If      '${ssidLastSixDigit}' == '${bssidSplitedList}'    Log To Console      Matched!
+    ...       ELSE      Fail     Not Matched!
+
+Compare Get SSID 5GHz With SSID Expected Index 2,3,4
+    [Arguments]                               ${ssid_expect}
+
+    ${ssid}=                                  Get SSID 5G
+    Log To Console                            Get SSID = ${ssid}
+    Log To Console                            SSID Expected = ${ssid_expect}
+    Run Keyword If      '${ssid}' == '${ssid_expect}'    Log To Console      Matched!
+    ...       ELSE      Fail     Not Matched!
+
+Verify Config 5G Security mode OPEN
+    ${secu_value}=                                SL.Get Value         xpath=//select[@name="WEP_Selection"]  
+    Should Be Equal                               OPEN                 ${secu_value}
+    Log To Console					              \nConfig Success Authentication Mode OPEN Success!
+
+Verify Config 5G Security mode WEP
+    [Arguments]                                   ${wep_mode}
+    ...                                           ${password}
+    
+    ${secu_value}=                                SL.Get Value         xpath=//select[@name="WEP_Selection"]  
+    Should Be Equal                               Basic                ${secu_value}
+
+    ${mode_value}=                                SL.Get Value         xpath=//select[@name="wlKeyBit"]  
+    Should Contain                                ${wep_mode}          ${mode_value}
+
+    ${pass_value}=                                SL.Get Value         xpath=//input[@id="WEP_Key13"] 
+    Should Be Equal                               ${password}          ${pass_value}
+
+    Log To Console					              \nConfig Success Authentication Mode WEP ${wep_mode} Success!
+
+Verify Config 5G Security mode WPA-PSK
+    [Arguments]                                   
+    ...                                           ${password}
+    ...                                           ${encry_type}
+    ...                                           ${key_renew}
+    
+    ${secu_value}=                                SL.Get Value         xpath=//select[@name="WEP_Selection"]  
+    Should Be Equal                               WPAPSK               ${secu_value}
+
+    ${pass_value}=                                SL.Get Value         xpath=//input[@id="PreSharedKey2"] 
+    Should Be Equal                               ${password}          ${pass_value}
+
+    ${encry_value}=                               SL.Get Value         xpath=//select[@name="TKIP_Selection5"] 
+    Run Keyword If       '${encry_type}' == 'AES'         	           Should Be Equal        AES                      ${encry_value}
+    ...    ELSE IF       '${encry_type}' == 'TKIP'        		       Should Be Equal        TKIP                     ${encry_value}
+    ...    ELSE IF       '${encry_type}' == 'TKIP+AES'                 Should Be Equal        TKIPAES                  ${encry_value}
+
+    ${renew_value}=                               SL.Get Value         xpath=//input[@id="keyRenewalInterval2"] 
+    Should Be Equal                               ${key_renew}         ${renew_value}
+
+    Log To Console					              \nConfig Security Mode WPA-PSK Success!
+
+Verify Config 5G Security mode WPA2-PSK
+    [Arguments]                                   
+    ...                                           ${password}
+    ...                                           ${encry_type}
+    ...                                           ${key_renew}
+    
+    ${secu_value}=                                SL.Get Value         xpath=//select[@name="WEP_Selection"]  
+    Should Be Equal                               WPA2PSK              ${secu_value}
+
+    ${pass_value}=                                SL.Get Value         xpath=//input[@id="PreSharedKey1"] 
+    Should Be Equal                               ${password}          ${pass_value}
+
+    ${encry_value}=                               SL.Get Value         xpath=//select[@name="TKIP_Selection4"] 
+    Run Keyword If       '${encry_type}' == 'AES'         	           Should Be Equal        AES                      ${encry_value}
+    ...    ELSE IF       '${encry_type}' == 'TKIP'        		       Should Be Equal        TKIP                     ${encry_value}
+    ...    ELSE IF       '${encry_type}' == 'TKIP+AES'                 Should Be Equal        TKIPAES                  ${encry_value}
+
+    ${renew_value}=                               SL.Get Value         xpath=//input[@id="keyRenewalInterval1"] 
+    Should Be Equal                               ${key_renew}         ${renew_value}
+
+    Log To Console					              \nConfig Security Mode WPA2-PSK Success!
+
+Verify Config 5G Security mode WPA-PSK/WPA2-PSK
+    [Arguments]                                   
+    ...                                           ${password}
+    ...                                           ${encry_type}
+    ...                                           ${key_renew}
+    
+    ${secu_value}=                                SL.Get Value         xpath=//select[@name="WEP_Selection"]  
+    Should Be Equal                               WPAPSKWPA2PSK        ${secu_value}
+
+    ${pass_value}=                                SL.Get Value         xpath=//input[@id="PreSharedKey3"] 
+    Should Be Equal                               ${password}          ${pass_value}
+
+    ${encry_value}=                               SL.Get Value         xpath=//select[@name="TKIP_Selection6"] 
+    Run Keyword If       '${encry_type}' == 'AES'         	           Should Be Equal        AES                      ${encry_value}
+    ...    ELSE IF       '${encry_type}' == 'TKIP'        		       Should Be Equal        TKIP                     ${encry_value}
+    ...    ELSE IF       '${encry_type}' == 'TKIP+AES'                 Should Be Equal        TKIPAES                  ${encry_value}
+
+    ${renew_value}=                               SL.Get Value         xpath=//input[@id="keyRenewalInterval3"] 
+    Should Be Equal                               ${key_renew}         ${renew_value}
+
+    Log To Console					              \nConfig Security Mode WPA-PSK/WPA2-PSK Success!
+
+Verify Config 5G Security mode WPA3-PSK
+    [Arguments]                                   
+    ...                                           ${password}
+    ...                                           ${encry_type}
+    ...                                           ${key_renew}
+    
+    ${secu_value}=                                SL.Get Value         xpath=//select[@name="WEP_Selection"]  
+    Should Be Equal                               WPA3PSK              ${secu_value}
+
+    ${pass_value}=                                SL.Get Value         xpath=//input[@id="PreSharedKey_WPA3"] 
+    Should Be Equal                               ${password}          ${pass_value}
+
+    ${encry_value}=                               SL.Get Value         xpath=//select[@name="TKIP_Selection_WPA3"] 
+    Run Keyword If       '${encry_type}' == 'AES'         	           Should Be Equal        AES                      ${encry_value}
+    ...    ELSE IF       '${encry_type}' == 'TKIP'        		       Should Be Equal        TKIP                     ${encry_value}
+    ...    ELSE IF       '${encry_type}' == 'TKIP+AES'                 Should Be Equal        TKIPAES                  ${encry_value}
+
+    ${renew_value}=                               SL.Get Value         xpath=//input[@id="keyRenewalInterval_WPA3"] 
+    Should Be Equal                               ${key_renew}         ${renew_value}
+
+    Log To Console					              \nConfig Security Mode WPA3-PSK Success!
+
+
+
+################
+Popup PreSharedKey Length Error Should Be Visible
+    [Documentation]                     Handle popup PreSharedKey Length Error
+    ${popup_message}=                   SL.Handle Alert    timeout=10s
+    Log To Console                      Popup message: ${popup_message}
+    Should Contain                      ${popup_message}      Pre-Shared Key length error!
+
+Popup Key Renewal Interval Length Error Should Be Visible
+    [Documentation]                     Handle Key Renewal Interval Length Error
+    ${popup_message}=                   SL.Handle Alert    timeout=10s
+    Log To Console                      Popup message: ${popup_message}
+    Should Contain                      ${popup_message}      Key Renewal Interval must be between 10 and 4194303
+
+Popup Key Renewal Interval Non-integer Should Be Visible
+    [Documentation]                     Handle Key Renewal Interval Non-integer
+    ${popup_message}=                   SL.Handle Alert    timeout=10s
+    Log To Console                      Popup message: ${popup_message}
+    Should Contain                      ${popup_message}      Key Renewal Interval : Non-integer value given
+
+Message WPA Password Invalid Should Be Visible
+    [Documentation]                     Handle Message WPA Password Invalid
+    ${popup_message}=                   SL.Handle Alert    timeout=10s
+    SL.Handle Alert                     ACCEPT
+    Log To Console                      Popup message: ${popup_message}
+    Should Contain                      ${popup_message}      Password must not include special character or all characters are space and out of standard ascii table
+
+Popup PreSharedKey Hex Error Should Be Visible
+    [Documentation]                     Handle popup PreSharedKey Hex Error
+    ${popup_message}=                   SL.Handle Alert    timeout=10s
+    Log To Console                      Popup message: ${popup_message}
+    Should Contain                      ${popup_message}      Pre-Shared Key Hex value error!
+
+
+################
+Config Name SSID 5G Incorrect On WebGui
+    [Arguments]                               		${ssid_index}
+    ...							                    ${ssid_change}
+
+    Select SSID 5G Index                            ${ssid_index}
+    Input SSID 5G Name                              ${ssid_change}
+    Save Config SSID
+    Popup Name SSID Incorrect Should Be Visible
+
+Config Name SSID 5G All Space On WebGui
+    [Arguments]                               		${ssid_index}
+    ...							                    ${ssid_change}
+
+    Select SSID 5G Index                            ${ssid_index}
+    Input SSID 5G Name                              ${ssid_change}
+    Save Config SSID
+    Popup Name SSID Invalid Should Be Visible
+
+Config Name SSID 5G Correct On WebGui
+    [Arguments]                               		${ssid_index}
+    ...							                    ${ssid_change}
+
+    Select SSID 5G Index                            ${ssid_index}
+    Input SSID 5G Name                              ${ssid_change}
+    Save Config SSID
+    Logout WebGUI
+
+    # Verify SSID Change Success
+    Verify Wifi Rescan Contain                      ${ssid_change}
+    Log To Console                                  \nConfig Name SSID Success!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+###################
+#######ONT-H#######
+Config Channel_5G
+    [Arguments]                          ${channel}=AUTO
+    ### Input Beacon Interval
+    ### Select Channel (channel=AUTO/36/40/44/48/52/56/60/64/100/104/108/112/116/120/124/128/132/136/140/144/149/153/157/161/165)
+    Log To Console                      \nSelect Channel
+    SL.Wait Until Element Is Visible    xpath=//select[@name="Channel_ID"]
+    ...                                 timeout=10s
+    ...                                 error=\nChannel Select Box Does Not Show Up
+    ${channel_value}=                   SL.Get Value        xpath=//option[contains(text(), "${channel}")]
+    SL.Select From List By Value        xpath=//select[@name="Channel_ID"]         ${channel_value}
+
+Select Wireless_5G Mode
+    [Documentation]                             Select Wireless_5G mode from list by get value of this index
+	...                                11a only
+	...                                11a/n mixed mode
+	...                                11vht AC/AN/A
+	...                                11vht AC/AN			
+	[Arguments]                          ${wireless_mode}
+	### Select wireless mode
+    SL.Wait Until Element Is Visible    xpath=//select[@name="WirelessMode"]
+    ...                                 timeout=10s
+    ...                                 error=\802.1p Selection Not Found
+	${wireless_mode_value}=                   SL.Get Value        xpath=//option[contains(text(), "${wireless_mode}")]
+	Log To Console						\n${wireless_mode_value}
+    SL.Select From List By Value        xpath=//select[@name="WirelessMode"]         ${wireless_mode_value}
+
+Get original Main SSID in 5GHz
+    Open 5GHz Wireless Configure Page
+    ###Get original SSID 1
+    SL.Select From List By Value                 xpath=//select[@name="SSID_INDEX"]    0
+    SL.Wait Until Element Is Visible             xpath=//input[@name="ESSID"]
+    ...                                          timeout=15s
+    ...                                          error=\nSSID Textbox Does Not Show Up
+    ${ssid_1}=     SL.Get Value                  xpath=//input[@name="ESSID"]
+    Return From Keyword                          ${ssid_1}
+
+
+Get original SSID 2 in 5GHz
+    Open 5GHz Wireless Configure Page
+    ###Get original SSID 2
+    SL.Select From List By Value                 xpath=//select[@name="SSID_INDEX"]    1
+    SL.Wait Until Element Is Visible             xpath=//input[@name="ESSID"]
+    ...                                          timeout=15s
+    ...                                          error=\nSSID Textbox Does Not Show Up
+    ${ssid_2}=     SL.Get Value                  xpath=//input[@name="ESSID"]
+    Return From Keyword                          ${ssid_2}
+
+
+Get original SSID 3 in 5GHz
+    Open 5GHz Wireless Configure Page
+    ###Get original SSID 3
+    SL.Select From List By Value                 xpath=//select[@name="SSID_INDEX"]    2
+    SL.Wait Until Element Is Visible             xpath=//input[@name="ESSID"]
+    ...                                          timeout=15s
+    ...                                          error=\nSSID Textbox Does Not Show Up
+    ${ssid_3}=     SL.Get Value                  xpath=//input[@name="ESSID"]
+    Return From Keyword                          ${ssid_3}
+
+
+
+SSID in 5GHz Should Be Set To Default
+    [Documentation]                           Verify wifi SSID in 2.4GHz should be set back to default.
+    ...                                       Input:
+    ...                                       1. ssid_prefix: Default is GW040_2.4G
+
+    [Arguments]                               ${ssid_prefix}=&{ONT}[SSID_5G]
+    ${ssid}=                                  Get SSID 2G
+    ${bssid}=                                 Get BSSID
+    ${bssidSplitedList}                       STR.Get Substring              ${bssid}     -8
+    ${bssidSplitedList}=                      STR.Remove String Using Regexp     ${bssidSplitedList}     :
+    Should Be Equal                           ${ssid}     ${ssid_prefix}_${bssidSplitedList}
+
+
+Select Channel Bandwidth 5GHz
+    [Documentation]                            20 MHz
+    ...                                        20/40 MHz    20 MHz, 40 MHz, 80 MHz
+    ...                                        40 MHz       20 MHz, 40 MHz, 80 MHz
+	
+    [Arguments]                                ${channel_bandwidth}
+    ...                                        ${vht_bandwidth}=0
+
+	SL.Wait Until Element Is Visible            xpath=//select[@name='WLANChannelBandwidth']
+    ...                                         timeout=20s
+    ...                                         error=\nChannel Bandwidth mode Box Does Not Show Up
+    
+    Log To Console                              \nSelect Channel Bandwidth
+    Run Keyword If    '${channel_bandwidth}' == '20 MHz'       SL.Select From List By Value      xpath=//select[@name='WLANChannelBandwidth']    0
+    ...    ELSE IF    '${channel_bandwidth}' == '20/40 MHz'    SL.Select From List By Value      xpath=//select[@name='WLANChannelBandwidth']    1
+    ...    ELSE IF    '${channel_bandwidth}' == '40 MHz'       SL.Select From List By Value      xpath=//select[@name='WLANChannelBandwidth']    2     
+	Sleep                                       2s
+
+    Log To Console                              Select VHT Bandwidth
+    Run Keyword If    '${vht_bandwidth}' == '20 MHz'       SL.Select From List By Value      xpath=//select[@name='WLan11acVHTChannelBandwidth']    0
+    ...    ELSE IF    '${vht_bandwidth}' == '40 MHz'       SL.Select From List By Value      xpath=//select[@name='WLan11acVHTChannelBandwidth']    1
+    ...    ELSE IF    '${vht_bandwidth}' == '80 MHz'       SL.Select From List By Value      xpath=//select[@name='WLan11acVHTChannelBandwidth']    2
+	Sleep                                       2s

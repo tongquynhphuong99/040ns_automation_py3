@@ -1,0 +1,182 @@
+*** Settings ***
+Library                                    SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
+
+*** Variables ***
+
+*** Keywords ***
+###
+Open NAT Page
+    ###Select Advanced Setup Tab
+    [Arguments]                                ${url}=https://192.168.1.1/cgi-bin/adv_nat_top.asp
+
+    SL.Go To                                   ${url}
+    SL.Wait Until Page Contains                NAT
+    ...                                        timeout=20s
+    ...                                        error=\nNat Configure Page Not Found
+    SL.Page Should Contain                     NAT
+    Sleep                                      2s
+
+###
+Select Interface For NAT
+    [Arguments]                         ${interface_default}=WAN1
+
+    Log To Console                      Select Interface For NAT
+    SL.Wait Until Element Is Visible    xpath=//select[@name="NAT_VCIndex"]
+    ...                                 timeout=10s
+    ...                                 error=\nInterface For Nat Select Box Not Found
+   
+    Run Keyword If    '${interface_default}' == 'WAN1'       SL.Select From List By Value    xpath=//select[@name="NAT_VCIndex"]    1
+    ...    ELSE    SL.Select From List By Value        xpath=//select[@name="NAT_VCIndex"]    ${interface_default}
+    Sleep                               2s
+    
+Select NAT DMZ Mode
+    [Documentation]                     Enabled/Disabled
+    [Arguments]                         ${nat_mode}=Enabled
+
+    Log To Console                      Select NAT DMZ Mode ${nat_mode}
+    SL.Wait Until Element Is Visible    xpath=//input[@name="dmz_active"]
+    ...                                 timeout=10s
+    ...                                 error=\nInterface For Nat Select Box Not Found
+    
+    Run Keyword If         '${nat_mode}' == 'Enabled'          SL.Execute Javascript                 document.getElementsByName('dmz_active')[0].click();
+    ...   ELSE IF          '${nat_mode}' == 'Disabled'         SL.Execute Javascript                 document.getElementsByName('dmz_active')[1].click();
+    Sleep                               2s
+
+Config DMZ Host Ip
+    [Arguments]                            ${ip_add}
+
+    Log To Console                         Input DMZ Host IP ${ip_add}
+    SL.Input Text                          xpath=//input[@name="dmzHostIP"]       ${ip_add}
+    Log To Console                         \nConfig DMZ Host Ip Address
+    Sleep                               2s
+
+######### VIRTUAL SERVER
+
+###    
+Config Nat Virtual Application
+    [Documentation]                         FTP/SSH/TELNET/SMTP/HTTP_Server/POP3/HTTPS/T.120/H.323/PPTP/pcAnywhere/VNC/CUSeeMe
+
+    [Arguments]                             ${app}            ${ip_add}
+
+    Log To Console                          \nConfig NAT Virtual Application
+    Log To Console                          Select Application NAT ${app}
+    SL.Select From List By Value            xpath=//select[@name='SelectApplication']       ${app}
+    Sleep                                   1s
+    
+    Log To Console                          Input Local IP Address ${ip_add}
+    SL.Page Should Contain Element          xpath=//input[@name="Addr"]
+    SL.Input Text                           xpath=//input[@name="Addr"]    ${ip_add}
+    Sleep                                   1s
+
+### Config parameters of NAT virtual server
+Input Application Name
+	[Arguments]                              ${application_name}=abc
+	
+    Log To Console                           Input Application Name ${application_name}
+	SL.Page Should Contain Element           xpath=//*[@id="uiViewPvcVpi3"]
+    SL.Input Text                            xpath=//*[@id="uiViewPvcVpi3"]    ${application_name}
+    Sleep                                    1s
+    
+Select Protocol Nat Virtual
+    [Documentation]                          TCP/UDP/ALL
+    [Arguments]                              ${protocol}=TCP
+
+    Log To Console                           Select Protocol NAT Virtual ${protocol}
+    SL.Wait Until Element Is Visible         xpath=//select[@name="SelectProtocol"]
+    ...                                      timeout=10s
+    ...                                      error=\nProtocol For Nat Select Box Not Found
+    SL.Select From List By Value             xpath=//select[@name='SelectProtocol']       ${protocol}
+    Sleep                                    1s
+    
+###
+Input Start Port Number
+	[Arguments]                              ${start_port_number}
+	
+    Log To Console                           Input Start Port Number ${start_port_number}
+	SL.Page Should Contain Element           xpath=//input[@name="start_port"]
+    SL.Input Text                            xpath=//input[@name="start_port"]    ${start_port_number}
+    Sleep                                    1s
+    
+###
+Input End Port Number
+	[Arguments]                              ${end_port_number}
+
+    Log To Console                           Input End Port Number ${end_port_number}
+	SL.Page Should Contain Element           xpath=//input[@name="end_port"]
+    SL.Input Text                            xpath=//input[@name="end_port"]    ${end_port_number}
+    Sleep                                    1s
+    
+###
+Input Local IP Address
+	[Arguments]                              ${server_ip_address}
+
+    Log To Console                           Input Local IP Address ${server_ip_address}
+	SL.Page Should Contain Element           xpath=//input[@id="uiViewIpAddressMark"]
+    SL.Input Text                            xpath=//input[@id="uiViewIpAddressMark"]    ${server_ip_address}
+    Sleep                                    1s
+    
+###
+Input Local Start Port Number
+	[Arguments]                              ${local_start_port_number}
+	
+    Log To Console                           Input Local Start Port Number ${local_start_port_number}
+    SL.Page Should Contain Element           xpath=//input[@name="local_sport"]
+    SL.Input Text                            xpath=//input[@name="local_sport"]    ${local_start_port_number}
+    Sleep                                    1s
+    
+###
+Input Local End Port Number
+	[Arguments]                              ${local_end_port_number}
+	
+    Log To Console                           Input Local End Port Number ${local_end_port_number}
+	SL.Page Should Contain Element           xpath=//input[@name="local_eport"]
+    SL.Input Text                            xpath=//input[@name="local_eport"]    ${local_end_port_number}
+    Sleep                                    1s
+    
+Configure Virtual Server 
+    [Arguments]                              ${application_name}	${protocol}		${start_port_number}    ${end_port_number}     ${server_ip_address}    ${local_start_port_number}    ${local_end_port_number}
+
+    Log To Console                           \nAdd new NAT rule
+    ###Select Application & Input Application Name
+    Log To Console                           \nSelect Application & Input Application Name
+    Input Application Name			${application_name}
+    
+    ### Select Protocol
+    Select Protocol Nat Virtual		${protocol}
+
+    ###Input Start Port Number
+    Log To Console                           \nInput Start Port Number
+    Input Start Port Number    		${start_port_number}
+
+    ###Input End Port Number
+    Log To Console                           \nInput End Port Number
+    Input End Port Number    		${end_port_number}
+
+    ###Input Local IP Address
+    Log To Console                           \nInput Local IP Address
+    Input Local IP Address    		${server_ip_address}
+
+    ###Input Start Port Number(Local)
+    Log To Console                           \nInput Start Port Number(Local)
+    Input Local Start Port Number    ${local_start_port_number}
+
+    ###Input End Port Number(Local)
+    Log To Console                           \nInput End Port Number(Local)
+    Input Local End Port Number	     ${local_end_port_number}
+
+Click Drop Button
+    Log To Console                                   \nClick Drop Button
+    SL.Select Frame                                  xpath=//iframe[@id="cgi_frame"]
+    SL.Wait Until Page Contains Element              xpath=//*[@id="CgiInnerTable"]/tbody/tr[2]/td[8]/img
+    # ${a}=         SL.Get Element Attribute           xpath=//*[@id="CgiInnerTable"]/tbody/tr[2]/td[8]/img        src
+    # Log To Console                    ${a}
+    SL.Execute Javascript        document.querySelector("table[@id="CgiInnerTable"]>tbody>tr:nth-of-type(2)>td:nth-of-type(8)>img").click()
+    # SL. Click Element                            xpath=//*[@id="CgiInnerTable"]/tbody/tr[2]/td[8]/img
+    Log To Console                    123
+    Sleep                                       5s
+    SL.Unselect Frame                        
+
+Save Config NAT 
+    SL.Page Should Contain Element           	xpath=//input[@name="SaveBtn"]
+    SL.Click Button                             xpath=//input[@name="SaveBtn"]
+    Sleep                                       10s

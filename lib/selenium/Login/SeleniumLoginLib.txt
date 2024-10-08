@@ -1,0 +1,287 @@
+*** Settings ***
+
+Library                                       SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
+Resource                                      ../../variables/AllVariables.txt
+
+*** Variables ***
+${COOKIE_NAME}    session_cookie
+${COOKIE_VALUE}   session_value
+
+*** Keywords ***
+
+###Login###
+Open Browser To Login Page
+    [Arguments]                               ${url}
+    ...                                       ${browser}=firefox
+    SL.Open Browser                           ${url}
+    ...                                       ${browser}
+    ...                                       ${ONT_BROWSER}
+    ...                                       options=add_argument("--ignore-certificate-errors")
+    SL.Wait Until Element Is Visible          xpath=//input[@id="username"]
+    ...                                       timeout=20s
+    ...                                       error=\nLogin Page Does Not Found!
+
+Input Username
+    [Arguments]                               ${username}
+    SL.Wait Until Element Is Visible          xpath=//input[@id="username"]
+    SL.Input Text                             xpath=//input[@id="username"]      ${username}
+
+Input User Password
+    [Arguments]                               ${password}
+    SL.Wait Until Element Is Visible          xpath=//input[@id="password"]
+    SL.Input Password                         xpath=//input[@id="password"]      ${password}
+
+Submit Credentials
+    SL.Wait Until Element Is Visible          xpath=//button[@id="loginbutton"]
+    SL.Click Button                           xpath=//button[@id="loginbutton"]
+
+###Verify###
+Welcome Page Should Be Open
+    SL.Wait Until Element Is Visible          xpath=//frame[@name="main"]     timeout=30s     error=\nWelcome Page Does Not Found!
+    
+Login To Browser
+    [Arguments]                               ${url}=${LOGIN_URL}
+    ...                                       ${username}=${ONT}[ONT_WEB_USER]
+    ...                                       ${password}=${ONT}[ONT_WEB_PASS]
+    ...                                       ${browser}=${BROWSER}
+    
+    Open Browser To Login Page                url=${url}
+    ...                                       browser=${browser}
+    Input Username                            username=${username}
+    Input User Password                       password=${password}
+    Submit Credentials
+    Sleep                                     3s
+
+Logout WebGUI
+    Reload Page
+    SL.Select Frame                                 xpath=//frame[@name="header"]
+    SL.Click Element                                xpath=//*[@id="logOut"]
+    SL.Close All Browsers
+
+
+# Relogin To Browser
+#     [Arguments]                               ${remote_selenium_server_tmp}=${REMOTE_SELENIUM_SERVER}
+#     ...                                       ${url}=${LOGIN_URL}
+#     ...                                       ${username}=&{ONT}[ONT_WEB_USER]
+#     ...                                       ${password}=&{ONT}[ONT_WEB_PASS]
+#     ...                                       ${browser}=${BROWSER}
+    
+#     SL.Reload Page
+#     SL.Wait Until Element Is Visible          xpath=//input[@id="username"]
+#     ...                                       timeout=20s
+#     ...                                       error=\nLogin Page Does Not Found!
+#     Input Username                            username=${ONT_WEB_USER}
+#     Input User Password                       password=&{ONT}[ONT_WEB_PASS]
+#     Submit Credentials
+#     Sleep                                     3s
+
+Change Password
+	[Documentation]					Change Password Login Of The First Login
+    [Arguments]                               ${newPassword}   ${confirmPass}
+    
+    SL.Input Text                             xpath=//input[@id='newPassword']            ${newPassword}
+    SL.Input Text                             xpath=//input[@id='confirmPass']            ${confirmPass}
+    SL.Click Button                           xpath=//input[@id='buttonSave']
+    ${popup_message}=                         SL.Handle Alert         timeout=20s
+    Should Contain                            ${popup_message}        Your password has been changed successfully! Thank you.
+    Log To Console                            Popup message: ${popup_message}
+
+Change Wrong Password
+    [Arguments]             ${inUserName}=admin            ${new_pass}=admin     ${cfm_new_pass}=admin
+    SL.Wait Until Element Is Visible       xpath=//input[@name="inUserName"]           timeout=10s              error=\nUsername Textbox Does Not Show Up!
+    SL.Input Text                          xpath=//input[@name="inUserName"]                 ${inUserName}
+    SL.Wait Until Element Is Visible       xpath=//input[@name="inPassword"]           timeout=10s              error=\nNew Password Textbox Does Not Show Up!
+    SL.Input Password                      xpath=//input[@name="inPassword"]                   ${new_pass}
+    SL.Wait Until Element Is Visible       xpath=//input[@name="pwdCfm"]               timeout=10s              error=\nConfirm New Password Textbox Does Not Show Up!
+    SL.Input Password                      xpath=//input[@name="pwdCfm"]                   ${cfm_new_pass}
+    SL.Wait Until Element Is Visible       xpath=//input[@value="Apply/Save"]          timeout=10s              error=\nApply Save Button Does Not Show Up!
+    SL.Click Button                        xpath=//input[@value="Apply/Save"]
+    SL.Handle Alert
+
+Login To Admin User With Wrong Password
+    [Arguments]                               ${remote_selenium_server_tmp}
+    ...                                       ${url}
+    ...                                       ${username}
+    ...                                       ${password_1}
+    ...                                       ${password_2}
+    ...                                       ${password_3}
+    ...                                       ${browser}
+    #The first time
+    Log To Console                            Input Wrong Password the first time
+    Open Browser To Login Page                url=${url}
+    ...                                       browser=${browser}
+    SL.Wait Until Element Is Visible          xpath=//button[@class="loginBtn"]
+    ...                                       timeout=20s
+    ...                                       error=\nLogin Page Does Not Found!
+    Input Username                            username=${username}
+    Input User Password                       password=${password_1}
+    Submit Credentials
+    SL.Page Should Contain                    You have 2 times try to login
+
+    #The second time
+    Log To Console                            Input Wrong Password the second time
+    SL.Wait Until Element Is Visible          xpath=//button[@class="loginBtn"]
+    ...                                       timeout=20s
+    ...                                       error=\nLogin Page Does Not Found!
+    Input Username                            username=${username}
+    Input User Password                       password=${password_2}
+    Submit Credentials
+    SL.Page Should Contain                    You have 1 times try to login
+
+    #The third time
+    Log To Console                            Input Wrong Password the third time
+    SL.Wait Until Element Is Visible          xpath=//button[@class="loginBtn"]
+    ...                                       timeout=20s
+    ...                                       error=\nLogin Page Does Not Found!
+    Input Username                            username=${username}
+    Input User Password                       password=${password_3}
+    Submit Credentials
+    SL.Page Should Contain                    You have 0 times try to login
+
+    SL.Element Should Be Disabled             xpath=//input[@id="username"]
+    SL.Element Should Be Disabled             xpath=//input[@id="password"]
+    Sleep                                     180
+    SL.Element Should Be Enabled              xpath=//input[@id="username"]
+    SL.Element Should Be Enabled              xpath=//input[@id="password"]
+
+Login with correct password
+    Log To Console                            \nLogin to WEBGUI with correct password
+    Login To Browser                          url=${LOGIN_URL}
+    ...                                       username=${ONT}[ONT_WEB_USER]
+    ...                                       password=${ONT}[ONT_WEB_PASS]
+    ...                                       browser=${BROWSER}
+    Welcome Page Should Be Open
+
+
+Logout From Admin User
+    # [Arguments]                               ${REMOTE_SELENIUM_SERVER}
+    # ...                                       ${LOGIN_URL}
+    # ...                                       &{ONT}[ONT_WEB_USER]
+    # ...                                       &{ONT}[ONT_WEB_PASS]
+    # ...                                       ${BROWSER}
+
+    Login To Browser                          url=${LOGIN_URL}
+    ...                                       username=${ONT}[ONT_WEB_USER]
+    ...                                       password=${ONT}[ONT_WEB_PASS]
+    ...                                       browser=${BROWSER}
+    Welcome Page Should Be Open
+
+    SL.Execute Javascript                     window.frames[0].document.querySelector("span[onclick='doLogout();']").click()
+    SL.Close All Browsers
+
+Go To Administration
+    [Arguments]                               ${url}=https://192.168.1.1/cgi-bin/tools_admin.aspl
+    SL.Go To                                  ${url}
+    SL.Wait Until Page Contains               Administration          timeout=10s       error=\nChange Password Page Does Not Show Up!
+    SL.Page Should Contain                    Administration
+
+Logout Page
+    [Documentation]                           logout_url=http://lan_ip_address or logout_url=http://wan_ip_address
+    ...                                       user=admin or user=operator
+    [Arguments]                               ${logout_url}=http://192.168.1.1    ${user}=admin
+    SL.Go To                                  ${logout_url}
+    Welcome Page Should Be Open
+    SL.Select Frame                           xpath=//frame[@name="menufrm"]
+    Run Keyword If                            '${user}' == 'admin'        SL.Click Element    xpath=//a[@id="79"]
+    ...    ELSE IF                            '${user}' == 'operator'     SL.Click Element    xpath=//a[@id="81"]
+    SL.Handle Alert
+    SL.Unselect Frame
+    SL.Wait Until Element Is Visible          xpath=//button[@class="loginBtn"]
+    ...                                       timeout=20s
+    ...                                       error=\nLogin Page Does Not Found!
+
+# Login Retry With Another Password
+#     [Arguments]                             ${username}
+#     ...                                     ${new_password}
+#     ...                                     ${default_password}
+
+#     Input Username                          ${username}
+#     Input User Password                     ${new_password}
+#     Submit Credentials
+#     ${password_incorrect}=                  Run Keyword And Return Status    SL.Page Should Contain    The username or password is incorrect
+#     Run Keyword If                          ${password_incorrect} == True        Change Password And Relogin    username=${username}    default_password=${default_password}    new_pass=${new_password}
+#     ...    ELSE                             Welcome Page Should Be Open
+
+Change Password WebGui
+    Input Username                           admin
+    Input User Password                      admin
+    Submit Credentials
+    Change Password After Reset Factory 
+
+Change Password After Reset Factory
+	SL.Wait Until Page Contains              This version requires user change the password in the first time login.
+	...                                      timeout=20s
+	...                                      error=\nChange Password Page Does Not Show Up!
+	# Change Password                          &{ONT}[ONT_WEB_PASS]              &{ONT}[ONT_WEB_PASS]      
+	# Log To Console                          \nChange Password to &{ONT}[ONT_WEB_PASS] Successfully!
+    Change Password                         ttcn@99CN            ttcn@99CN      
+	Log To Console                          \nChange Password to ttcn@99CN Successfully!
+# Change Password And Relogin
+#     [Arguments]                             ${username}
+#     ...                                     ${default_password}
+#     ...                                     ${new_pass}
+
+#     Input Username                          ${username}
+#     Input User Password                     ${default_password}
+#     Submit Credentials
+#     SL.Wait Until Page Contains             Administration         timeout=10s       error=\nChange Password Page Does Not Show Up!
+#     SL.Page Should Contain                  Administration
+#     ###Change Password
+#     Log To Console                          \nChange password from Operator
+#     Change Password                         inUserName=${username}
+#     ...                                     new_pass=${new_pass}
+#     ...                                     cfm_new_pass=${new_pass}
+
+#     SL.Wait Until Element Is Visible        xpath=//button[@class="loginBtn"]
+#     ...                                     timeout=20s
+#     ...                                     error=\nLogin Page Does Not Found!
+#     Input Username                          ${username}
+#     Input User Password                     ${new_pass}
+#     Submit Credentials
+#     Welcome Page Should Be Open
+
+# Logout And Login As Another User
+#     [Arguments]                             ${ip_address_logout}
+#     ...                                     ${ip_address_login}
+#     ...                                     ${user_logout}
+#     ...                                     ${user_login}
+#     ...                                     ${default_password}
+#     ...                                     ${new_password}
+
+#     SL.Go To                                url=http://${ip_address_logout}
+#     Sleep                                   2s
+#     ${login_button_visible}=                Run Keyword And Return Status    SL.Element Should Be Visible    xpath=//button[@class="loginBtn"]
+
+#     Run Keyword If                          ${login_button_visible} == True    Login Retry With Another Password    ${user_logout}    ${new_password}    ${default_password}
+#     ...    ELSE                             Welcome Page Should Be Open
+
+#     Logout Page                             logout_url=http://${ip_address_logout}    user=${user_logout}
+#     Sleep                                   2s
+#     SL.Go To                                url=http://${ip_address_login}
+#     SL.Wait Until Element Is Visible        xpath=//button[@class="loginBtn"]
+#     ...                                     timeout=20s
+#     ...                                     error=\nLogin Page Does Not Found!
+#     Input Username                          ${user_login}
+#     Input User Password                     ${new_password}
+#     Submit Credentials
+
+#############################
+### Login with new IP ONT ###
+#############################
+
+Login Webgui With Specific IP
+    [Arguments]
+    ...    ${remote_selenium_server_tmp}=${REMOTE_SELENIUM_SERVER}
+    ...    ${ip_ont}=192.168.1.1
+    ...    ${browser}=chrome
+    ...    ${username}=admin
+    ...    ${password}=ttcn@99CN
+    SL.Set Selenium Speed    0.3
+    SL.Open Browser                https://${ip_ont}/cgi-bin/index.asp            ${browser}     None        http://${remote_selenium_server_tmp}:5555/wd/hub
+    SL.Wait Until Element Is Visible       xpath=//input[@id="username"]
+    ...                                    timeout=15s
+    ...                                    error=\nLogin Page Does Not Show Up
+    SL.Input Text                          xpath=//input[@id="username"]      ${username}
+    SL.Input Password                      xpath=//input[@id="password"]      ${password}
+    SL.Click Button                        xpath=//button[@id="loginbutton"]
+

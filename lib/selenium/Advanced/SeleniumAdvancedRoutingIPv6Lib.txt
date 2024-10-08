@@ -1,0 +1,48 @@
+*** Settings ***
+Library                                        SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
+
+
+*** Variables ***
+
+*** Keywords ***
+Open Setup Routing IPv6 Page
+	Log To Console                             \nAccess to Set Up Routing IPv6 Page
+    [Arguments]                                ${url}=https://192.168.1.1/cgi-bin/adv_ipv6_static_route.asp
+
+    SL.Go To                                   ${url}
+    SL.Wait Until Page Contains                IPv6 Static Route Table Listing
+    ...                                        timeout=20s
+    ...                                        error=\nSet Up Routing IPv6 Page Not Found
+    SL.Page Should Contain                     IPv6 Static Route Table Listing
+
+Config Static Route IPv6
+    [Documentation]                        gateway_wan = 0 <=>  br0
+    ...                                            1 <=>  PVC0
+    ...                                            8 <=>  PVC7
+    
+    [Arguments]                            ${index}      ${destination_ip}     ${prefix}      ${gateway_wan}	
+
+    ## Select Rule Index
+    Log To Console                         Select Index ${index}
+    SL.Page Should Contain Element         xpath=//select[@name="Rule_Index"]
+    SL.Select From List By Value           xpath=//select[@name="Rule_Index"]     ${index}
+
+    ## Input IP Address
+    Log To Console                         Input Destination IP Address = ${destination_ip}
+    SL.Page Should Contain Element         xpath=//input[@name="staticDestIP"]
+    SL.Input Text                          xpath=//input[@name="staticDestIP"]      ${destination_ip}
+
+    Log To Console                         Input Prefix = ${prefix}
+    SL.Page Should Contain Element         xpath=//input[@name="DstIPv6Prefix"]
+    SL.Input Text				           xpath=//input[@name="DstIPv6Prefix"]     ${prefix}
+    
+    Log To Console                         Select Gateway WAN ${gateway_wan}
+    SL.Page Should Contain Element         xpath=//select[@name="Route_PVC_Index"]
+    SL.Execute Javascript                  document.getElementsByName('Route_PVC_Index')[0].selectedIndex = ${gateway_wan}
+
+    ## Add Rule
+    SL.Click Element                       xpath=//input[@value="ADD"]
+
+Remove Static Route IPv6
+    SL.Execute Javascript                  document.querySelector("img[onclick='doDelete(1)']").click();
+    SL.Wait Until Page Contains            Static Route                timeout=60s

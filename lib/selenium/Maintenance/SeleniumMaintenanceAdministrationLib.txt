@@ -1,0 +1,60 @@
+*** Settings ***
+Library                      SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
+
+*** Variables ***
+
+*** Keywords ***
+
+###
+Open Administration Page
+    [Arguments]                                ${url}=https://192.168.1.1/cgi-bin/tools_admin.asp?reload=-1
+
+    SL.Go To                                   ${url}
+    SL.Wait Until Page Contains                Administrator
+    ...                                        timeout=20s
+    ...                                        error=\nAdministration Configure Page Not Found
+    SL.Page Should Contain                     Administrator
+
+Config Administration
+    [Arguments]                         ${new_pass}                     ${confirm_pass}
+
+    Log To Console                        \nInput New Password=${new_pass} & Confirm Password=${confirm_pass}
+    SL.Wait Until Element Is Visible      xpath=//input[@name="uiViewTools_Password"]
+    ...                                   timeout=10s
+    ...                                   error=\nNew Pass Text Box Not Found
+    SL.Click Element                      xpath=//input[@name="uiViewTools_Password"]
+    SL.Input Text                         xpath=//input[@name="uiViewTools_Password"]       ${new_pass}
+    
+    SL.Wait Until Element Is Visible      xpath=//input[@name="uiViewTools_PasswordConfirm"]
+    ...                                   timeout=10s
+    ...                                   error=\nConfirm Pass Text Box Not Found
+    SL.Click Element                      xpath=//input[@name="uiViewTools_PasswordConfirm"]
+    SL.Input Text                         xpath=//input[@name="uiViewTools_PasswordConfirm"]       ${confirm_pass}
+
+Save Config Administration
+    SL.Wait Until Element Is Visible      xpath=//input[@name="SaveBtn"]
+    ...                                   timeout=10s
+    ...                                   error=\nSave Button Not Found
+    SL.Click Element                      xpath=//input[@name="SaveBtn"]
+    Sleep                               5s
+
+Popup Administrator Special Should Be Visible
+    [Documentation]                     Handle popup Administrator is special
+
+    ${popup_message}=                   SL.Handle Alert    timeout=10s
+    Log To Console                      Popup message: ${popup_message}
+    Should Contain                      ${popup_message}    Your Password and Confirm Password must match before you can apply.
+
+Popup Administrator Special Format Should Be Visible
+    [Documentation]                     Handle popup Administrator is wrong format
+
+    ${popup_message}=                   SL.Handle Alert    timeout=10s
+    Log To Console                      Popup message: ${popup_message}
+    Should Contain                      ${popup_message}    Invalid password. Password need include number, uppercase, lowercase and specific character. 
+
+Popup Administrator Success Should Be Visible
+    [Documentation]                     Handle popup Administrator is Success
+
+    ${popup_message}=                   SL.Handle Alert    timeout=10s
+    Log To Console                      Popup message: ${popup_message}
+    Should Contain                      ${popup_message}    Your password has been changed successfully! Thank you. 

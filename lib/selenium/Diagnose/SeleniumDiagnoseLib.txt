@@ -1,0 +1,62 @@
+*** Settings ***
+Library                      SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
+
+*** Variables ***
+
+*** Keywords ***
+
+###
+Open Diagnostic Page
+    [Arguments]                                ${url}=https://192.168.1.1/cgi-bin/tools_test.asp
+
+    SL.Go To                                   ${url}
+    SL.Wait Until Page Contains                Diagnostic Test
+    ...                                        timeout=20s
+    ...                                        error=\nDiagnostic Test Configure Page Not Found
+    SL.Page Should Contain                     Diagnostic Test 
+Select Ping Mode
+    [Documentation]           WAN/LAN
+    [Arguments]      ${mode}
+    SL.Wait Until Element Is Visible                xpath=//input[@name="InterfaceTesting"]
+    ...                                             timeout=10s
+    ...                                             error=\nPing Mode Does Not Show Up
+    Run Keyword If   '${mode}' == 'WAN'         SL.Execute Javascript       document.getElementsByName("InterfaceTesting")[0].click()
+    ...    ELSE IF   '${mode}' == 'LAN'         SL.Execute Javascript       document.getElementsByName("InterfaceTesting")[1].click()
+Select WAN Index
+    [Documentation]                              1=>7
+ 
+    
+    [Arguments]                                  ${wan_index}=1
+    Log To Console                               \nSelect WAN Index
+    
+    SL.Wait Until Element Is Visible             xpath=//option[contains(text(), "${wan_index}")]
+    ...                                          timeout=20s
+    ...                                          error=\nNetwork Authentication Dropdown Does Not Show Up
+    ${auth_value}=              SL.Get Value     xpath=//option[contains(text(), "${wan_index}")]
+    SL.Select From List By Value                 xpath=//select[@name="Test_PVC"]     ${wan_index}
+Config Ip Ping
+ 
+    [Arguments]                         ${ip}               
+
+    SL.Wait Until Element Is Visible           xpath=//input[@name="ping_destaddr"]
+    ...                                        timeout=10s
+    ...                                        error=\nPing Text Box Not Found
+    SL.Click Element                           xpath=//input[@name="ping_destaddr"]
+    SL.Input Text                              xpath=//input[@name="ping_destaddr"]        ${ip}   
+    SL.Click Element                           xpath=//input[@id="TestPingBtn"]
+Config Address Trace
+ 
+    [Arguments]                         ${address}               
+
+    SL.Wait Until Element Is Visible           xpath=//input[@name="tracert_destaddr"]
+    ...                                        timeout=10s
+    ...                                        error=\nTrace Text Box Not Found
+    SL.Click Element                           xpath=//input[@name="tracert_destaddr"]
+    SL.Input Text                              xpath=//input[@name="tracert_destaddr"]        ${address}  
+    SL.Click Element                           xpath=//input[@id="TestTracertBtn"] 
+Config Diagnostic Test
+    SL.Wait Until Element Is Visible           xpath=//input[@name="TestBtn"]
+    ...                                        timeout=10s
+    ...                                        error=\nDiagnostic Button Not Found
+    SL.Click Element                           xpath=//input[@name="TestBtn"]
+    

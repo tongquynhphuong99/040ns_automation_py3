@@ -1,0 +1,103 @@
+*** Settings ***
+Library                          SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
+
+*** Variables ***
+${DHCP_CLIENTS_URL}          https://192.168.1.1/cgi-bin/status_DHCP_Clients.asp
+
+*** Keywords ***
+
+Open DHCP Clients Page
+	[Documentation]              Open DHCP Clients URL to open DHCP Clients page.
+	
+	SL.Go To                     ${DHCP_CLIENTS_URL}
+    SL.Wait Until Page Contains  DHCP Clients List
+    ...                          timeout=10s
+    ...                          error=\nDHCP Clients Page Not Found
+    SL.Page Should Contain       DHCP Clients List
+    
+Get Column Index DHCP
+    [Documentation]             Get column index base on column name.
+    ...                         Input:
+    ...                         1. column_name
+    ...                         Return:
+    ...                         1. Column index if found, else return 'None'
+
+    [Arguments]                 ${column_name}
+
+    ${index}=                   Set Variable     None
+    SL.Set Selenium Speed       0.1
+    FOR     ${i}     IN RANGE      1     20
+            ${element_is_visible}=    Run Keyword And Return Status       SL.Element Should Be Visible    xpath=//table[@class="tableW"]/tbody/tr[1]/td[${i}]
+            Exit For Loop If    '${element_is_visible}' == 'False'
+            ${column_name_tmp}=       SL.Get Text    xpath=//table[@class="tableW"]/tbody/tr[1]/td[${i}]
+    #        Log To Console     Column Name Tmp= ${column_name_tmp}
+            ${index}=          Set Variable If    '${column_name_tmp}' == '${column_name}'     ${i}
+            Exit For Loop If   '${column_name_tmp}' == '${column_name}'
+    END
+    SL.Set Selenium Speed       0.3
+    [Return]                    ${index}
+
+###
+Get Row Index DHCP
+    [Documentation]             Get row index base on column name and column value.
+    ...                         Input:
+    ...                         1. column_name
+    ...                         2. column_value
+    ...                         Return:
+    ...                         1. Row index if found, else return 'None'
+
+    [Arguments]                 ${column_name}   ${column_value}
+
+    ${index}=                   Set Variable     None
+    SL.Set Selenium Speed       0.1
+    ${column_index_tmp}=        Get Column Index DHCP           ${column_name}
+    FOR    ${row_i}     IN RANGE   2     20
+           ${element_is_visible}=    Run Keyword And Return Status       SL.Element Should Be Visible    xpath=//table[@class="tableW"]/tbody/tr[${row_i}]/td[3]
+           Exit For Loop If    '${element_is_visible}' == 'False'
+           ${column_value_tmp}=     SL.Get Text     xpath=//table[@class="tableW"]/tbody/tr[${row_i}]/td[${column_index_tmp}]
+    #       Log To Console      ${column_value_tmp}
+           ${index}=           Set Variable If     '${column_value_tmp}' == '${column_value}'    ${row_i}
+           Exit For Loop If    '${column_value_tmp}' == '${column_value}'
+    END
+    SL.Set Selenium Speed       0.3
+    [Return]                    ${index}
+
+###
+Get Cell Value DHCP
+    [Documentation]             Get value of cell base on column name and row index.
+    ...                         If found, return cell value, else return 'None'
+    ...                         Input:
+    ...                         1. column_name
+    ...                         2. row_index
+    ...                         Return:
+    ...                         1. cell_value
+
+    [Arguments]                 ${column_name}       ${row_index}
+    ${cell_value}=              Set Variable         None
+
+    ${column_index_tmp}=        Get Column Index DHCP    ${column_name}
+    Return From Keyword If      '${row_index}' == 'None'     None
+    ${cell_value_tmp}=          SL.Get Text     xpath=//table[@class="tableW"]/tbody/tr[${row_index}]/td[${column_index_tmp}]
+    ${cell_value}=              Set Variable    ${cell_value_tmp}
+    [Return]                    ${cell_value}
+    
+DHCP Client Should Not Be Gateway
+	[Documentation]             Check WAN status IPv6 (Use with FW International) whether it's connected, base on VLAN ID
+    ...                         Input:
+    ...                         1. vlan_id: int
+    ...							2. wan_ipv6_status_column_name: column name of wan IPv6 status (Status/Status IPv6)
+    ...                         Return:
+    ...                         Pass or Failed
+
+    [Arguments]                 ${vlan_id}		${wan_ipv6_status_column_name}=
+
+    ${row_index}=               Get Row Index DHCP    column_name=IP    column_value=${vlan_id}
+    ${dhcp_client}=             Get Cell Value DHCP   column_name=${wan_ipv6_status_column_name}    row_index=${row_index}
+    Log To Console              DHCP Client: ${dhcp_client}
+    Should Be Equal             '${dhcp_client}'    '192.168.1.1'
+
+
+
+
+
+

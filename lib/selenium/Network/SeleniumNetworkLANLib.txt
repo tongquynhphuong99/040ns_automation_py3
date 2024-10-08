@@ -1,0 +1,264 @@
+*** Settings ***
+Library                                        SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
+
+*** Variables ***
+
+*** Keywords ***
+
+###
+Open Network Settings LAN Page
+    [Arguments]                                ${url}=https://192.168.1.1/cgi-bin/home_lan.asp
+
+    SL.Go To                                   ${url}
+    SL.Wait Until Page Contains                Router Local IP
+    ...                                        timeout=20s
+    ...                                        error=\nNetwork Settings LAN Configure Page Not Found
+    SL.Page Should Contain                     Router Local IP
+
+Config IP Address
+    [Arguments]                                ${ip_address}=192.168.1.10
+    
+    Log To Console                             Config ip: ${ip_address} for ONT device
+    SL.Wait Until Element Is Visible           xpath=//input[@name="uiViewIPAddr"]
+    SL.Input Text                              xpath=//input[@name="uiViewIPAddr"]    ${ip_address}
+
+Config IPv4 DHCP
+    [Arguments]                                ${ip_address}=192.168.10.1    ${subnet_mask}=255.255.255.0    ${start_ip_address}=192.168.10.2    ${end_ip_address}=192.168.10.251    ${lan_ipv4_config_url}=https://192.168.1.1/cgi-bin/home_lan.asp
+    
+    Log To Console                             Config ip: ${ip_address} for ONT device
+    SL.Wait Until Element Is Visible           xpath=//input[@name="uiViewIPAddr"]
+    SL.Input Text                              xpath=//input[@name="uiViewIPAddr"]    ${ip_address}
+
+    Log To Console                             Config ip: ${subnet_mask} for ONT device
+    SL.Wait Until Element Is Visible           xpath=//input[@name="uiViewNetMask"]
+    SL.Input Text                              xpath=//input[@name="uiViewNetMask"]    ${subnet_mask}
+
+    Log To Console                             Config start ip address: ${start_ip_address}
+    SL.Wait Until Element Is Visible           xpath=//input[@name="StartIp"]
+    SL.Input Text                              xpath=//input[@name="StartIp"]    ${start_ip_address}
+
+    Log To Console                             Config end ip address: ${end_ip_address}
+    SL.Wait Until Element Is Visible           xpath=//input[@name="End_IP"]
+    SL.Input Text                              xpath=//input[@name="End_IP"]    ${end_ip_address}
+
+Config DHCP Lease Time
+    [Arguments]                                  ${dhcp_lease}=86400
+
+    ### Input Beacon Interval
+    Log To Console                              \nInput DHCP Lease Time
+    SL.Wait Until Element Is Visible             xpath=//input[@name="dhcp_LeaseTime"]
+    ...                                          timeout=15s
+    ...                                          error=\nDHCP Lease Time Textbox Does Not Show Up
+    SL.Input Text                                xpath=//input[@name="dhcp_LeaseTime"]         ${dhcp_lease}
+
+Config DHCP Reservation 	
+    [Arguments]                                  ${dhcp_reser_ip}=192.168.1.2            ${dhcp_reser_mac}=AA:BB:CC:11:22:33
+    
+    ### Input Beacon Interval
+    Log To Console                              \nInput DHCP Reservation IP 	
+    SL.Wait Until Element Is Visible             xpath=//input[@name="IpAddr"]
+    ...                                          timeout=15s
+    ...                                          error=\nDHCP Reservation IP Textbox Does Not Show Up
+    SL.Input Text                                xpath=//input[@name="IpAddr"]         ${dhcp_reser_ip}
+    Log To Console                              \nInput Input DHCP Reservation MAC 
+    SL.Wait Until Element Is Visible             xpath=//input[@name="MACAddr"]
+    ...                                          timeout=15s
+    ...                                          error=\nDHCP Reservation MAC Textbox Does Not Show Up
+    SL.Input Text                                xpath=//input[@name="MACAddr"]         ${dhcp_reser_mac}
+
+Config DNS Server
+    [Documentation]                     Auto/Manually/ISP
+    [Arguments]                                  ${dns_mode}
+
+    Run Keyword If    '${dns_mode}' == 'Auto'           SL.Execute Javascript                      document.getElementsByName('dnsTypeRadio')[0].click();
+    ...    ELSE IF    '${dns_mode}' == 'Manually'       SL.Execute Javascript                      document.getElementsByName('dnsTypeRadio')[1].click();
+    ...    ELSE IF    '${dns_mode}' == 'ISP'            SL.Execute Javascript                      document.getElementsByName('dnsTypeRadio')[2].click();
+
+    Log To Console                                        Choose DNS Mode ${dns_mode}
+
+Config DNS Manually
+    [Documentation]                    
+    [Arguments]                                  ${dns_pri}=8.8.8.8       ${dns_secon}=8.8.4.4
+
+    SL.Clear Element Text                      xpath=//input[@name="PrimaryDns"]
+    SL.Input Text                              xpath=//input[@name="PrimaryDns"]      ${dns_pri}
+    Log To Console                             Input DNS Primary
+
+    SL.Clear Element Text                      xpath=//input[@name="SecondDns"]
+    SL.Input Text                              xpath=//input[@name="SecondDns"]       ${dns_secon}
+    Log To Console                             Input DNS Second
+
+Config DHCPv6
+    [Documentation]                     Enable/Disable
+    [Arguments]                                  ${dhcpv6_mode}=Enable
+
+    Run Keyword If    '${dhcpv6_mode}' == 'Enable'           SL.Execute Javascript                      document.getElementsByName('dhcp6sEnableRadio')[0].click();
+    ...    ELSE IF    '${dhcpv6_mode}' == 'Disable'          SL.Execute Javascript                      document.getElementsByName('dhcp6sEnableRadio')[1].click();
+    
+# Config DHCPv6 Manually
+#     [Arguments]        ${prefix}        ${length}=128        ${prefer_time}        ${valid_time}        ${dns_pri}=8.8.8.8       ${dns_secon}=8.8.4.4
+    
+#     SL.Clear Element Text                      xpath=//input[@name="uiViewIPv6DHCPPrefix"]
+#     SL.Input Text                              xpath=//input[@name="uiViewIPv6DHCPPrefix"]       ${prefix}
+#     SL.Clear Element Text                      xpath=//input[@name="uiViewIPv6DHCPPrefixLen"]
+#     SL.Input Text                              xpath=//input[@name="uiViewIPv6DHCPPrefixLen"]       ${length}
+#     SL.Clear Element Text                      xpath=//input[@name="uiPreferredLifetimeDHCP6"]
+#     SL.Input Text                              xpath=//input[@name="uiPreferredLifetimeDHCP6"]      ${prefer_time}
+#     SL.Clear Element Text                      xpath=//input[@name="uiValidLifetimeDHCP6"]
+#     SL.Input Text                              xpath=//input[@name="uiValidLifetimeDHCP6"]      ${valid_time} 
+#     SL.Clear Element Text                      xpath=//input[@name="uiPrimaryDNSDHCP6"]
+#     SL.Input Text                              xpath=//input[@name="uiPrimaryDNSDHCP6"]       ${dns_pri}
+#     SL.Clear Element Text                      xpath=//input[@name="uiSecondaryDNSDHCP6"]
+#     SL.Input Text                              xpath=//input[@name="uiSecondaryDNSDHCP6"]      ${dns_secon}
+    
+Select Vlan QinQ Mode
+    [Documentation]                     No/Yes
+    [Arguments]                                  ${vlan_mode}=Yes
+    
+    Run Keyword If    '${vlan_mode}' == 'No'           SL.Execute Javascript                      document.getElementsByName('vlanqinqActive')[0].click();
+    ...    ELSE IF    '${vlan_mode}' == 'Yes'          SL.Execute Javascript                      document.getElementsByName('vlanqinqActive')[1].click();
+
+Config Vlan QinQ
+    [Arguments]                                  ${lan}=LAN1      ${vlan_mode}=Yes     ${pvid}=11     ${c_tag}=11     ${s_tag}=11
+      
+    Log To Console                               \nSelect LAN Interface
+    SL.Wait Until Element Is Visible             xpath=//option[contains(text(), "${lan}")]
+    ...                                          timeout=20s
+    ...                                          error=\nNetwork Authentication Dropdown Does Not Show Up
+    ${lan_value}=              SL.Get Value      xpath=//option[contains(text(), "${lan}")]
+    SL.Select From List By Value                 xpath=//select[@name="vlanqinqPort"]     ${lan_value}
+    Run Keyword If    '${vlan_mode}' == 'Yes'          SL.Execute Javascript                      document.getElementsByName('vlanqinqActivePerPort')[1].click();
+    SL.Clear Element Text                        xpath=//input[@name="uivlanQinQPVID"]
+    SL.Input Text                                xpath=//input[@name="uivlanQinQPVID"]        ${pvid}
+    SL.Clear Element Text                        xpath=//input[@name="uivlanQinQCTag"]
+    SL.Input Text                                xpath=//input[@name="uivlanQinQCTag"]        ${c_tag}
+    SL.Clear Element Text                        xpath=//input[@name="uivlanQinQSTag"]
+    SL.Input Text                                xpath=//input[@name="uivlanQinQSTag"]        ${s_tag}
+    SL.Execute Javascript                        document.getElementsByName('VLanAddBtn')[0].click();
+    Run Keyword If       '${vlan_mode}' == 'No'           SL.Execute Javascript                      document.getElementsByName('vlanqinqActivePerPort')[0].click();    
+    
+Config Radvd
+    [Documentation]                     Enable/Disable
+    [Arguments]                                  ${radvd}=Enable
+    
+    Run Keyword If    '${radvd}' == 'Disable'           SL.Execute Javascript                      document.getElementsByName('radvdRadio')[0].click();
+    ...    ELSE IF    '${radvd}' == 'Enable'            SL.Execute Javascript                      document.getElementsByName('radvdRadio')[1].click();
+    Log To Console                        Config ${radvd} DHCPv6 Radvd     
+
+Config Radvd Mode       
+    [Documentation]                     Auto/Manual
+    [Arguments]                                  ${radvd_mode}=Auto
+    
+    Run Keyword If    '${radvd_mode}' == 'Auto'            SL.Execute Javascript                      document.getElementsByName('radvdModeRadio')[0].click();
+    ...    ELSE IF    '${radvd_mode}' == 'Manual'          SL.Execute Javascript                      document.getElementsByName('radvdModeRadio')[1].click();    
+    Log To Console                        Config Radvd Mode ${radvd_mode} 
+
+Config IPv6 Address
+    [Documentation]                   
+    [Arguments]                                  ${ipv6_address}=          ${prefix}=64
+    
+    SL.Clear Element Text                        xpath=//input[@name="uiViewIPv6Addr"]
+    SL.Input Text                                xpath=//input[@name="uiViewIPv6Addr"]        ${ipv6_address}
+    SL.Clear Element Text                        xpath=//input[@name="uiViewIPv6Prefix"]
+    SL.Input Text                                xpath=//input[@name="uiViewIPv6Prefix"]       ${prefix}            
+    
+Select LAN VLAN
+    [Documentation]                   
+    [Arguments]                     ${interface}=LAN2             ${mode}=Yes         
+    
+    Run Keyword If    '${mode}' == 'Yes'           SL.Execute Javascript                      document.getElementsByName('vlanLanActive')[1].click();
+    Run Keyword If    '${interface}' == 'LAN1'     SL.Execute Javascript                      document.getElementsByName('VlanLan0_Enabled')[0].click();
+    Run Keyword If    '${interface}' == 'LAN2'     SL.Execute Javascript                      document.getElementsByName('VlanLan1_Enabled')[0].click();
+    Run Keyword If    '${interface}' == 'LAN3'     SL.Execute Javascript                      document.getElementsByName('VlanLan2_Enabled')[0].click();
+    Run Keyword If    '${interface}' == 'LAN4'     SL.Execute Javascript                      document.getElementsByName('VlanLan3_Enabled')[0].click();
+    Run Keyword If    '${mode}' == 'No'            SL.Execute Javascript                      document.getElementsByName('vlanLanActive')[0].click();    
+
+Config LAN VLAN
+    [Arguments]                          ${interface}=LAN2        ${vlan_list}=11,223,333
+    
+    Run Keyword If    '${interface}' == 'LAN1'      SL.Input Text                                xpath=//input[@name="Vlan_Lan0_List"]       ${vlan_list}  
+    Run Keyword If    '${interface}' == 'LAN2'      SL.Input Text                                xpath=//input[@name="Vlan_Lan1_List"]       ${vlan_list}
+    Run Keyword If    '${interface}' == 'LAN3'      SL.Input Text                                xpath=//input[@name="Vlan_Lan2_List"]       ${vlan_list}  
+    Run Keyword If    '${interface}' == 'LAN4'      SL.Input Text                                xpath=//input[@name="Vlan_Lan3_List"]       ${vlan_list}    
+
+Popup Lan Ip Address Is Special Should Be Visible
+    [Documentation]                     Handle popup LAN IP address is special
+    [Arguments]                         ${lan_ip_address}
+
+    ${popup_message}=                   SL.Handle Alert    timeout=10s
+    Log To Console                      Popup message: ${popup_message}
+    Should Contain                      ${popup_message}     Invalid IP address ${lan_ip_address}
+
+Popup Lan Subnet Mask Is Special Should Be Visible
+    [Documentation]                     Handle popup LAN subnet mask is special
+    [Arguments]                         ${lan_subnet_mask}
+
+    ${popup_message}=                   SL.Handle Alert    timeout=10s
+    Log To Console                      Popup message: ${popup_message}
+    Should Contain                      ${popup_message}     Invalid network mask  ${lan_subnet_mask}
+
+Popup Start IP Address Special Should Be Visible
+    [Documentation]                     Handle popup Start IP Address is special
+
+    ${popup_message}=                   SL.Handle Alert    timeout=10s
+    Log To Console                      Popup message: ${popup_message}
+    Should Contain                      ${popup_message}    DHCP Start IP and Router Local IP are not allowed to be the same
+
+Popup Start IP Address Other Special Should Be Visible
+    [Documentation]                     Handle popup Start IP Address is other special
+
+    ${popup_message}=                   SL.Handle Alert    timeout=10s
+    Log To Console                      Popup message: ${popup_message}
+    Should Contain                      ${popup_message}    DHCP Start IP and Router Local IP are not in the same subnet
+
+Popup End IP Address Special Should Be Visible
+    [Documentation]                     Handle popup End IP Address is special
+
+    ${popup_message}=                   SL.Handle Alert    timeout=10s
+    Log To Console                      Popup message: ${popup_message}
+    Should Contain                      ${popup_message}     DHCP End IP and Router Local IP are not in the same subnet!
+
+Popup End IP Address Other Special Should Be Visible
+    [Documentation]                     Handle popup End IP Address is other special
+
+    ${popup_message}=                   SL.Handle Alert    timeout=10s
+    Log To Console                      Popup message: ${popup_message}
+    Should Contain                      ${popup_message}    DHCP End IP and Router Local IP are not allowed to be the same! 
+    
+Popup MAC Address Is Special Should Be Visible
+    [Documentation]                     Handle popup MAC address is special
+    [Arguments]                         ${mac_address}
+
+    ${popup_message}=                   SL.Handle Alert    timeout=10s
+    Log To Console                      Popup message: ${popup_message}
+    Should Contain                      ${popup_message}     Invalid MAC address:${mac_address}
+    
+Popup Lan Ipv6 Address Is Special Should Be Visible
+    [Documentation]                     Handle popup LAN IPv6 address is special
+    [Arguments]                         ${ipv6_address}
+
+    ${popup_message}=                   SL.Handle Alert    timeout=10s
+    Log To Console                      Popup message: ${popup_message}
+    Should Contain                      ${popup_message}     Invalid IPv6 Address: ${ipv6_address}
+    
+Popup Lan Ipv6 Prefix Is Special Should Be Visible
+    [Documentation]                     Handle popup LAN IPv6 prefix is special
+    [Arguments]                         ${ipv6_prefix}
+    
+    ${popup_message}=                   SL.Handle Alert    timeout=10s
+    Log To Console                      Popup message: ${popup_message}
+    Should Contain                      ${popup_message}     Invalid IPv6 Prefix: ${ipv6_prefix}
+
+Click Button Save LAN
+    [Timeout]                           20s
+    SL.Execute Javascript               document.querySelector("input[onclick='uiSave()']").click();
+
+###
+Verify Config LAN
+    [Arguments]                                		${option}
+    ...							                    ${value_set}
+    
+    ${value_get}=                            	SL.Get Value            xpath=//input[@name="${option}"]
+    Should Be Equal                             	${value_get}         ${value_set}
+    Log To Console					                Config Success ${value_set}: True 
+    

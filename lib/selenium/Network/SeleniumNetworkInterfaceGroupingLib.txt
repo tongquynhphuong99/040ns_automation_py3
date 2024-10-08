@@ -1,0 +1,172 @@
+*** Settings ***
+Library                                    SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
+Library                                    String                              WITH NAME    STR
+
+*** Variables ***
+
+*** Keywords ***
+###
+Open Interface Grouping Page
+    ###Select Advanced Setup Tab
+    [Arguments]                                ${url}=https://192.168.1.1/cgi-bin/adv_portbinding.asp
+
+    SL.Go To                                   ${url}
+    SL.Wait Until Page Contains                Interface Grouping Group Setting
+    ...                                        timeout=20s
+    ...                                        error=\nInterface Grouping Configure Page Not Found
+    SL.Page Should Contain                     Interface Grouping Group Setting
+
+    Log To Console                             \nOpen Interface Grouping Page
+
+Open Interface Grouping Summary Page
+    ###Select Advanced Setup Tab
+    [Arguments]                                ${url}=https://192.168.1.1/cgi-bin/portbinding_table.asp
+
+    SL.Go To                                   ${url}
+    SL.Wait Until Page Contains                Group ID
+    ...                                        timeout=20s
+    ...                                        error=\nNat Configure Page Not Found
+    SL.Page Should Contain                     Group ID
+
+    Log To Console                             \nInterface Grouping Summary Page
+
+###
+Select Active Group
+    SL.Click Element                           xpath=//td[@class='tabdata']/input[1]
+    Log To Console                             \nSelect Active Group
+
+###
+Select Deactivated Group
+    SL.Click Element                           xpath=//td[@class='tabdata']/input[2]
+    Log To Console                             \nSelect Deactivated Group
+
+###
+Select Group Index
+    [Arguments]                                 ${group_index}
+
+    Log To Console                              \nSelect Group Index
+    SL.Select From List By Index                xpath=//select[@name="PortBind_Index"]     ${group_index}
+
+Config Interface Group Name
+    [Arguments]                                 ${group_name}
+
+    # Input Group Name
+    Log To Console                              \nInput Group Name
+    SL.Wait Until Element Is Visible            xpath=//input[@name="Name"]
+    ...                                         timeout=10s
+    ...                                         error=\nGroup Name Text Box Not Found
+    SL.Input Text                               xpath=//input[@name="Name"]    ${group_name}
+
+###
+Select WAN To Interface Grouping
+    [Arguments]                            ${wan}=0
+    SL.Click Element        xpath=//label[@for="PortBind_PON_Port_${wan}"]
+
+Select Ethernet Port To Interface Grouping
+    [Arguments]                            ${ethernet_port}
+    SL.Click Element        xpath=//label[@for="PortBind_Ethernet_Port_${ethernet_port}"]
+
+###
+Select WiFi Name In 24GHz To Interface Grouping
+    [Arguments]                            ${wlan_24}
+
+    Run Keyword If        '${wlan_24}' == 'Main SSID'         SL.Click Element        xpath=//label[@for="PortBind_Wireless_Port_0"]
+    ...    ELSE IF        '${wlan_24}' == 'Guest 1'           SL.Click Element        xpath=//label[@for="PortBind_Wireless_Port_1"]
+    ...    ELSE IF        '${wlan_24}' == 'Guest 2'           SL.Click Element        xpath=//label[@for="PortBind_Wireless_Port_2"]
+    ...    ELSE IF        '${wlan_24}' == 'Guest 3'           SL.Click Element        xpath=//label[@for="PortBind_Wireless_Port_3"]
+
+###
+Select WiFi Name In 5GHz To Interface Grouping
+    [Arguments]                            ${wlan_5}
+
+    Run Keyword If        '${wlan_5}' == 'Main SSID'          SL.Click Element        xpath=//label[@for="PortBind_Wireless11ac_Port_0"]
+    ...    ELSE IF        '${wlan_5}' == 'Guest 1'            SL.Click Element        xpath=//label[@for="PortBind_Wireless11ac_Port_1"]
+    ...    ELSE IF        '${wlan_5}' == 'Guest 2'            SL.Click Element        xpath=//label[@for="PortBind_Wireless11ac_Port_2"]
+    ...    ELSE IF        '${wlan_5}' == 'Guest 3'            SL.Click Element        xpath=//label[@for="PortBind_Wireless11ac_Port_3"]
+
+Add Interface Group
+    [Documentation]                        Add Interface Group
+    ...                                    1.Active:
+    ...                                    2.Group_Index:
+    ...                                    3.Group_Name:
+    ...                                    4.WANs:
+    ...                                    5.Ethernet:
+    ...                                    6.WLAN 2.4GHz:
+    ...                                    7.WLAN 5GHz:
+    
+    [Arguments]                            ${group_index}=0     ${group_name}=group1       
+
+    # Select Active Group
+    Select Active Group
+
+    # Select Group Index
+    Select Group Index    ${group_index}
+
+    Config Interface Group Name                          group_name=${group_name}
+
+###
+Save Wan Interface Grouping
+    SL.Wait Until Element Is Visible    xpath=//input[@name="SaveBtn_PortBind_group"]
+    ...                                 timeout=10s
+    ...                                 error=\nSave Button Not Found
+    Run Keyword And Continue On Failure    SL.Click Element        xpath=//input[@name="SaveBtn_PortBind_group"]
+
+
+Remove Interface Group
+    [Arguments]                           ${group_index}
+
+    Select Group Index                    group_index=${group_index}
+    SL.Click Button                       xpath=//input[@name="DeleteBtn_PortBind_group"]
+
+Popup Group Name Empty Should Be Visible
+    [Documentation]                     			Handle popup Group name must not blank
+    ${popup_message}=                   			SL.Handle Alert    timeout=10s
+    Log To Console                      			Popup message: ${popup_message}
+    Should Contain                      			${popup_message}      Group name must not blank!
+
+Popup Choose 1 WAN Should Be Visible
+    [Documentation]                     			Handle popup Choose 1 WAN
+    ${popup_message}=                   			SL.Handle Alert    timeout=10s
+    Log To Console                      			Popup message: ${popup_message}
+    Should Contain                      			${popup_message}      Please choose only 1 WAN interface for this group
+
+Verify Config Interface Group
+    [Arguments]                           ${group_index}=None
+    ...                                   ${group_name}=${EMPTY}
+    ...                                   ${wan}=None
+    ...                                   ${ethernet_port}=None
+    ...                                   ${wlan_24}=None
+    ...                                   ${wlan_5}=None
+
+    Select Group Index                    group_index=${group_index}
+
+    ${name_value}=                        SL.Get Value                xpath=//input[@name="Name"]
+    Should Be Equal                       '${name_value}'             '${group_name}' 
+
+    ${status_wan_port}=        Run Keyword If                  '${wan}'=='None'                Set Variable        ${wan}
+    ...                                  ELSE                  SL.Execute Javascript           return document.querySelector("#PortBind_PON_Port_${wan}").checked
+    Run Keyword If             '${status_wan_port}'=='None'    Log To Console                  No WAN Port was selected 
+    ...       ELSE             Should Be Equal                 '${status_wan_port}'            'True'
+
+    ${status_lan_port}=        Run Keyword If                  '${ethernet_port}'=='None'      Set Variable        ${ethernet_port}
+    ...                                  ELSE                  SL.Execute Javascript           return document.querySelector("#PortBind_Ethernet_Port_${ethernet_port}").checked
+    Run Keyword If             '${status_lan_port}'=='None'    Log To Console                  No LAN Port was selected 
+    ...       ELSE             Should Be Equal                 '${status_lan_port}'            'True'
+
+    ${status_wlan24}=    Run Keyword If        '${wlan_24}' == 'None'              Set Variable                ${wlan_24}
+    ...                         ELSE IF        '${wlan_24}' == 'Main SSID'         SL.Execute Javascript       return document.querySelector("#PortBind_Wireless_Port_0").checked
+    ...                         ELSE IF        '${wlan_24}' == 'Guest 1'           SL.Execute Javascript       return document.querySelector("#PortBind_Wireless_Port_1").checked
+    ...                         ELSE IF        '${wlan_24}' == 'Guest 2'           SL.Execute Javascript       return document.querySelector("#PortBind_Wireless_Port_2").checked
+    ...                         ELSE IF        '${wlan_24}' == 'Guest 3'           SL.Execute Javascript       return document.querySelector("#PortBind_Wireless_Port_3").checked
+    Run Keyword If             '${status_wlan24}'=='None'      Log To Console                  No WLAN 2.4Ghz was selected 
+    ...       ELSE             Should Be Equal                 '${status_wlan24}'              'True'
+
+    ${status_wlan5}=     Run Keyword If        '${wlan_5}' == 'None'               Set Variable                ${wlan_5}
+    ...                         ELSE IF        '${wlan_5}' == 'Main SSID'          SL.Execute Javascript       return document.querySelector("#PortBind_Wireless11ac_Port_0").checked
+    ...                         ELSE IF        '${wlan_5}' == 'Guest 1'            SL.Execute Javascript       return document.querySelector("#PortBind_Wireless11ac_Port_1").checked
+    ...                         ELSE IF        '${wlan_5}' == 'Guest 2'            SL.Execute Javascript       return document.querySelector("#PortBind_Wireless11ac_Port_2").checked
+    ...                         ELSE IF        '${wlan_5}' == 'Guest 3'            SL.Execute Javascript       return document.querySelector("#PortBind_Wireless11ac_Port_3").checked
+    Run Keyword If             '${status_wlan5}'=='None'      Log To Console                  No WLAN 5Ghz was selected 
+    ...       ELSE             Should Be Equal                '${status_wlan5}'               'True'
+
+    Log To Console                             \nGet Info Has Match with Config!

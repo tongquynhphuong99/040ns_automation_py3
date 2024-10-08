@@ -1,0 +1,149 @@
+*** Settings ***
+Library                      SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
+Resource                     ../Network/SeleniumNetworkWANLib.txt
+
+*** Variables ***
+
+*** Keywords ***
+###
+Open ACL Page
+    Log To Console                             \nAccess to ACL Page
+    [Arguments]                                ${url}=https://192.168.1.1/cgi-bin/access_acl.asp
+
+    SL.Go To                                   ${url}
+    SL.Wait Until Page Contains                Access Control Setup
+    ...                                        timeout=20s
+    ...                                        error=\nACL Page Not Found
+    SL.Page Should Contain                     Access Control Setup
+
+###
+Select ACL Mode
+    [Documentation]                         Activated/Deactivated
+    [Arguments]                             ${acl_mode}=Activated    
+
+    Log To Console                          \nSelect ACL ${acl_mode}
+    Run Keyword If        '${acl_mode}' == 'Activated'            SL.Execute Javascript            document.getElementsByName('ActivateRDO')[0].click();
+    ...   ELSE IF         '${acl_mode}' == 'Deactivated'          SL.Execute Javascript            document.getElementsByName('ActivateRDO')[1].click();
+
+###
+Select ACL Rule Index
+    [Documentation]                         index_value [1-15] <=> Rule Index [2:]
+    
+    [Arguments]                             ${rule_index}
+
+    Log To Console                          \nSelect ACL Rule Index: ${rule_index}
+    ${index_value}=                         Evaluate        ${rule_index} - 1
+    ${index_value}=                         Convert To String        ${index_value}
+    SL.Select From List By Value            xpath=//select[@name='RuleIndexSEL']            ${index_value}    
+
+###
+Select ACL Rule Mode
+    [Documentation]                         Activated/Deactivated
+    [Arguments]                             ${rule_mode}=Activated
+
+    Log To Console                          \nSelect ACL Rule ${rule_mode}
+    Run Keyword If        '${rule_mode}' == 'Activated'            SL.Execute Javascript            document.getElementsByName('RuleActiveRDO')[0].click();
+    ...   ELSE IF         '${rule_mode}' == 'Deactivated'          SL.Execute Javascript            document.getElementsByName('RuleActiveRDO')[1].click();
+
+###
+Config IP Address ACL
+    [Arguments]                ${start_ip}=0.0.0.0                              ${end_ip}=0.0.0.0
+
+    Log To Console                        \nInput Secure IP Address
+
+    SL.Wait Until Element Is Visible      xpath=//input[@name="ScrIPaddrBeginTXT"]
+    ...                                   timeout=10s
+    ...                                   error=\nStart Ip Text Box Not Found
+    SL.Click Element                      xpath=//input[@name="ScrIPaddrBeginTXT"]
+    SL.Input Text                         xpath=//input[@name="ScrIPaddrBeginTXT"]       ${start_ip}
+    
+    SL.Wait Until Element Is Visible      xpath=//input[@name="ScrIPaddrEndTXT"]
+    ...                                   timeout=10s
+    ...                                   error=\nStart Ip Text Box Not Found
+    SL.Click Element                      xpath=//input[@name="ScrIPaddrEndTXT"]
+    SL.Input Text                         xpath=//input[@name="ScrIPaddrEndTXT"]       ${end_ip}
+
+###
+Select ACL App
+    [Documentation]                       HTTPS/HTTP/FTP/Telnet/SSH/TFTP/SNMP/Ping/ALL
+    [Arguments]                           ${app}=ALL
+
+    SL.Select From List By Value          xpath=//select[@name='ApplicationSEL']       ${app}
+    Log To Console                        \nSelect ACL Rule Application
+
+###    
+Select Interface
+    [Documentation]                       WAN/LAN/Both
+    [Arguments]                           ${interface}=Both
+    SL.Select From List By Value          xpath=//select[@name='InterfaceSEL']       ${interface}
+    Log To Console                        \nSelect ACL Rule Interface
+
+###
+Save ACL Settings
+    SL.Wait Until Element Is Visible      xpath=//input[@name="ACLAddBTN"]
+    ...                                   timeout=10s
+    ...                                   error=\nSave Button Not Found
+    SL.Click Element                      xpath=//input[@name="ACLAddBTN"]
+    Sleep                                 5s
+
+###
+Add Config ACL 
+    [Arguments]                         ${acl_mode}=Activated
+    ...                                 ${index_value}=2     
+    ...                                 ${rule_mode}=Activated      
+    ...                                 ${app}=Telnet        
+    ...                                 ${interface}=LAN    
+
+    Select ACL Mode                     ${acl_mode}
+    Select ACL Rule Index               ${index_value}
+    Select ACL Rule Mode                ${rule_mode}
+    Config IP Address ACL               
+    Select ACL App                      ${app}
+    Select Interface                    ${interface}
+    Save ACL Settings
+
+###
+Delete Config ACL
+    [Arguments]            ${index_value}=2
+
+    ${i}=                  SeleniumNetworkWANLib.Get Row Index        column_name=Index        column_value=${index_value}
+    SL.Click Element                                xpath=//table[@class="tableShowData"]/tbody/tr[${i}]/td[6]/img
+    Sleep                                           5s
+    # SL.Execute Javascript                          document.querySelector("img[onclick='doDel(1)']").click();
+
+###
+Verify ACL Mode
+    [Arguments]                                             ${mode}
+
+    Log To Console                                          \nVerify ACL Mode
+    ${status}=             SL.Execute Javascript            return document.querySelector("body > form > table:nth-child(2) > tbody > tr:nth-child(7) > td:nth-child(5) > input[type=RADIO]:nth-child(1)").checked
+    Run Keyword If         '${mode}' == 'Activated'         Should Be Equal        '${status}'       'True'
+    ...    ELSE IF         '${mode}' == 'Deactivated'       Should Be Equal        '${status}'       'False'
+    Log To Console                                          ACL is ${mode}
+
+Verify ACL Rule
+    [Arguments]            ${index_value}=2     ${rule_mode}=Activated      ${app}=Telnet        ${interface}=LAN    
+
+    ${i}=                  SeleniumNetworkWANLib.Get Row Index        column_name=Index        column_value=${index_value}
+
+    ${active}=             SL.Get Text                xpath=//table[@class="tableShowData"]/tbody/tr[${i}]/td[2]
+    Run Keyword If         '${rule_mode}' == 'Activated'         Should Be Equal        '${active}'       'Yes'
+    ...    ELSE IF         '${rule_mode}' == 'Deactivated'       Should Be Equal        '${active}'       'No'
+
+    ${secure_ip}=          SL.Get Text                xpath=//table[@class="tableShowData"]/tbody/tr[${i}]/td[3]
+    Should Be Equal        '${secure_ip}'             '0.0.0.0~0.0.0.0'
+
+    ${app_get}=            SL.Get Text                xpath=//table[@class="tableShowData"]/tbody/tr[${i}]/td[4]
+    Should Be Equal        ${app_get}                 ${app}
+
+    ${if_get}=             SL.Get Text                xpath=//table[@class="tableShowData"]/tbody/tr[${i}]/td[5]
+    Should Be Equal        ${if_get}                  ${interface}
+
+    Log To Console         Rule ACL Match with Info Config!
+
+Verify Delete ACL Rule
+    [Arguments]            ${index_value}=2
+
+    ${i}=                  SeleniumNetworkWANLib.Get Row Index        column_name=Index        column_value=${index_value}
+    Should Be Equal        '${i}'        'None'
+    Log To Console         \nDelete ACL Rule Success!

@@ -1,0 +1,119 @@
+*** Settings ***
+Documentation                Selenium Lib To Reset, Reboot Device
+Library                      SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
+Resource					 SeleniumMaintenanceAdministrationLib.txt
+Resource                     ../Login/SeleniumLoginLib.txt
+Resource                     ../../variables/AllVariables.txt
+Resource                     ../../ssh/SshLib.txt
+
+*** Variables ***
+
+*** Keywords ***
+
+
+Reboot Device Via Web GUI
+    [Arguments]                                ${url}=https://192.168.1.1/cgi-bin/mag-reset.asp
+
+    Open Connection And Login To Remote Machine             ssh_server_ip=${REMOTE_SERVER_IP}
+    ...                                                     ssh_server_username=${REMOTE_SERVER_USERNAME}
+    ...                                                     ssh_server_password=${REMOTE_SERVER_PASSWORD}
+
+    Enable Wifi
+    Delete All Wireless
+    ${lan_interface}=                                       SSHL.Execute Command    ifconfig | grep -B1 "inet addr:192.168.1." | awk '$1!="inet" && $1!="--" {print $1}'
+
+    SL.Go To                                   ${url}
+    SL.Wait Until Page Contains                Reboot/Reset
+    ...                                        timeout=20s
+    ...                                        error=\nReboot/Reset Configure Page Not Found
+    SL.Page Should Contain                     Reboot/Reset
+
+    SL.Wait Until Element Is Visible            xpath=//*[@value="1"]
+    ...                                         timeout=20s
+    ...                                         error=\nReboot Button Not Found!
+    SL.Click Button                             xpath=//*[@value="APPLY"]
+    SL.Handle Alert
+    # Sleep                               1s
+    # SL.Handle Alert
+    Sleep                               120s
+    Up Down Network Card PC Linux       ${lan_interface}
+    Sleep                               10s
+    SL.Reload Page
+    Run Keyword And Ignore Error             SL.Wait Until Element Is Visible    xpath=//button[@id="loginbutton"]
+    ...                                      timeout=20s
+    ...                                      error=\nLogin Page Does Not Found!
+    
+
+Factory Reset Via Web GUI
+    [Arguments]                                ${url}=https://192.168.1.1/cgi-bin/mag-reset.asp
+
+    Open Connection And Login To Remote Machine             ssh_server_ip=${REMOTE_SERVER_IP}
+    ...                                                     ssh_server_username=${REMOTE_SERVER_USERNAME}
+    ...                                                     ssh_server_password=${REMOTE_SERVER_PASSWORD}
+
+    Enable Wifi
+    Delete All Wireless
+    ${lan_interface}=                          SSHL.Execute Command    ifconfig | grep -B1 "inet addr:192.168.1." | awk '$1!="inet" && $1!="--" {print $1}'
+    # Log To Console        ${lan_interface}
+    
+    SL.Go To                                   ${url}
+    SL.Wait Until Page Contains                Reboot/Reset
+    ...                                        timeout=20s
+    ...                                        error=\nReboot/Reset Configure Page Not Found
+    SL.Page Should Contain                     Reboot/Reset
+    SL.Wait Until Element Is Visible           xpath=//*[@value="2"]
+    ...                                        timeout=20s
+    ...                                        error=\nReset Button Not Found!
+    SL.Click Element                           xpath=//*[@value="2"]
+    SL.Click Button                            xpath=//*[@value="APPLY"]
+    SL.Handle Alert
+
+    Sleep                               120s
+    Up Down Network Card PC Linux       ${lan_interface}
+    Up Down Network Card PC Linux       ${lan_interface}
+    Sleep                               10s
+    SL.Reload Page
+    Run Keyword And Ignore Error             SL.Wait Until Element Is Visible    xpath=//button[@id="loginbutton"]
+    ...                                      timeout=20s
+    ...                                      error=\nLogin Page Does Not Found!
+
+Reboot/Reset Device Via Telnet
+    [Arguments]                                			${option}
+    ...                                        			${option_command}
+    ...                                        			${option_output}
+
+    ## Login Telnet To ONT
+    Log To Console                           			\nLogin Telnet To ONT
+
+    Telnet To ONT Device                     			ip_telnet=192.168.1.1
+    ...                                      			user_telnet=&{ONT}[ONT_USER_TELNET]
+    ...                                      			pass_telnet=&{ONT}[ONT_PASS_TELNET]
+    ...                                      			delay=5s
+    SSHL.Write                               			ifconfig
+    ${output}=                               			SSHL.Read    delay=5s
+    Should Contain                           			${output}    rai0
+    Log To Console						\nLogin Telnet Success!
+
+    ## Reboot/Reset ONT By Telnet
+    Log To Console                           			\n${option} ONT By Telnet
+    SSHL.Write                               			${option_command}
+    ${output}=                               			SSHL.Read    delay=5s
+    Should Contain                           			${output}    ${option_output}
+    Log To Console						\nWait Few Minutes For ${option} Complete...
+    Sleep                                       		180s
+    Log To Console						\n${option} ONT By Telnet Success!
+
+Reboot Device EXT
+    [Arguments]                                ${url}=https://192.168.1.1/cgi-bin/mag-reset.asp
+
+    SL.Go To                                   ${url}
+    SL.Wait Until Page Contains                Reboot/Reset
+    ...                                        timeout=20s
+    ...                                        error=\nReboot/Reset Configure Page Not Found
+    SL.Page Should Contain                     Reboot/Reset
+
+    SL.Wait Until Element Is Visible            xpath=//*[@value="1"]
+    ...                                         timeout=20s
+    ...                                         error=\nReboot Button Not Found!
+    SL.Click Button                             xpath=//*[@value="APPLY"]
+    SL.Handle Alert

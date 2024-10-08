@@ -1,0 +1,85 @@
+*** Settings ***
+Library                                        SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
+
+
+*** Variables ***
+
+*** Keywords ***
+Open Setup Routing IPv4 Page
+	Log To Console                                 \nAccess to Set Up Routing IPv4 Page
+    [Arguments]                                ${url}=https://192.168.1.1/cgi-bin/adv_routing_table.asp
+
+    SL.Go To                                   ${url}
+    SL.Wait Until Page Contains                Routing Table List
+    ...                                        timeout=20s
+    ...                                        error=\nSet Up Routing IPv4 Page Not Found
+    SL.Page Should Contain                      Routing Table List
+
+Add Static Route IPv4
+    SL.Wait Until Element Is Visible           xpath=//input[@name="AddRoute"]
+    ...                                        timeout=20s
+    ...                                        error=\nCreate Button Does Not Found!
+    SL.Click Element                           xpath=//input[@name="AddRoute"]
+    SL.Wait Until Page Contains                Static Route         timeout=60s
+
+Config Static Route IPv4
+    [Arguments]                            ${destination_ip}    ${subnet_mask}      ${gateway_ip}		${static_metric}
+
+    ### Select Routing IPv4
+    Log To Console                         \nConfig Static Route IPv4
+
+    Log To Console                         Input Destination IP Address = ${destination_ip}
+    SL.Page Should Contain Element         xpath=//input[@name="staticDestIP"]
+    SL.Input Text                          xpath=//input[@name="staticDestIP"]      ${destination_ip}
+
+    Log To Console                         Input IP Subnet Mask = ${subnet_mask}
+    SL.Page Should Contain Element         xpath=//input[@name="staticSubnetMask"]
+    SL.Input Text				           xpath=//input[@name="staticSubnetMask"]     ${subnet_mask}
+    
+    Log To Console						   \nSelect Gateway IP Address
+    SL.Click Element                       xpath=/html/body/form/div/table[1]/tbody/tr[4]/td[5]/input[1]
+
+    Log To Console                         Input Gateway IP Address = ${gateway_ip}
+    SL.Page Should Contain Element         xpath=//input[@name="staticGatewayIP"]
+    SL.Input Text                          xpath=//input[@name="staticGatewayIP"]      ${gateway_ip}
+    
+    Log To Console                         Input Metric = ${static_metric}
+    SL.Page Should Contain Element         xpath=//input[@name="staticMetric"]
+    SL.Input Text                          xpath=//input[@name="staticMetric"]      ${static_metric}
+
+    ## Save
+    Log To Console                         Click Button Save
+    SL.Click Element                       xpath=//input[@value="SAVE"]
+
+Edit Static Route IPv4
+    SL.Page Should Contain Element         xpath=/html/body/form/div/table[1]/tbody/tr[2]/td[2]/div/table/tbody/tr[2]/td[7]/img
+    SL.Execute Javascript                  document.querySelector("img[onclick='doedit(0)']").click() 
+
+Remove Static Route IPv4
+    SL.Page Should Contain Element         xpath=/html/body/form/div/table[1]/tbody/tr[2]/td[2]/div/table/tbody/tr[2]/td[8]/img
+    SL.Execute Javascript                  document.querySelector("img[onclick='doDelete(0);']").click()  
+    SL.Wait Until Page Contains            Routing Table List                    timeout=60s
+
+Popup Destination IP Is Special Should Be Visible
+    [Documentation]                     Handle popup Destination IP is special
+    ${popup_message}=                   SL.Handle Alert    timeout=10s
+    Log To Console                      \nPopup message: ${popup_message}
+    Should Contain                      ${popup_message}      Invalid destination IP address!
+
+Popup Subnet Mask Routing Is Special Should Be Visible
+    [Documentation]                     Handle popup Subnet Mask is special
+    ${popup_message}=                   SL.Handle Alert    timeout=10s
+    Log To Console                      \nPopup message: ${popup_message}
+    Should Contain                      ${popup_message}      Invalid subnet mask:
+
+Popup Gateway IP Is Special Should Be Visible
+    [Documentation]                     Handle Popup Gateway IP is special
+    ${popup_message}=                   SL.Handle Alert    timeout=10s
+    Log To Console                      \nPopup message: ${popup_message}
+    Should Contain                      ${popup_message}      Invalid IP address!  
+
+Popup Routing IPv4 Existed Is Special Should Be Visible
+    [Documentation]                     Handle popup Routing IPv4 Existed
+    ${popup_message}=                   SL.Handle Alert    timeout=10s
+    Log To Console                      \nPopup message: ${popup_message}
+    Should Contain                      ${popup_message}      Duplicate route, please check again!   

@@ -1,0 +1,1442 @@
+*** Settings ***
+Library                                 SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
+Library                                 String     WITH NAME    STR
+Resource                                ../Login/SeleniumLoginLib.txt
+Resource                                ../Status/SeleniumStatusDeviceInfoLib.txt
+Resource                                ../../ssh/SshLib.txt
+Resource                                ../../variables/AllVariables.txt
+
+*** Variables ***
+
+
+*** Keywords ***
+
+Open 2.4GHz Wireless Configure Page
+    # [Arguments]                                ${url}=https://192.168.1.1/cgi-bin/net-wlan.asp
+
+    # SL.Go To                                   ${url}
+
+    Click Element                                   xpath=//*[@id="net-wanset"]
+    Click Element                                   xpath=//*[@id="net-wlan"]
+
+    SL.Wait Until Page Contains                     SSID Setting
+    ...                                             timeout=20s
+    ...                                             error=\nNetwork Settings Wireless 2.4GHz Configure Page Not Found
+    SL.Page Should Contain                          SSID Setting
+
+    SL.Select Frame                                 xpath=//frame[@name="contentfrm"]
+
+Select SSID 2G Index
+	[Documentation]                              Select SSID Index
+	[Arguments]                                  ${ssid_index}
+	Log To Console                               \nSelect SSID index ${ssid_index}
+
+    SL.Wait Until Element Is Visible             xpath=//select[@name="wlSsidIdx"]
+    ...                                          timeout=15s
+    ...                                          error=\nSelect SSID Index Dropdown Does Not Show Up
+    
+    ${ssid_index_value}=      SL.Get Value       xpath=//select[@name="wlSsidIdx"]/option[contains(text(), "${ssid_index}")]
+    SL.Select From List By Value                 xpath=//select[@name="wlSsidIdx"]     ${ssid_index_value}
+
+Enable/Disable SSID 2G
+    [Documentation]                               On/Off
+    [Arguments]                                   ${ssid_mode}
+
+    SL.Wait Until Element Is Visible              xpath=//input[@name="enableSsid"]    timeout=10s
+    ...                                           error=\nEnable SSID Checkbox Does Not Show Up
+    
+    Log To Console                                \nSelect ${ssid_mode} SSID
+    ${status}=        SL.Execute Javascript        return document.querySelector("#enableSsid").checked
+    
+    Run Keyword If        '${ssid_mode}' == 'On' and '${status}' == 'False'        SL.Execute Javascript        document.querySelector("#enableSsid").click();
+    ...   ELSE IF         '${ssid_mode}' == 'Off' and '${status}' == 'True'        SL.Execute Javascript        document.querySelector("#enableSsid").click();
+
+Input SSID 2G Name
+    [Arguments]                                  ${ssid}
+    Log To Console                               \nInput SSID Name
+    SL.Wait Until Element Is Visible             xpath=//input[@name="wlSsid"]
+    ...                                          timeout=10s
+    ...                                          error=\nSSID Text Box Not Found
+    SL.Input Text                                xpath=//input[@name="wlSsid"]        ${ssid}
+
+Config Cancel Broadcast
+    [Documentation]                               On/Off
+    [Arguments]                                   ${cancel_broadcast}
+
+    SL.Wait Until Element Is Visible              xpath=//input[@name="wlHide"]    timeout=10s
+    ...                                           error=\nCancel Broadcast Checkbox Does Not Show Up
+
+    Log To Console                                \nConfig Cancel Broadcast mode: ${cancel_broadcast}
+    ${status}=        SL.Execute Javascript       return document.querySelector("#wlHide").checked
+    
+    Run Keyword If        '${cancel_broadcast}' == 'On' and '${status}' == 'False'        SL.Execute Javascript        document.querySelector("#wlHide").click();
+    ...   ELSE IF         '${cancel_broadcast}' == 'Off' and '${status}' == 'True'        SL.Execute Javascript        document.querySelector("#wlHide").click();
+
+Select 2G Security Mode
+    [Documentation]                              OPEN 
+    ...                                          WEP
+    ...                                          WPA-PSK 
+    ...                                          WPA2-PSK   		
+    ...                                          WPA-PSK/WPA2-PSK 
+    ...                                          WPA3-PSK   		
+    ...                                          WPA2-PSK/WPA3-PSK 
+    [Arguments]                                  ${secu_mode}=OPEN
+
+    Log To Console                               \nSelect Security Mode ${secu_mode}
+    SL.Wait Until Element Is Visible             xpath=//select[@name="wlSecurMode"]/option[contains(text(), "${secu_mode}")]
+    ...                                          timeout=20s
+    ...                                          error=\nSecurity Configure Dropdown Does Not Show Up
+    
+    ${secu_value}=             SL.Get Value      xpath=//select[@name="wlSecurMode"]/option[contains(text(), "${secu_mode}")]
+    SL.Select From List By Value                 xpath=//select[@name="wlSecurMode"]     ${secu_value}
+
+###### Config WEP_64-bit/WEP_128-bit
+Configure 2G Security Mode WEP
+	[Documentation]                             wep_mode = 64-bit/128-bit
+    ...                                         key = Key1/Key2/Key3/Key4
+    
+    [Arguments]                                 ${wep_mode}=64-bit
+    ...                                         ${key}=Key1
+    ...                                         ${password}=1234567890		                              
+    
+    Log To Console                               Select WEP Mode ${wep_mode}
+    SL.Wait Until Element Is Visible             xpath=//select[@name="wlKeyBit"]/option[contains(text(), "${wep_mode}")]
+    ...                                          timeout=20s
+    ...                                          error=\nWEP Mode Dropdown Does Not Show Up
+    
+    ${wep_value}=             SL.Get Value       xpath=//select[@name="wlKeyBit"]/option[contains(text(), "${wep_mode}")]
+    SL.Select From List By Value                 xpath=//select[@name="wlKeyBit"]     ${wep_value}
+
+    Run Keyword If   '${key}' == 'Key1'         	Config 2G WEP Key1		${password}
+    ...    ELSE IF   '${key}' == 'Key2'        		Config 2G WEP Key2		${password}
+    ...    ELSE IF   '${key}' == 'Key3'        		Config 2G WEP Key3		${password}
+    ...    ELSE IF   '${key}' == 'Key4'        		Config 2G WEP Key4		${password}
+
+Config 2G WEP Key1
+	[Arguments]                                 ${password}=1234567890
+	
+	Log To Console								\Select and Config WEP Key1
+    SL.Wait Until Element Is Visible            xpath=//input[@id="wlKeys1"]
+    ...                                         timeout=2s
+    ...                                         error=\nWEP Key phrase Does Not Show Up    
+	
+    SL.Click Element							xpath=//input[@id="wlKeys1"]
+    SL.Input Password                           xpath=//input[@id="wlKeys1"]       ${password}
+
+Config 2G WEP Key2
+	[Arguments]                                 ${password}=1234567890
+	
+	Log To Console								\Select and Config WEP Key2
+    SL.Wait Until Element Is Visible            xpath=//input[@id="wlKeys2"]
+    ...                                         timeout=2s
+    ...                                         error=\nWEP Key phrase Does Not Show Up    
+	
+    SL.Click Element							xpath=//input[@id="wlKeys2"]
+    SL.Input Password                           xpath=//input[@id="wlKeys2"]       ${password}
+
+Config 2G WEP Key3
+	[Arguments]                                 ${password}=1234567890
+	
+	Log To Console								\Select and Config WEP Key3
+    SL.Wait Until Element Is Visible            xpath=//input[@id="wlKeys3"]
+    ...                                         timeout=2s
+    ...                                         error=\nWEP Key phrase Does Not Show Up    
+	
+    SL.Click Element							xpath=//input[@id="wlKeys3"]
+    SL.Input Password                           xpath=//input[@id="wlKeys3"]       ${password}
+
+Config 2G WEP Key4
+	[Arguments]                                 ${password}=1234567890
+	
+	Log To Console								\Select and Config WEP Key4
+    SL.Wait Until Element Is Visible            xpath=//input[@id="wlKeys4"]
+    ...                                         timeout=2s
+    ...                                         error=\nWEP Key phrase Does Not Show Up    
+	
+    SL.Click Element							xpath=//input[@id="wlKeys4"]
+    SL.Input Password                           xpath=//input[@id="wlKeys4"]       ${password}
+
+Configure 2G Security Mode WPA
+    [Arguments]                                 ${encry_type}=AES
+    ...                                         ${password}=12345678			
+    
+    # Select Encryption Type
+    SL.Wait Until Element Is Visible            xpath=//select[@name="wlWpa"]/option[contains(text(), "${encry_type}")]
+    ...                                         timeout=2s
+    ...                                         error=\nWPA Encryption Dropdown Does Not Show Up
+    ${encry_value}=        SL.Get Value         xpath=//select[@name="wlWpa"]/option[contains(text(), "${encry_type}")]
+    SL.Select From List By Value                xpath=//select[@name="wlWpa"]        ${encry_value}
+
+    # Input Password
+    SL.Wait Until Element Is Visible            xpath=//input[@name="wlWpaPsk"]
+    ...                                         timeout=2s
+    ...                                         error=\nWPA Password Input Does Not Show Up
+    SL.Input Password                           xpath=//input[@name="wlWpaPsk"]          ${password}
+
+#########
+Save Config SSID
+	###Click Save Button
+    SL.Wait Until Element Is Visible    xpath=//input[@value="SAVE"]
+    ...                                 timeout=10s
+    ...                                 error=\nSave Button Not Found
+    SL.Click Element                    xpath=//input[@value="SAVE"]    
+    Sleep								20s
+
+################
+Get SSID 2G
+    SL.Wait Until Element Is Visible              xpath=//input[@name="wlSsid"] 
+    ...                                           timeout=10s
+    ...                                           error=\nSelect SSID Index Dropdown Does Not Show Up
+    ${ssid_value}=     SL.Get Value               xpath=//input[@name="wlSsid"] 
+    Return From Keyword                           ${ssid_value}
+
+Check Status Encryption Type 2G Mode WPA3
+    [Arguments]                                 ${encry_type}=AES
+
+    Log To Console                              Check Status Encryption Type 2G Mode WPA3
+
+    Run Keyword If   '${encry_type}' == 'AES'         SL.Element Should Be Enabled     xpath=//select[@name="wlWpa"]/option[contains(text(), "${encry_type}")]
+    ...    ELSE IF   '${encry_type}' == 'TKIP'        SL.Element Should Be Disabled    xpath=//select[@name="wlWpa"]/option[contains(text(), "${encry_type}")]
+    ...    ELSE IF   '${encry_type}' == 'TKIP+AES'    SL.Element Should Be Disabled    xpath=//select[@name="wlWpa"]/option[contains(text(), "${encry_type}")]
+
+    Run Keyword If   '${encry_type}' == 'AES'         Log To Console                   Option ${encry_type} is Enable
+    ...    ELSE IF   '${encry_type}' == 'TKIP'        Log To Console                   Option ${encry_type} is Disable
+    ...    ELSE IF   '${encry_type}' == 'TKIP+AES'    Log To Console                   Option ${encry_type} is Disable
+
+################
+Compare SSID in 2.4GHz With BSSID
+    ${ssid}=                               Get SSID 2G
+    ${bssid}=                              SeleniumStatusDeviceInfoLib.Get BSSID
+    Log To Console                         \nSSID= ${ssid}
+    Log To Console                         MAC Address= ${bssid}
+    ${ssidLastSixDigit}=                   STR.Fetch From Right           ${ssid}      _
+    ${bssidSplitedList}                    STR.Get Substring              ${bssid}     -8
+    ${bssidSplitedList}=                   STR.Remove String Using Regexp    ${bssidSplitedList}     :
+    Log To Console      SSID Last Six Digit= ${ssidLastSixDigit}
+    Log To Console      MAC Address Last Six Digit= ${bssidSplitedList}
+    Run Keyword If      '${ssidLastSixDigit}' == '${bssidSplitedList}'    Log To Console      Matched!
+    ...       ELSE      Fail     Not Matched!
+
+Compare Get SSID 2.4GHz With SSID Expected Index 2,3,4
+    [Arguments]                               ${ssid_expect}
+
+    ${ssid}=                                  Get SSID 2G
+    Log To Console                            \nGet SSID = ${ssid}
+    Log To Console                            SSID Expected = ${ssid_expect}
+    Run Keyword If      '${ssid}' == '${ssid_expect}'    Log To Console      Matched!
+    ...       ELSE      Fail     Not Matched!
+
+Verify Wifi Rescan Contain
+    [Arguments]                                    ${ssid}
+
+    Log To Console                                 \nVerify Config: PC Rescan Wifi Contain SSID ${ssid}
+
+    Open Connection And Login To Remote Machine    ssh_server_ip=${REMOTE_SERVER_IP}
+    ...                                            ssh_server_username=${REMOTE_SERVER_USERNAME}
+    ...                                            ssh_server_password=${REMOTE_SERVER_PASSWORD}
+    Enable Wifi
+    Delete All Wireless
+
+    Wait Until Keyword Succeeds                    120s    5s    Wifi Rescan Contain    wifi_ssid=${ssid}
+    Disable Wifi
+
+Verify Wifi Rescan Not Contain
+    [Arguments]                                    ${ssid}
+
+    Log To Console                                 \nVerify Config: PC Rescan Wifi Not Contain SSID ${ssid}
+
+    Open Connection And Login To Remote Machine    ssh_server_ip=${REMOTE_SERVER_IP}
+    ...                                            ssh_server_username=${REMOTE_SERVER_USERNAME}
+    ...                                            ssh_server_password=${REMOTE_SERVER_PASSWORD}
+    Enable Wifi
+    Delete All Wireless
+
+    Wait Until Keyword Succeeds                    120s    5s    Wifi Rescan Not Contain    wifi_ssid=${ssid}
+    Disable Wifi
+
+Verify Config 2G Security mode OPEN
+    ${secu_value}=                                SL.Get Value         xpath=//select[@name="wlSecurMode"]  
+    Should Be Equal                               None                 ${secu_value}
+    Log To Console					              \nConfig Security Mode OPEN Success! 
+
+Verify Config 2G Security mode WEP
+    [Arguments]                                   ${wep_mode}
+    ...                                           ${password}
+    
+    ${secu_value}=                                SL.Get Value         xpath=//select[@name="wlSecurMode"]  
+    Should Be Equal                               Basic                ${secu_value}
+
+    ${mode_value}=                                SL.Get Value         xpath=//select[@name="wlKeyBit"]  
+    Should Contain                                ${wep_mode}          ${mode_value}
+
+    ${pass_value}=                                SL.Get Value         xpath=//input[@id="wlKeys1"] 
+    Should Be Equal                               ${password}          ${pass_value}
+
+    Log To Console					              \nConfig Security Mode WEP ${wep_mode} Success!
+
+Verify Config 2G Security mode WPA
+    [Arguments]                                   ${secu_mode}
+    ...                                           ${encry_type}
+    ...                                           ${password}
+    
+    ${secu_value}=                                SL.Get Value         xpath=//select[@name="wlSecurMode"]  
+    Run Keyword If       '${secu_mode}' == 'WPA-PSK'         	       Should Be Equal        WPA                      ${secu_value}
+    ...    ELSE IF       '${secu_mode}' == 'WPA2-PSK'        		   Should Be Equal        11i                      ${secu_value}
+    ...    ELSE IF       '${secu_mode}' == 'WPA-PSK/WPA2-PSK'          Should Be Equal        WPAand11i                ${secu_value}
+    ...    ELSE IF       '${secu_mode}' == 'WPA3-PSK'        		   Should Be Equal        WPA3-PSK                 ${secu_value}
+    ...    ELSE IF       '${secu_mode}' == 'WPA2-PSK/WPA3-PSK'         Should Be Equal        WPA2-PSK/WPA3-PSK        ${secu_value}
+
+    ${encry_value}=                               SL.Get Value         xpath=//select[@name="wlWpa"] 
+    Run Keyword If       '${encry_type}' == 'AES'         	           Should Be Equal        AES                      ${encry_value}
+    ...    ELSE IF       '${encry_type}' == 'TKIP'        		       Should Be Equal        TKIP                     ${encry_value}
+    ...    ELSE IF       '${encry_type}' == 'TKIP+AES'                 Should Be Equal        TKIPAES                  ${encry_value}
+
+    ${pass_value}=                                SL.Get Value         xpath=//input[@id="wlWpaPsk"] 
+    Should Be Equal                               ${password}          ${pass_value}
+
+    Log To Console					              \nConfig Security Mode ${secu_mode} Success!
+
+
+
+
+############
+Popup Name SSID Incorrect Should Be Visible
+    [Documentation]                     Handle popup Name SSID Incorrect
+    ${popup_message}=                   SL.Handle Alert    timeout=10s
+    Log To Console                      Popup message: ${popup_message}
+    Should Contain                      ${popup_message}      must not include special character or all characters are space and out of standard ascii table
+
+Popup Name SSID Invalid Should Be Visible
+    [Documentation]                     Handle popup Name SSID Invalid
+    ${popup_message}=                   SL.Handle Alert    timeout=10s
+    Log To Console                      Popup message: ${popup_message}
+    Should Contain                      ${popup_message}      Invalid SSID Input!
+
+Popup Security mode OPEN Should Be Visible
+    [Documentation]                     Handle popup Warning Config Security mode OPEN
+    ${popup_message}=                   SL.Handle Alert    timeout=10s
+    Log To Console                      Popup message: ${popup_message}
+    Should Contain                      ${popup_message}      Your network will be set to OPEN without security setting, we strongly suggest you choose WPAPSK or WPA2PSK encryption
+
+Popup WEP Key Invalid Should Be Visible
+    [Documentation]                     Handle popup WEP Key Invalid
+    ${popup_message}=                   SL.Handle Alert    timeout=10s
+    Log To Console                      Popup message: ${popup_message}
+    Should Contain                      ${popup_message}      Invalid
+
+Popup WPA Password Invalid Should Be Visible
+    [Documentation]                     Handle popup WPA Password Invalid
+    ${popup_message}=                   SL.Handle Alert    timeout=10s
+    Log To Console                      Popup message: ${popup_message}
+    Should Contain                      ${popup_message}      Password must not include special character or all characters are space and out of standard ascii table
+
+Popup WPA Password Length Should Be Visible
+    [Documentation]                     Handle popup WPA Password Length
+    ${popup_message}=                   SL.Handle Alert    timeout=10s
+    Log To Console                      Popup message: ${popup_message}
+    Should Contain                      ${popup_message}      shared key should be 8 to 63 ASCII characters or 64 hexadecimal number
+
+
+################
+Config Name SSID 2G Incorrect On WebGui
+    [Arguments]                               		${ssid_index}
+    ...							                    ${ssid_change}
+
+    Select SSID 2G Index                            ${ssid_index}
+    Input SSID 2G Name                              ${ssid_change}
+    Save Config SSID
+    Popup Name SSID Incorrect Should Be Visible
+
+Config Name SSID 2G All Space On WebGui
+    [Arguments]                               		${ssid_index}
+    ...							                    ${ssid_change}
+
+    Select SSID 2G Index                            ${ssid_index}
+    Input SSID 2G Name                              ${ssid_change}
+    Save Config SSID
+    Popup Name SSID Invalid Should Be Visible
+
+Config Name SSID 2G Correct On WebGui
+    [Arguments]                               		${ssid_index}
+    ...							                    ${ssid_change}
+
+    Select SSID 2G Index                            ${ssid_index}
+    Input SSID 2G Name                              ${ssid_change}
+    Save Config SSID
+    Logout WebGUI
+
+    # Verify SSID Change Success
+    Verify Wifi Rescan Contain                      ${ssid_change}
+    Log To Console                                  \nConfig Name SSID Success!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+###################
+#######ONT-H#######
+Turn On Access Point
+    Log To Console                             \nCheck Access Point is On
+    SL.Wait Until Element Is Visible           xpath=//input[@name="wlan_APenable" and @value='1']
+    ...                                        timeout=20s
+    ...                                        error=\nAccess Point Checkbox Does Not Show up!
+    SL.Execute Javascript                      document.getElementsByName("wlan_APenable")[0].click();
+    Log To Console                             \n\t=> Access Point is On
+    
+Turn Off Access Point
+    Log To Console                             \nCheck Access Point is Off
+    SL.Wait Until Element Is Visible           xpath=//input[@name="wlan_APenable" and @value='0']
+    ...                                        timeout=20s
+    ...                                        error=\nAccess Point Checkbox Does Not Show up!
+    SL.Execute Javascript                      document.getElementsByName("wlan_APenable")[1].click();
+    Log To Console                             \n\t=> Access Point is Off
+    
+Check Wireless Is Enable
+    SL.Wait Until Element Is Visible          xpath=//input[@name="ESSID_Enable_Selection" and @value='1']
+    ...								          timeout=10s
+    ...                                       error=\nEnable Wireless Checkbox Does Not Show Up
+    ${wireless_status}=						  SL.Execute Javascript		return document.getElementsByName("ESSID_Enable_Selection")[0].checked
+	Should Be Equal							  '${wireless_status}'		'True'
+    Log To Console							  \nWireless is Enable
+    
+Check Wireless Is Disable
+    SL.Wait Until Element Is Visible          xpath=//input[@name="ESSID_Enable_Selection" and @value='0']     timeout=10s
+    ...                                       error=\nEnable Wireless Checkbox Does Not Show Up
+    ${wireless_status}=						  SL.Execute Javascript		return document.getElementsByName("ESSID_Enable_Selection")[0].checked
+	Should Be Equal							  '${wireless_status}'		'False'
+	Log To Console							  \nWireless is Disable
+
+Name SSID Index
+    [Arguments]                          ${ssid_index}          ${ssid}
+    SL.Select Frame                                 xpath=//frame[@name="contentfrm"]
+
+	###Select SSID index
+    Log To Console                      \nSelect SSID index
+
+    SL.Wait Until Element Is Visible     xpath=//select[@name="wlSsidIdx"]
+    ...                                  timeout=30s
+    ...                                  error=\nSSID Index Does Not Show Up
+    Run Keyword If    '${ssid_index}' == '1'         SL.Select From List By Value      xpath=//select[@name="wlSsidIdx"]    0
+    ...    ELSE IF    '${ssid_index}' == '2'         SL.Select From List By Value      xpath=//select[@name="wlSsidIdx"]    1
+    ...    ELSE IF    '${ssid_index}' == '3'         SL.Select From List By Value      xpath=//select[@name="wlSsidIdx"]    2
+    ...    ELSE                                      SL.Select From List By Value      xpath=//select[@name="wlSsidIdx"]    3
+
+	###Turn On PerSSID Switch
+    Log To Console                      \nTurn On PerSSID Switch
+    Enable Wireless
+
+	###Change SSID Name
+    Run Keyword If    '${ssid_index}' == '1'         Log To Console      \nChange Main SSID Name
+    ...    ELSE IF    '${ssid_index}' == '2'         Log To Console      \nChange SSID 2 Name
+    ...    ELSE IF    '${ssid_index}' == '3'         Log To Console      \nChange SSID 3 Name
+    ...    ELSE                                      Log To Console      \nChange SSID 4 Name
+
+    SL.Wait Until Element Is Visible             xpath=//input[@name="wlSsid"]
+    ...                                          timeout=15s
+    ...                                          error=\nSSID Textbox Does Not Show Up
+    SL.Input Text                                xpath=//input[@name="wlSsid"]         ${ssid}
+
+Configure WPS
+    [Arguments]      ${mode}
+    SL.Wait Until Element Is Visible                xpath=//select[@name="UseWPS_Selection"]
+    ...                                             timeout=10s
+    ...                                             error=\nEnable WPS Dropdown Does Not Show Up
+    Run Keyword If   '${mode}' == 'Enabled'         SL.Execute Javascript       document.getElementsByName("UseWPS_Selection")[1].click()
+    ...    ELSE IF   '${mode}' == 'Disabled'        SL.Execute Javascript       document.getElementsByName("UseWPS_Selection")[0].click()
+
+
+    
+Name SSID
+    [Arguments]                                 ${ssid}        ${authen_mode}        ${encryptionType}       ${password}       ${channel}        ${wireless_mode}
+
+    ###Input SSID Name
+    Log To Console                              \nChange SSID Name
+
+    SL.Wait Until Element Is Visible             xpath=//input[@name="wlSsid"]
+    ...                                          timeout=15s
+    ...                                          error=\nSSID Textbox Does Not Show Up
+    SL.Input Text                                xpath=//input[@name="wlSsid"]         ${ssid}
+
+	###Select Authentication Type (mode=OPEN/WEP-64Bits/WEP-128Bits/WPAPSK/WPA2PSK/WPAPSKWPA2PSK)
+    Log To Console                               \nSelect Authentication Type
+    SL.Wait Until Element Is Visible             xpath=//option[contains(text(), "${authen_mode}")]
+    ...                                          timeout=20s
+    ...                                          error=\nNetwork Authentication Dropdown Does Not Show Up
+    ${auth_value}=      SL.Get Value             xpath=//option[contains(text(), "${authen_mode}")]
+    SL.Select From List By Value                 xpath=//select[@name="WEP_Selection"]     ${auth_value}
+    Run Keyword If     'WPA2PSK' == '${authen_mode}'      SeleniumNetwork24GHzLib.Configure WPA2-PSK Mode       encryptionType=${encryptionType}    password=${password}      channel=${channel}		wireless_mode=${wireless_mode}
+
+Config Beacon Interval
+    [Arguments]                                  ${beacon_interval}=300 
+    ### Input Beacon Interval
+    Log To Console                              \nInput Beacon Interval
+    SL.Wait Until Element Is Visible             xpath=//input[@name="BeaconInterval"]
+    ...                                          timeout=15s
+    ...                                          error=\nBeacon Interval Textbox Does Not Show Up
+    SL.Input Text                                xpath=//input[@name="BeaconInterval"]         ${beacon_interval}
+
+Config RTS/CTS Threshold
+    
+    [Arguments]                                  ${threshold}=2347
+    ### Input Beacon Interval
+    Log To Console                              \nInput RTS/CTS Threshold
+    SL.Wait Until Element Is Visible             xpath=//input[@name="RTSThreshold"]
+    ...                                          timeout=15s
+    ...                                          error=\nRTS/CTS Threshold Textbox Does Not Show Up
+    SL.Input Text                                xpath=//input[@name="RTSThreshold"]         ${threshold}
+
+Config Fragmentation Threshold
+    
+    [Arguments]                                  ${frag_threshold}=2347
+    ### Input Beacon Interval
+    Log To Console                              \nInput Fragmentation Threshold
+    SL.Wait Until Element Is Visible             xpath=//input[@name="FragmentThreshold"]
+    ...                                          timeout=15s
+    ...                                          error=\nFragmentation Threshold Textbox Does Not Show Up
+    SL.Input Text                                xpath=//input[@name="FragmentThreshold"]         ${frag_threshold}
+
+Config DTIM
+    [Arguments]                                  ${dtim}=1
+    ### Input Beacon Interval
+    Log To Console                              \nInput DTIM
+    SL.Wait Until Element Is Visible             xpath=//input[@name="DTIM"]
+    ...                                          timeout=15s
+    ...                                          error=\nDTIM Textbox Does Not Show Up
+    SL.Input Text                                xpath=//input[@name="DTIM"]         ${dtim}
+
+Config Channel
+    [Arguments]                                  ${channel}=AUTO
+    ### Input Channel
+    ### Select Channel Wifi 2.4GHZ (channel=AUTO/01/02/03/04/05/06/07/08/09/10/11)
+    ### Select Channel Wifi 5GHZ (channel=AUTO/36/40/44/48/52/56/60/64/100/104/108/112/116/120/124/128/132/136/140/144/149/153/157/161/165)
+    Log To Console                              Select Channel
+    SL.Wait Until Element Is Visible            xpath=//select[@name="Channel_ID"]
+    ...                                         timeout=10s
+    ...                                         error=\nChannel Select Box Does Not Show Up
+	${channel_value}=                           SL.Get Value        xpath=//select[@name="Channel_ID"]/option[normalize-space(text())="${channel}"]
+    SL.Select From List By Value                xpath=//select[@name="Channel_ID"]         ${channel_value}
+
+Config Station Number
+    [Arguments]                                  ${station_number}
+	###Input Station Number
+    Log To Console                              \nInput Station Number
+    SL.Wait Until Element Is Visible             xpath=//input[@name="StationNum"]
+    ...                                          timeout=15s
+    ...                                          error=\nStation Number Textbox Does Not Show Up
+    SL.Execute Javascript                        document.getElementsByName("StationNum")[0].value=''   
+    SL.Input Text                                xpath=//input[@name="StationNum"]         ${station_number}
+
+Config BandSteering
+    [Documentation]                                   Disable
+    ...                                               Enable
+    [Arguments]                                  ${bandsteering_mode}
+		###Select BandSteering mode
+    Log To Console                       \nSelect BandSteering mode
+    SL.Wait Until Element Is Visible     xpath=//select[@name='BandSteering']
+    ...                                  timeout=20s
+    ...                                  error=\nBandSteering mode Box Does Not Show Up
+    Run Keyword If    '${bandsteering_mode}' == 'Disable'     SL.Select From List By Value      xpath=//select[@name='BandSteering']    0
+    ...    ELSE                                               SL.Select From List By Value      xpath=//select[@name='BandSteering']    1
+
+Config AirTime Fairness
+    [Documentation]                                   Disable
+    ...                                               Enable
+    [Arguments]                                  ${airtime_fairness}
+		###Select BandSteering mode
+    ###Select AirTime FairNess mode
+    Log To Console                       \nSelect AirTime FairNess mode
+    SL.Wait Until Element Is Visible     xpath=//select[@name='AirTimeFairness']
+    ...                                  timeout=20s
+    ...                                  error=\nAirTime FairNess mode Box Does Not Show Up
+    Run Keyword If    '${airtime_fairness}' == 'Disable'     SL.Select From List By Value      xpath=//select[@name='AirTimeFairness']    0
+    ...    ELSE                                              SL.Select From List By Value      xpath=//select[@name='AirTimeFairness']    1
+
+Config Guard Interval
+    [Documentation]                              800 nsec
+    ...                                          AUTO
+    
+    [Arguments]                                  ${g_interval}=AUTO
+
+    Log To Console                              \nConfig Guard Interval
+    SL.Wait Until Element Is Visible            xpath=//select[@name="WLANGuardInterval"]
+    ...                                         timeout=10s
+    ...                                         error=\nGuard Interval Box Does Not Show Up
+    
+    Run Keyword If    '${g_interval}' == '800 nsec'       SL.Select From List By Value      xpath=//select[@name='WLANGuardInterval']    0
+    ...    ELSE IF    '${g_interval}' == 'AUTO'           SL.Select From List By Value      xpath=//select[@name='WLANGuardInterval']    1
+	Sleep                                       2s
+
+Config MCS
+    [Documentation]                              0/1/2/3/4/5/6/7/AUTO
+    [Arguments]                                  ${mcs}=AUTO
+
+    Log To Console                              \nConfig MCS
+    SL.Wait Until Element Is Visible            xpath=//select[@name="WLANMCS"]
+    ...                                         timeout=10s
+    ...                                         error=\nMCS Box Does Not Show Up
+    ${mcs_value}=                               SL.Get Value        xpath=//select[@name="WLANMCS"]/option[contains(text(), "${mcs}")]
+    SL.Select From List By Value                xpath=//select[@name="WLANMCS"]             ${mcs_value}
+
+Config Wireless Mac Filter
+    [Documentation]                              1. Mode: On/Off
+    ...                                          2. Action: Allow/Deny             
+    [Arguments]                                  ${mode}          ${action}         ${mac}
+
+    Log To Console                                 \nConfig Wireless Mac Filter
+    Log To Console                                 Select Mode: ${mode}
+    SL.Wait Until Element Is Visible               xpath=//input[@name="WLAN_FltActive"]
+    ...                                            timeout=10s
+    ...                                            error=\nWireless Mac Filter Does Not Show Up
+    Run Keyword If   '${mode}' == 'On'             SL.Click Element      xpath=//input[@name="WLAN_FltActive" and @value='1']
+    ...    ELSE IF   '${mode}' == 'Off'            SL.Click Element      xpath=//input[@name="WLAN_FltActive" and @value='0']
+    
+    Log To Console                                 Select Action: ${action}
+    SL.Wait Until Element Is Visible               xpath=//select[@name="WLAN_FltAction"]
+    ...                                            timeout=10s
+    ...                                            error=\nAction Box Does Not Show Up
+    ${action_value}=                               SL.Get Value        xpath=//select[@name="WLAN_FltAction"]/option[contains(text(), "${action}")]
+    SL.Select From List By Value                   xpath=//select[@name="WLAN_FltAction"]             ${action_value}
+    
+    Log To Console                                 Config Mac Address
+    SL.Wait Until Element Is Visible               xpath=//input[@name="WLANFLT_MAC1"]
+    ...                                            timeout=10s
+    ...                                            error=\nMac Address Box Does Not Show Up
+    SL.Input Text                                  xpath=//input[@name="WLANFLT_MAC1"]        ${mac}
+
+Config Tx/Rx Stream
+    [Documentation]                              1/2
+    [Arguments]                                  ${tx}=2          ${rx}=2
+
+    Log To Console                              \n---Config Tx/Rx Stream---
+    Log To Console                              Config Tx = ${tx}
+    SL.Wait Until Element Is Visible            xpath=//select[@name="TxStream_Action"]
+    ...                                         timeout=10s
+    ...                                         error=\nTx Box Does Not Show Up
+    ${tx_value}=                                SL.Get Value        xpath=//option[contains(text(), "${tx}")]
+    SL.Select From List By Value                xpath=//select[@name="TxStream_Action"]             ${tx}
+
+    Log To Console                              Config Rx = ${rx}
+    SL.Wait Until Element Is Visible            xpath=//select[@name="RxStream_Action"]
+    ...                                         timeout=10s
+    ...                                         error=\nRx Box Does Not Show Up
+    ${rx_value}=                                SL.Get Value        xpath=//option[contains(text(), "${rx}")]
+    SL.Select From List By Value                xpath=//select[@name="RxStream_Action"]             ${rx}
+
+Select TxPower
+	[Documentation]                             Select Tx power from list by get value of this index
+	...                                8.5 dBm
+	...                                11.5 dBm
+	...                                14.5 dBm
+	...                                17.5 dBm
+	...                                19.5 dBm
+	...                                20.5 dBm	
+	[Arguments]                                 ${Tx_power}
+	
+	Log To Console                               Select TxPower
+    SL.Wait Until Element Is Visible             xpath=//select[@name='TxPower']
+    ...                                          timeout=20s
+    ...                                          error=\nSelect TxPower Box Does Not Show Up
+	${txpower_value}=                            SL.Get Value         xpath=xpath=//select[@name='TxPower']/option[normalize-space(text())="${Tx_power}"]
+    SL.Select From List By Value         	     xpath=//select[@name='TxPower']     ${txpower_value}
+
+Name SSID 2_4
+    [Arguments]                         ${ssid_index}=2       ${ssid}=123SKY        ${authen_mode}=WPAPSK/WPA2PSK        ${encryptionType}=AES        ${password}=1234567890   
+    ...                                 ${channel}=6        ${wireless_mode}=802.11b+g+n	${Tx_power}=19.5 dBm
+
+	###Select SSID index
+	Select SSID Index					${ssid_index}
+	
+	###Turn On PerSSID Switch
+    Log To Console                      \nTurn On PerSSID Switch
+    Enable Wireless
+    
+	###Select TxPower
+    Select TxPower						${Tx_power}
+    
+    ### Select Wireless Mode
+    Log To Console                       \nConfig Wireless Mode
+    SeleniumNetworkWLAN24GHzLib.Select Wireless Mode                 ${wireless_mode}
+
+	###Change SSID Name
+    Log To Console                      \nChange SSID Name
+    SL.Wait Until Element Is Visible     xpath=//input[@name="wlSsid"]
+    ...                                  timeout=15s
+    ...                                  error=\nSSID Textbox Does Not Show Up
+    SL.Input Text                        xpath=//input[@name="wlSsid"]         ${ssid}
+
+	###Select Authentication Type and Configuration SSID (mode=OPEN/WEP-64Bits/WEP-128Bits/WPAPSK/WPA2PSK/WPAPSKWPA2PSK)
+    Run Keyword If     'WPA2PSK' == '${authen_mode}'      		SeleniumNetworkWLAN24GHzLib.Configure WPA2-PSK Mode
+    ...    ELSE IF     'WEP-64Bits' == '${authen_mode}'    		SeleniumNetworkWLAN24GHzLib.Configure WEP-64Bits Mode
+    ...    ELSE IF     'WEP-128Bits' == '${authen_mode}'    	SeleniumNetworkWLAN24GHzLib.Configure WEP-128Bits Mode
+    ...    ELSE IF     'WPAPSK' == '${authen_mode}'        		SeleniumNetworkWLAN24GHzLib.Configure WPA-PSK Mode
+    ...    ELSE IF     'WPAPSK/WPA2PSK' == '${authen_mode}'     SeleniumNetworkWLAN24GHzLib.Configure Mixed WPA2/WPA-PSK Mode
+    ...    ELSE IF     'OPEN' == '${authen_mode}'             	SeleniumNetworkWLAN24GHzLib.Configure Open Mode
+
+Configure Open Mode
+    [Arguments]                          ${channel}=AUTO      ${interval}=300      ${beacon_interval}=100    ${station_number}=30
+    ...                                  ${channel_bandwidth}=20MHz		${airtime_fairness}=Disable   ${wireless_mode}=802.11n
+
+    Turn On Access Point
+    
+	### Select Channel (channel=AUTO/01/02/03/04/05/06/07/08/09/10/11)
+    Log To Console                      \nSelect Channel
+    SL.Wait Until Element Is Visible    xpath=//select[@name="Channel_ID"]
+    ...                                 timeout=10s
+    ...                                 error=\nChannel Select Box Does Not Show Up
+    ${channel_value}=                   SL.Get Value        xpath=//option[contains(text(), "${channel}")]
+    SL.Select From List By Value        xpath=//select[@name="Channel_ID"]         ${channel_value}
+    
+    ### Select Wireless Mode
+	Log To Console                       \nConfig Wireless Mode
+    SeleniumNetworkWLAN24GHzLib.Select Wireless Mode                 ${wireless_mode}
+    
+	###Input Interval (secs)
+    Log To Console                      \nInput Interval (secs)
+    SL.Wait Until Element Is Visible     xpath=//input[@name="txtInterval"]
+    ...                                  timeout=15s
+    ...                                  error=\nInterval (secs) Textbox Does Not Show Up
+    SL.Input Text                        xpath=//input[@name="txtInterval"]         ${interval}
+	### Input Beacon Interval
+    Log To Console                      \nInput Beacon Interval
+    SL.Wait Until Element Is Visible     xpath=//input[@name="BeaconInterval"]
+    ...                                  timeout=15s
+    ...                                  error=\nBeacon Interval Textbox Does Not Show Up
+    SL.Input Text                        xpath=//input[@name="BeaconInterval"]         ${beacon_interval}
+	###Input Station Number
+    Log To Console                      \nInput Station Number
+    SL.Wait Until Element Is Visible     xpath=//input[@name="StationNum"]
+    ...                                  timeout=15s
+    ...                                  error=\nStation Number Textbox Does Not Show Up
+    SL.Input Text                        xpath=//input[@name="StationNum"]         ${station_number}
+	###Select BandSteering mode
+    Log To Console                       \nSelect BandSteering mode
+    SL.Wait Until Element Is Visible     xpath=//select[@name='BandSteering']
+    ...                                  timeout=20s
+    ...                                  error=\nBandSteering mode Box Does Not Show Up
+	###Select AirTime FairNess mode
+    Log To Console                       \nSelect AirTime FairNess mode
+    SL.Wait Until Element Is Visible     xpath=//select[@name='AirTimeFairness']
+    ...                                  timeout=20s
+    ...                                  error=\nAirTime FairNess mode Box Does Not Show Up
+    Run Keyword If    '${airtime_fairness}' == 'Disable'     SL.Select From List By Value      xpath=//select[@name='AirTimeFairness']    0
+    ...    ELSE                          SL.Select From List By Value      xpath=//select[@name='AirTimeFairness']    1
+	###Select Channel Bandwidth
+    Log To Console                       \nSelect Channel Bandwidth
+    
+    Run Keyword If    '${wireless_mode}' == '802.11n'       Select Channel Bandwidth 2.4GHz      ${channel_bandwidth}
+    ...    ELSE IF    '${wireless_mode}' == '802.11g+n'       Select Channel Bandwidth 2.4GHz      ${channel_bandwidth}
+    ...    ELSE IF    '${wireless_mode}' == '802.11b+g+n'       Select Channel Bandwidth 2.4GHz      ${channel_bandwidth}
+    ...    ELSE                          Log To Console		Don't Need To Configure Channel Bandwidth
+    SeleniumNetworkWLAN24GHzLib.Save Config SSID
+    Sleep                               30s
+    Log To Console                      \nChange network authentication to Open
+
+Configure WPA2-PSK Mode
+    [Arguments]                          ${encryptionType}=AES      ${password}=1234567890      ${channel}=AUTO
+    ...                                  ${beacon_interval}=100    ${station_number}=30
+    ...                                  ${bandsteering_mode}=Disable    ${airtime_fairness}=Enable     ${channel_bandwidth}=20MHz		${authen_mode}=WPA2PSK		${wireless_mode}=802.11n
+
+	### Select Authentication Mode WPA2-PSK
+	Select Authentication Type			${authen_mode}
+
+	### Select Encryption (encryptionType=AES/TKIP/TKIPAES )
+    Log To Console                       \nSelect Encryption
+    SL.Wait Until Element Is Visible     xpath=//div[@id='WPA2PSK_div']/table/tbody/tr[2]/td[5]/select
+    ...                                  timeout=20s
+    ...                                  error=\nEncryption Select Box Does Not Show Up
+    Run Keyword If    '${encryptionType}' == 'AES'        SL.Select From List By Value      xpath=//div[@id='WPA2PSK_div']/table/tbody/tr[2]/td[5]/select     AES
+    ...    ELSE IF    '${encryptionType}' == 'TKIP'       SL.Select From List By Value      xpath=//div[@id='WPA2PSK_div']/table/tbody/tr[2]/td[5]/select     TKIP
+    ...    ELSE IF    '${encryptionType}' == 'TKIPAES'    SL.Select From List By Value      xpath=//div[@id='WPA2PSK_div']/table/tbody/tr[2]/td[5]/select     TKIPAES
+
+	###Input Password
+    SL.Wait Until Element Is Visible    xpath=//div[@id="WPA2PSK_div"]/table/tbody/tr[3]/td[5]/input
+    ...                                 timeout=10s
+    ...                                 error=\nWPA2PSK Pre-Shared Key Does Not Show Up
+
+    SL.Click Element                            xpath=//input[@name="PreSharedKey3"]
+    SL.Clear Element Text                       xpath=//input[@name="PreSharedKey3"]
+    SL.Handle Alert                             timeout=5s
+    SL.Input Password                           xpath=//input[@name="PreSharedKey3"]          ${password}
+
+	###Check Access Point is On
+    Log To Console                      \nCheck Access Point is On
+    SL.Wait Until Element Is Visible    xpath=//tr[2]/td[5]/input
+    ...                                 timeout=20s
+    ...                                 error=\nAccess Point Checkbox Does Not Show up!
+    SL.Click Element                    xpath=//input[@name="wlan_APenable"]
+    Log To Console                      \n\t=> Access Point is On
+
+	### Select Channel (channel=AUTO/01/02/03/04/05/06/07/08/09/10/11)
+    Log To Console                      \nSelect Channel
+    SL.Wait Until Element Is Visible    xpath=//select[@name="Channel_ID"]
+    ...                                 timeout=10s
+    ...                                 error=\nChannel Select Box Does Not Show Up
+    ${channel_value}=                   SL.Get Value        xpath=//option[contains(text(), "${channel}")]
+    SL.Select From List By Value        xpath=//select[@name="Channel_ID"]         ${channel_value}
+
+	### Select Wireless Mode
+	Log To Console                       \nConfig Wireless Mode
+    SeleniumNetworkWLAN24GHzLib.Select Wireless Mode                 ${wireless_mode}
+
+	### Input Beacon Interval
+    Log To Console                      \nInput Beacon Interval
+    SL.Wait Until Element Is Visible     xpath=//input[@name="BeaconInterval"]
+    ...                                  timeout=15s
+    ...                                  error=\nBeacon Interval Textbox Does Not Show Up
+    SL.Input Text                        xpath=//input[@name="BeaconInterval"]         ${beacon_interval}
+
+
+	###Input Station Number
+    Log To Console                      \nInput Station Number
+    SL.Wait Until Element Is Visible     xpath=//input[@name="StationNum"]
+    ...                                  timeout=15s
+    ...                                  error=\nStation Number Textbox Does Not Show Up
+    SL.Input Text                        xpath=//input[@name="StationNum"]         ${station_number}
+
+	###Select BandSteering mode
+    Log To Console                       \nSelect BandSteering mode
+    SL.Wait Until Element Is Visible     xpath=//select[@name='BandSteering']
+    ...                                  timeout=20s
+    ...                                  error=\nBandSteering mode Box Does Not Show Up
+    Run Keyword If    '${bandsteering_mode}' == 'Disable'     SL.Select From List By Value      xpath=//select[@name='BandSteering']    0
+    ...    ELSE                          SL.Select From List By Value      xpath=//select[@name='BandSteering']    1
+
+	###Select AirTime FairNess mode
+    Log To Console                       \nSelect AirTime FairNess mode
+    SL.Wait Until Element Is Visible     xpath=//select[@name='AirTimeFairness']
+    ...                                  timeout=20s
+    ...                                  error=\nAirTime FairNess mode Box Does Not Show Up
+    Run Keyword If    '${airtime_fairness}' == 'Disable'     SL.Select From List By Value      xpath=//select[@name='AirTimeFairness']    0
+    ...    ELSE                          SL.Select From List By Value      xpath=//select[@name='AirTimeFairness']    1
+
+	###Select Channel Bandwidth
+    Log To Console                       \nSelect Channel Bandwidth
+    
+    Run Keyword If    '${wireless_mode}' == '802.11n'       Select Channel Bandwidth 2.4GHz      ${channel_bandwidth}
+    ...    ELSE IF    '${wireless_mode}' == '802.11g+n'       Select Channel Bandwidth 2.4GHz      ${channel_bandwidth}
+    ...    ELSE IF    '${wireless_mode}' == '802.11b+g+n'       Select Channel Bandwidth 2.4GHz      ${channel_bandwidth}
+    ...    ELSE                          Log To Console		Don't Need To Configure Channel Bandwidth
+    SeleniumNetworkWLAN24GHzLib.Save Config SSID
+    Sleep                               30s
+    Log To Console                      \nChange network authentication to WPA2-PSK
+    
+Select Wireless Mode
+    [Documentation]                             Select Wireless mode from list by get value of this index
+	...                                802.11b
+	...                                802.11g
+	...                                802.11b+g
+	...                                802.11n
+	...                                802.11g+n
+	...                                802.11b+g+n
+				
+	[Arguments]                          ${wireless_mode}
+	### Select wireless mode
+	Log To Console						    Select Wireless Mode
+    SL.Wait Until Element Is Visible        xpath=//select[@name="WirelessMode"]
+    ...                                     timeout=10s
+    ...                                     error=802.1p Selection Not Found
+	${wireless_mode_value}=                 SL.Get Value        xpath=//select[@name="WirelessMode"]/option[normalize-space(text())="${wireless_mode}"]
+    SL.Select From List By Value            xpath=//select[@name="WirelessMode"]         ${wireless_mode_value}
+
+Configure Security Mode WPA2PSK With Wrong Password
+    [Arguments]                          ${encryptionType}=AES      ${password}=1234567890
+
+
+	### Select Encryption (encryptionType=AES/TKIP/TKIPAES )
+    Log To Console                       \n\t\tSelect Encryption
+    Run Keyword If    '${encryptionType}' == 'AES'        SL.Select From List By Value      xpath=//div[@id='WPA2PSK_div']/table/tbody/tr[2]/td[5]/select     AES
+    ...    ELSE IF    '${encryptionType}' == 'TKIP'       SL.Select From List By Value      xpath=//div[@id='WPA2PSK_div']/table/tbody/tr[2]/td[5]/select     TKIP
+    ...    ELSE IF    '${encryptionType}' == 'TKIPAES'    SL.Select From List By Value      xpath=//div[@id='WPA2PSK_div']/table/tbody/tr[2]/td[5]/select     TKIPAES
+
+	###Input Password
+    # SL.Wait Until Element Is Visible    xpath=//div[@id="WPA2PSK_div"]/table/tbody/tr[3]/td[5]/input
+    # ...                                 timeout=10s
+    # ...                                 error=\nWPA2PSK Pre-Shared Key Does Not Show Up
+
+    SL.Click Element                    xpath=//input[@name="PreSharedKey3"]
+    SL.Clear Element Text               xpath=//input[@name="PreSharedKey3"]
+    SL.Handle Alert
+    SL.Input Password                   xpath=//input[@name="PreSharedKey3"]          ${password}
+
+Select Security mode WPA2-PSK for Main SSID
+    [Arguments]                                    ${password_failed_1}
+    ...                                            ${password_failed_2}
+    ...                                            ${correct_password}
+    ####Select Security for MAIN SSID
+    Log To Console                            \n\tSelect Security mode WPA2-PSK for MAIN SSID
+
+    Log To Console                            \n\t\tConfigure Security Mode WPA2PSK With Wrong Password 1st
+    Configure Security Mode WPA2PSK With Wrong Password            password=${password_failed_1}
+
+    Log To Console                            \n\t\tConfigure Security Mode WPA2PSK With Wrong Password 2nd
+    Configure Security Mode WPA2PSK With Wrong Password            password=${password_failed_2}
+
+    Log To Console                            \n\t\tConfigure Security Mode With Correct Password
+    SeleniumNetworkWLAN24GHzLib.Configure WPA2-PSK Mode                   password=${correct_password}
+    Sleep                                     5s
+
+Select Security mode WPA2-PSK for SSID 2
+    [Arguments]                               ${password_failed_1}
+    ...                                       ${password_failed_2}
+    ...                                       ${correct_password}
+    ####Select Security for MAIN SSID
+    Log To Console                            \n\tSelect Security mode WPA2-PSK for SSID 2
+
+    Configure Security Mode WPA2PSK With Wrong Password            password=${password_failed_1}
+
+    Configure Security Mode WPA2PSK With Wrong Password            password=${password_failed_2}
+
+    SeleniumNetworkWLAN24GHzLib.Configure WPA2-PSK Mode                   password=${correct_password}
+    Sleep                                     5s
+
+Select Security mode WPA2-PSK for SSID 3
+    [Arguments]                                    ${password_failed_1}
+    ...                                            ${password_failed_2}
+    ...                                            ${correct_password}
+    ####Select Security for MAIN SSID
+    Log To Console                            \n\tSelect Security mode WPA2-PSK for SSID 3
+
+    Configure Security Mode WPA2PSK With Wrong Password            password=${password_failed_1}
+
+    Configure Security Mode WPA2PSK With Wrong Password            password=${password_failed_2}
+
+    SeleniumNetworkWLAN24GHzLib.Configure WPA2-PSK Mode                   password=${correct_password}
+    Sleep                                     5s
+
+Configure WPA-PSK Mode
+    [Arguments]                          ${encryptionType}=AES      ${password}=1234567890      ${channel}=AUTO
+    ...                                  ${beacon_interval}=100    ${station_number}=30
+    ...                                  ${bandsteering_mode}=Disable    ${airtime_fairness}=Enable     ${channel_bandwidth}=20MHz		${authen_mode}=WPAPSK		${wireless_mode}=802.11n
+
+	### Select Authentication Mode WPA2-PSK
+	Select Authentication Type			${authen_mode}
+	
+	### Select Encryption (encryptionType=AES/TKIP/TKIPAES )
+    Log To Console                       \nSelect Encryption
+    Run Keyword If    '${encryptionType}' == 'AES'        SL.Select From List By Value      xpath=//div[@id='WPAPSK_div']/table/tbody/tr[2]/td[5]/select     AES
+    ...    ELSE IF    '${encryptionType}' == 'TKIP'       SL.Select From List By Value      xpath=//div[@id='WPAPSK_div']/table/tbody/tr[2]/td[5]/select     TKIP
+    ...    ELSE IF    '${encryptionType}' == 'TKIPAES'    SL.Select From List By Value      xpath=//div[@id='WPAPSK_div']/table/tbody/tr[2]/td[5]/select     TKIPAES
+
+	###Input Password
+    SL.Wait Until Element Is Visible    xpath=//div[@id='WPAPSK_div']/table/tbody/tr[3]/td[5]/input
+    ...                                 timeout=10s
+    ...                                 error=\nWPAPSK Pre-Shared Key Does Not Show Up
+
+    SL.Click Element                    xpath=//input[@id="Wireless_Pass_2"]
+    SL.Clear Element Text               xpath=//input[@id="Wireless_Pass_2"]
+
+    SL.Input Password                   xpath=//input[@id="Wireless_Pass_2"]          ${password}
+    Sleep                               20s
+
+	###Check Access Point is On
+    Log To Console                      \nCheck Access Point is On
+    SL.Wait Until Element Is Visible    xpath=//tr[2]/td[5]/input
+    ...                                 timeout=20s
+    ...                                 error=\nAccess Point Checkbox Does Not Show up!
+    SL.Click Element                    xpath=//input[@name="wlan_APenable"]
+    Log To Console                      \n\t=> Access Point is On
+
+	### Select Channel (channel=AUTO/01/02/03/04/05/06/07/08/09/10/11)
+    Log To Console                      \nSelect Channel
+    SL.Wait Until Element Is Visible    xpath=//select[@name="Channel_ID"]
+    ...                                 timeout=10s
+    ...                                 error=\nChannel Select Box Does Not Show Up
+    ${channel_value}=                   SL.Get Value        xpath=//option[contains(text(), "${channel}")]
+    SL.Select From List By Value        xpath=//select[@name="Channel_ID"]         ${channel_value}
+    
+    ### Select Wireless Mode
+	Log To Console                       \nConfig Wireless Mode
+    SeleniumNetworkWLAN24GHzLib.Select Wireless Mode                 ${wireless_mode}
+    
+
+	### Input Beacon Interval
+    Log To Console                      \nInput Beacon Interval
+    SL.Wait Until Element Is Visible     xpath=//input[@name="BeaconInterval"]
+    ...                                  timeout=15s
+    ...                                  error=\nBeacon Interval Textbox Does Not Show Up
+    SL.Input Text                        xpath=//input[@name="BeaconInterval"]         ${beacon_interval}
+
+	###Input Station Number
+    Log To Console                      \nInput Station Number
+    SL.Wait Until Element Is Visible     xpath=//input[@name="StationNum"]
+    ...                                  timeout=15s
+    ...                                  error=\nStation Number Textbox Does Not Show Up
+    SL.Input Text                        xpath=//input[@name="StationNum"]         ${station_number}
+
+	###Select BandSteering mode
+    Log To Console                       \nSelect BandSteering mode
+    SL.Wait Until Element Is Visible     xpath=//select[@name='BandSteering']
+    ...                                  timeout=20s
+    ...                                  error=\nBandSteering mode Box Does Not Show Up
+    Run Keyword If    '${bandsteering_mode}' == 'Disable'     SL.Select From List By Value      xpath=//select[@name='BandSteering']    0
+    ...    ELSE                          SL.Select From List By Value      xpath=//select[@name='BandSteering']    1
+
+	###Select AirTime FairNess mode
+    Log To Console                       \nSelect AirTime FairNess mode
+    SL.Wait Until Element Is Visible     xpath=//select[@name='AirTimeFairness']
+    ...                                  timeout=20s
+    ...                                  error=\nAirTime FairNess mode Box Does Not Show Up
+    Run Keyword If    '${airtime_fairness}' == 'Disable'     SL.Select From List By Value      xpath=//select[@name='AirTimeFairness']    0
+    ...    ELSE                          SL.Select From List By Value      xpath=//select[@name='AirTimeFairness']    1
+
+	###Select Channel Bandwidth
+    Log To Console                       \nSelect Channel Bandwidth
+    
+    Run Keyword If    '${wireless_mode}' == '802.11n'       Select Channel Bandwidth 2.4GHz      ${channel_bandwidth}
+    ...    ELSE IF    '${wireless_mode}' == '802.11g+n'       Select Channel Bandwidth 2.4GHz      ${channel_bandwidth}
+    ...    ELSE IF    '${wireless_mode}' == '802.11b+g+n'       Select Channel Bandwidth 2.4GHz      ${channel_bandwidth}
+    ...    ELSE                          Log To Console		Don't Need To Configure Channel Bandwidth
+    SeleniumNetworkWLAN24GHzLib.Save Config SSID
+    Sleep                               30s
+    Log To Console                      \nChange network authentication to WPA-PSK
+
+    
+Configure Security Mode WPAPSK With Wrong Password
+    [Arguments]                          ${encryptionType}=AES      ${password}=1234567890
+
+	### Select Encryption (encryptionType=AES/TKIP/TKIPAES )
+    Log To Console                       \n\t\tSelect Encryption
+    SL.Wait Until Element Is Visible     xpath=//div[@id='WPAPSK_div']/table/tbody/tr[2]/td[5]/select
+    ...                                  timeout=20s
+    ...                                  error=\nEncryption Select Box Does Not Show Up
+    Run Keyword If    '${encryptionType}' == 'AES'        SL.Select From List By Value      xpath=//div[@id='WPAPSK_div']/table/tbody/tr[2]/td[5]/select     AES
+    ...    ELSE IF    '${encryptionType}' == 'TKIP'       SL.Select From List By Value      xpath=//div[@id='WPAPSK_div']/table/tbody/tr[2]/td[5]/select     TKIP
+    ...    ELSE IF    '${encryptionType}' == 'TKIPAES'    SL.Select From List By Value      xpath=//div[@id='WPAPSK_div']/table/tbody/tr[2]/td[5]/select     TKIPAES
+
+	###Input Password
+    SL.Wait Until Element Is Visible    xpath=//div[@id='WPAPSK_div']/table/tbody/tr[3]/td[5]/input
+    ...                                 timeout=10s
+    ...                                 error=\nWPAPSK Pre-Shared Key Does Not Show Up
+
+    SL.Click Element                    xpath=//div[@id='WPAPSK_div']/table/tbody/tr[3]/td[5]/input
+    SL.Clear Element Text               xpath=//div[@id='WPAPSK_div']/table/tbody/tr[3]/td[5]/input
+
+    SL.Input Password                   xpath=//div[@id='WPAPSK_div']/table/tbody/tr[3]/td[5]/input          ${password}
+    SL.Click Element                    xpath=//input[@id="keyRenewalInterval2"]
+    SL.Handle Alert
+
+
+Select Security mode WPA-PSK for Main SSID
+    [Arguments]                                    ${password_failed_1}
+    ...                                            ${password_failed_2}
+    ...                                            ${correct_password}
+    ####Select Security for MAIN SSID
+    Log To Console                            \n\tSelect Security mode WPA-PSK for MAIN SSID
+
+    Log To Console                            \n\t\tConfigure Security Mode WPAPSK With Wrong Password 1st
+    Configure Security Mode WPAPSK With Wrong Password            password=${password_failed_1}
+
+    Log To Console                            \n\t\tConfigure Security Mode WPAPSK With Wrong Password 2nd
+    Configure Security Mode WPAPSK With Wrong Password            password=${password_failed_2}
+
+    Log To Console                            \n\t\tConfigure Security Mode With Correct Password
+    Configure WPA-PSK Mode                   password=${correct_password}
+    Sleep                                     5s
+
+
+Select Security mode WPA-PSK for SSID 2
+    [Arguments]                               ${password_failed_1}
+    ...                                       ${password_failed_2}
+    ...                                       ${correct_password}
+    ####Select Security for MAIN SSID
+    Log To Console                            \n\tSelect Security mode WPA-PSK for SSID 2
+
+    Configure Security Mode WPAPSK With Wrong Password            password=${password_failed_1}
+
+    Configure Security Mode WPAPSK With Wrong Password            password=${password_failed_2}
+
+    Configure WPA-PSK Mode                   password=${correct_password}
+    Sleep                                     5s
+
+
+Select Security mode WPA-PSK for SSID 3
+    [Arguments]                                    ${password_failed_1}
+    ...                                            ${password_failed_2}
+    ...                                            ${correct_password}
+    ####Select Security for MAIN SSID
+    Log To Console                            \n\tSelect Security mode WPA-PSK for SSID 3
+
+    Configure Security Mode WPAPSK With Wrong Password            password=${password_failed_1}
+
+    Configure Security Mode WPAPSK With Wrong Password            password=${password_failed_2}
+
+    Configure WPA-PSK Mode                   password=${correct_password}
+    Sleep                                     5s
+
+
+# Configure WPAPSKWPA2PSK Mode
+    # [Arguments]                          ${encryptionType}=AES      ${password}=1234567890      ${channel}=AUTO
+    # ...                                  ${beacon_interval}=100    ${station_number}=30
+    # ...                                  ${bandsteering_mode}=Disable    ${airtime_fairness}=Enable     ${channel_bandwidth}=20MHz		${authen_mode}=WPAPSK/WPA2PSK		${wireless_mode}=802.11n
+
+	# ### Select Authentication Mode WPA2-PSK
+	# Select Authentication Type			${authen_mode}
+
+	# ### Select Encryption (encryptionType=AES/TKIP/TKIPAES )
+    # Log To Console                       \nSelect Encryption
+    # SL.Wait Until Element Is Visible     xpath=//div[@id='WPAPSKWPA2PSK_div']/table/tbody/tr[2]/td[5]/select
+    # ...                                  timeout=20s
+    # ...                                  error=\nEncryption Select Box Does Not Show Up
+    # Run Keyword If    '${encryptionType}' == 'AES'        SL.Select From List By Value      xpath=//div[@id='WPAPSKWPA2PSK_div']/table/tbody/tr[2]/td[5]/select     AES
+    # ...    ELSE IF    '${encryptionType}' == 'TKIP'       SL.Select From List By Value      xpath=//div[@id='WPAPSKWPA2PSK_div']/table/tbody/tr[2]/td[5]/select     TKIP
+    # ...    ELSE IF    '${encryptionType}' == 'TKIPAES'    SL.Select From List By Value      xpath=//div[@id='WPAPSKWPA2PSK_div']/table/tbody/tr[2]/td[5]/select     TKIPAES
+
+	# ###Input Password
+    # SL.Wait Until Element Is Visible    xpath=//input[@id="Wireless_Pass_3"]
+    # ...                                 timeout=10s
+    # ...                                 error=\nWPAPSKWPA2PSK Pre-Shared Key Does Not Show Up
+
+    # SL.Click Element                    xpath=//input[@id="Wireless_Pass_3"]
+    # SL.Clear Element Text               xpath=//input[@id="Wireless_Pass_3"]
+
+    # SL.Input Password                   xpath=//input[@id="Wireless_Pass_3"]          ${password}
+    # Sleep                               20s
+
+	# ###Check Access Point is On
+    # Log To Console                      \nCheck Access Point is On
+    # SL.Wait Until Element Is Visible    xpath=//tr[2]/td[5]/input
+    # ...                                 timeout=20s
+    # ...                                 error=\nAccess Point Checkbox Does Not Show up!
+    # SL.Click Element                    xpath=//input[@name="wlan_APenable"]
+    # Log To Console                      \n\t=> Access Point is On
+
+	# ### Select Channel (channel=AUTO/01/02/03/04/05/06/07/08/09/10/11)
+    # Log To Console                      \nSelect Channel
+    # SL.Wait Until Element Is Visible    xpath=//select[@name="Channel_ID"]
+    # ...                                 timeout=10s
+    # ...                                 error=\nChannel Select Box Does Not Show Up
+    # ${channel_value}=                   SL.Get Value        xpath=//option[contains(text(), "${channel}")]
+    # SL.Select From List By Value        xpath=//select[@name="Channel_ID"]         ${channel_value}
+    
+    # ### Select Wireless Mode
+	# Log To Console                       \nConfig Wireless Mode
+    # SeleniumNetworkWLAN24GHzLib.Select Wireless Mode                 ${wireless_mode}
+
+	# ### Input Beacon Interval
+    # Log To Console                      \nInput Beacon Interval
+    # SL.Wait Until Element Is Visible     xpath=//input[@name="BeaconInterval"]
+    # ...                                  timeout=15s
+    # ...                                  error=\nBeacon Interval Textbox Does Not Show Up
+    # SL.Input Text                        xpath=//input[@name="BeaconInterval"]         ${beacon_interval}
+
+
+	# ###Input Station Number
+    # Log To Console                      \nInput Station Number
+    # SL.Wait Until Element Is Visible     xpath=//input[@name="StationNum"]
+    # ...                                  timeout=15s
+    # ...                                  error=\nStation Number Textbox Does Not Show Up
+    # SL.Input Text                        xpath=//input[@name="StationNum"]         ${station_number}
+
+	# ###Select BandSteering mode
+    # Log To Console                       \nSelect BandSteering mode
+    # SL.Wait Until Element Is Visible     xpath=//select[@name='BandSteering']
+    # ...                                  timeout=20s
+    # ...                                  error=\nBandSteering mode Box Does Not Show Up
+    # Run Keyword If    '${bandsteering_mode}' == 'Disable'     SL.Select From List By Value      xpath=//select[@name='BandSteering']    0
+    # ...    ELSE                          SL.Select From List By Value      xpath=//select[@name='BandSteering']    1
+
+	# ###Select AirTime FairNess mode
+    # Log To Console                       \nSelect AirTime FairNess mode
+    # SL.Wait Until Element Is Visible     xpath=//select[@name='AirTimeFairness']
+    # ...                                  timeout=20s
+    # ...                                  error=\nAirTime FairNess mode Box Does Not Show Up
+    # Run Keyword If    '${airtime_fairness}' == 'Disable'     SL.Select From List By Value      xpath=//select[@name='AirTimeFairness']    0
+    # ...    ELSE                          SL.Select From List By Value      xpath=//select[@name='AirTimeFairness']    1
+
+	# ###Select Channel Bandwidth
+    # Log To Console                       \nSelect Channel Bandwidth
+    
+    # Run Keyword If    '${wireless_mode}' == '802.11n'       Select Channel Bandwidth 2.4GHz      ${channel_bandwidth}
+    # ...    ELSE IF    '${wireless_mode}' == '802.11g+n'       Select Channel Bandwidth 2.4GHz      ${channel_bandwidth}
+    # ...    ELSE IF    '${wireless_mode}' == '802.11b+g+n'       Select Channel Bandwidth 2.4GHz      ${channel_bandwidth}
+    # ...    ELSE                          Log To Console		Don't Need To Configure Channel Bandwidth
+    # SeleniumNetworkWLAN24GHzLib.Save Config SSID
+    # Sleep                               30s
+    # Log To Console                      \nChange network authentication to WPAPSKWPA2PSK
+    # SL.Unselect Frame
+
+
+Configure Security Mode WPAPSKWPA2PSK With Wrong Password
+    [Arguments]                          ${encryptionType}=AES      ${password}=1234567890
+
+	### Select Encryption (encryptionType=AES/TKIP/TKIPAES )
+    Log To Console                       \n\t\tSelect Encryption
+    SL.Wait Until Element Is Visible     xpath=//div[@id='WPAPSKWPA2PSK_div']/table/tbody/tr[2]/td[5]/select
+    ...                                  timeout=20s
+    ...                                  error=\nEncryption Select Box Does Not Show Up
+    Run Keyword If    '${encryptionType}' == 'AES'        SL.Select From List By Value      xpath=//div[@id='WPAPSKWPA2PSK_div']/table/tbody/tr[2]/td[5]/select     AES
+    ...    ELSE IF    '${encryptionType}' == 'TKIP'       SL.Select From List By Value      xpath=//div[@id='WPAPSKWPA2PSK_div']/table/tbody/tr[2]/td[5]/select     TKIP
+    ...    ELSE IF    '${encryptionType}' == 'TKIPAES'    SL.Select From List By Value      xpath=//div[@id='WPAPSKWPA2PSK_div']/table/tbody/tr[2]/td[5]/select     TKIPAES
+
+	###Input Password
+    SL.Wait Until Element Is Visible    xpath=//input[@id="Wireless_Pass_3"]
+    ...                                 timeout=10s
+    ...                                 error=\nWPAPSKWPA2PSK Pre-Shared Key Does Not Show Up
+
+    SL.Click Element                    xpath=//input[@id="Wireless_Pass_3"]
+    SL.Clear Element Text               xpath=//input[@id="Wireless_Pass_3"]
+
+    SL.Input Password                   xpath=//input[@id="Wireless_Pass_3"]          ${password}
+    SL.Click Element                    xpath=//input[@id="keyRenewalInterval3"]
+    SL.Handle Alert
+
+
+Select Security mode WPAPSKWPA2PSK for Main SSID
+    [Arguments]                                    ${password_failed_1}
+    ...                                            ${password_failed_2}
+    ...                                            ${correct_password}
+    ####Select Security for MAIN SSID
+    Log To Console                            \n\tSelect Security mode WPAPSKWPA2PSK for MAIN SSID
+
+    Log To Console                            \n\t\tConfigure Security Mode WPAPSKWPA2PSK With Wrong Password 1st
+    Configure Security Mode WPAPSKWPA2PSK With Wrong Password            password=${password_failed_1}
+
+    Log To Console                            \n\t\tConfigure Security Mode WPAPSKWPA2PSK With Wrong Password 2nd
+    Configure Security Mode WPAPSKWPA2PSK With Wrong Password            password=${password_failed_2}
+
+    Log To Console                            \n\t\tConfigure Security Mode With Correct Password
+    Configure WPAPSKWPA2PSK Mode              password=${correct_password}
+    Sleep                                     5s
+
+
+Select Security mode WPAPSKWPA2PSK for SSID 2
+    [Arguments]                               ${password_failed_1}
+    ...                                       ${password_failed_2}
+    ...                                       ${correct_password}
+    ####Select Security for MAIN SSID
+    Log To Console                            \n\tSelect Security mode WPAPSKWPA2PSK for SSID 2
+
+    Configure Security Mode WPAPSKWPA2PSK With Wrong Password            password=${password_failed_1}
+
+    Configure Security Mode WPAPSKWPA2PSK With Wrong Password            password=${password_failed_2}
+
+    Configure WPAPSKWPA2PSK Mode              password=${correct_password}
+    Sleep                                     5s
+
+
+Select Security mode WPAPSKWPA2PSK for SSID 3
+    [Arguments]                                    ${password_failed_1}
+    ...                                            ${password_failed_2}
+    ...                                            ${correct_password}
+    ####Select Security for MAIN SSID
+    Log To Console                            \n\tSelect Security mode WPAPSKWPA2PSK for SSID 3
+
+    Configure Security Mode WPAPSKWPA2PSK With Wrong Password            password=${password_failed_1}
+
+    Configure Security Mode WPAPSKWPA2PSK With Wrong Password            password=${password_failed_2}
+
+    Configure WPAPSKWPA2PSK Mode              password=${correct_password}
+    Sleep                                     5s
+
+
+Get original Main SSID in 2.4GHz
+    Open 2.4GHz Wireless Configure Tab
+    ###Get original SSID 1
+    SL.Select From List By Value         xpath=//select[@name="wlSsidIdx"]    0
+    SL.Wait Until Element Is Visible     xpath=//input[@name="wlSsid"]
+    ...                                  timeout=15s
+    ...                                  error=\nSSID Textbox Does Not Show Up
+    ${ssid_1}=     SL.Get Value          xpath=//input[@name="wlSsid"]
+    Return From Keyword                  ${ssid_1}
+
+
+Get original SSID 2 in 2.4GHz
+    Open 2.4GHz Wireless Configure Tab
+    ###Get original SSID 2
+    SL.Select From List By Value         xpath=//select[@name="wlSsidIdx"]    1
+    SL.Wait Until Element Is Visible     xpath=//input[@name="wlSsid"]
+    ...                                  timeout=15s
+    ...                                  error=\nSSID Textbox Does Not Show Up
+    ${ssid_2}=     SL.Get Value          xpath=//input[@name="wlSsid"]
+    Return From Keyword                  ${ssid_2}
+
+
+Get original SSID 3 in 2.4GHz
+    Open 2.4GHz Wireless Configure Tab
+    ###Get original SSID 3
+    SL.Select From List By Value         xpath=//select[@name="wlSsidIdx"]    2
+    SL.Wait Until Element Is Visible     xpath=//input[@name="wlSsid"]
+    ...                                  timeout=15s
+    ...                                  error=\nSSID Textbox Does Not Show Up
+    ${ssid_3}=     SL.Get Value          xpath=//input[@name="wlSsid"]
+    Return From Keyword                  ${ssid_3}
+
+
+
+SSID in 2.4GHz Should Be Set To Default
+    [Documentation]                           Verify wifi SSID in 2.4GHz should be set back to default.
+    ...                                       Input:
+    ...                                       1. ssid_prefix: Default is GW040_2.4G
+
+    [Arguments]                               ${ssid_prefix}=&{ONT}[SSID_24G]
+    ${ssid}=                                  Get SSID 2G
+    ${bssid}=                                 Get BSSID
+    ${bssidSplitedList}                       STR.Get Substring              ${bssid}     -8
+    ${bssidSplitedList}=                      STR.Remove String Using Regexp     ${bssidSplitedList}     :
+    Should Be Equal                           ${ssid}     ${ssid_prefix}_${bssidSplitedList}
+
+
+Change Wireless Names Mode Teardown
+    [Arguments]                         ${defaultSSID1}    ${defaultSSID2}    ${defaultSSID3}
+    Login To Browser                               remote_selenium_server_tmp=${REMOTE_SELENIUM_SERVER}
+    ...                                            url=${LOGIN_URL}
+    ...                                            username=${ONT_WEB_USER}
+    ...                                            password=&{ONT}[ONT_WEB_PASS]
+    ...                                            browser=${BROWSER}
+    Welcome Page Should Be Open
+    Open 2.4GHz Wireless Configure Tab
+    SL.Wait Until Element Is Visible                 xpath=//frame[@name="main"]       timeout=30s
+    SL.Select Frame                                  xpath=//frame[@name="main"]
+    Name SSID Index                                  ssid_index=1
+    ...                                              ssid=${defaultSSID1}
+    Save Config SSID
+    Name SSID Index                               ssid_index=2
+    ...                                      ssid=${defaultSSID2}
+    Save Config SSID
+    Name SSID Index                               ssid_index=3
+    ...                                      ssid=${defaultSSID3}
+    Save Config SSID
+    SL.Close All Browsers
+
+
+Select Channel Bandwidth 2.4GHz
+    [Documentation]                             20MHz
+    ...                                         20/40MHz
+    ...                                         40MHz
+	
+    [Arguments]                                 ${channel_bandwidth}
+
+	SL.Wait Until Element Is Visible            xpath=//select[@name='WLANChannelBandwidth']
+    ...                                         timeout=20s
+    ...                                         error=\nChannel Bandwidth mode Box Does Not Show Up
+    
+    Log To Console                              \nSelect Channel Bandwidth
+    Run Keyword If    '${channel_bandwidth}' == '20 MHz'       SL.Select From List By Value      xpath=//select[@name='WLANChannelBandwidth']    0
+    ...    ELSE IF    '${channel_bandwidth}' == '20/40 MHz'    SL.Select From List By Value      xpath=//select[@name='WLANChannelBandwidth']    1
+    ...    ELSE IF    '${channel_bandwidth}' == '40 MHz'       SL.Select From List By Value      xpath=//select[@name='WLANChannelBandwidth']    2    
+	Sleep                                       2s
+
+Get Web Element Custom By Name
+	[Arguments]                         ${locator}
+	${element}=			SL.Execute Javascript		return document.getElementsByName("${locator}")[0];
+	[Return]			${element}
+    
+Open Wireless Scheduling Page
+    [Arguments]                                ${url}=https://192.168.1.1/cgi-bin/WLAN_Scheduling.asp
+
+    SL.Go To                                   ${url}
+    SL.Wait Until Page Contains                Wireless LAN Scheduling
+    ...                                        timeout=20s
+    ...                                        error=\nWireless LAN Scheduling Page Not Found
+    SL.Page Should Contain                     Wireless LAN Scheduling
+
+Enable/Disable Wireless Scheduling
+    [Documentation]                         Enable/Disable
+    [Arguments]                             ${sche_mode}=Enable    
+
+    Log To Console                          \nSelect ${sche_mode} Wireless Scheduling
+    ${sche_status}=            SL.Execute Javascript            return document.querySelector("#ID_chkActive").checked
+    
+    Run Keyword If        '${sche_mode}' == 'Enable' and '${sche_status}' == 'False'        SL.Execute Javascript        document.querySelector("#ID_chkActive").click();
+    ...   ELSE IF         '${sche_mode}' == 'Disable' and '${sche_status}' == 'True'        SL.Execute Javascript        document.querySelector("#ID_chkActive").click();
+
+Config Scheduling Rule
+    [Documentation]                         Sun/Mon/Tue/Wed/Thu/Fri/Sat/Every
+    ...                                     On/Off
+    ...                                     Active/Deactive
+    ...                                     00/01/02/03/04/05/06/07/08/09/10/11/12/13/14/15/16/17/18/19/20/21/22/23
+    ...                                     00/01/02/03/04/05/06/07/08/09/10/11/12/13/14/15/16/17/18/19/20/21/22/23/24/25/26/27/28/29/30/31/32/33/34/35/36/37/38/39/40/41/42/43/44/45/46/47/48/49/50/51/52/53/54/55/56/57/58/59
+    
+    [Arguments]                             ${day}=Sun
+    ...                                     ${action}=On    
+    ...                                     ${day_mode}=Active
+    ...                                     ${start_h}=00
+    ...                                     ${start_m}=00
+    ...                                     ${end_h}=23
+    ...                                     ${end_m}=55
+
+    Log To Console                          \nConfig Scheduling Rule For ${day}day
+    Log To Console                          Select Action ${action}
+    Run Keyword If        '${action}' == 'On'        SL.Click Element        xpath=//input[@name="radio${day}Action" and @value="1"]
+    ...   ELSE IF         '${action}' == 'Off'       SL.Click Element        xpath=//input[@name="radio${day}Action" and @value="0"]
+
+    Log To Console                          Select ${day_mode} ${day}
+    ${day_status}=         SL.Execute Javascript                    return document.querySelector('[name="chk${day}Active"]').checked
+    Run Keyword If        '${day_mode}' == 'Active' and '${day_status}' == 'False'         SL.Execute Javascript        document.querySelector('[name="chk${day}Active"]').click();
+    ...   ELSE IF         '${day_mode}' == 'Deactive' and '${day_status}' == 'True'        SL.Execute Javascript        document.querySelector('[name="chk${day}Active"]').click();
+
+    Log To Console                              Select Start Time ${start_h}:${start_m}
+    SL.Select From List By Value                xpath=//select[@name="select${day}StartHH"]         ${start_h}
+    SL.Select From List By Value                xpath=//select[@name="select${day}StartMM"]         ${start_m}
+
+    Log To Console                              Select End Time ${end_h}:${end_m}
+    SL.Select From List By Value                xpath=//select[@name="select${day}EndHH"]           ${end_h}
+    SL.Select From List By Value                xpath=//select[@name="select${day}EndMM"]           ${end_m}
+
+Save Scheduling Settings
+    SL.Wait Until Element Is Visible      xpath=//input[@name="btnApply"]
+    ...                                   timeout=10s
+    ...                                   error=\nSave Button Not Found
+    SL.Click Element                      xpath=//input[@name="btnApply"]
+    Sleep                                 5s
+
+Popup Scheduling Special Should Be Visible
+    [Documentation]                     Handle popup Start time should be earlier than end time
+    ${popup_message}=                   SL.Handle Alert    timeout=10s
+    Log To Console                      Popup message: ${popup_message}
+    Should Contain                      ${popup_message}      Start time should be earlier than end time
+
+Verify Scheduling Mode
+    [Arguments]                         ${sche_mode}=Enable
+
+    Log To Console             \nVerify Scheduling Mode
+    ${sche_status}=            SL.Execute Javascript            return document.querySelector("#ID_chkActive").checked
+    Run Keyword If             '${sche_mode}' == 'Enable'          Should Be Equal        '${sche_status}'       'True' 
+    ...   ELSE IF              '${sche_mode}' == 'Disable'         Should Be Equal        '${sche_status}'       'False'
+    Log To Console             Get Scheduling Mode Has Match With Info Config!
+    
+Verify Scheduling Rule
+    [Arguments]                             ${day}=Sun
+    ...                                     ${action}=On    
+    ...                                     ${day_mode}=Active
+    ...                                     ${start_h}=00
+    ...                                     ${start_m}=00
+    ...                                     ${end_h}=23
+    ...                                     ${end_m}=55
+
+    Log To Console                          \nVerify Scheduling Rule ${day}day
+
+    ${action_status}=     SL.Execute Javascript        return document.querySelector('[name="radio${day}Action"]').checked
+    Run Keyword If        '${action}' == 'On'          Should Be Equal        '${action_status}'       'True' 
+    ...   ELSE IF         '${action}' == 'Off'         Should Be Equal        '${action_status}'       'False'
+
+    ${day_status}=        SL.Execute Javascript        return document.querySelector('[name="chk${day}Active"]').checked
+    Run Keyword If        '${day_mode}' == 'Active'          Should Be Equal        '${day_status}'       'True' 
+    ...   ELSE IF         '${day_mode}' == 'Deactive'        Should Be Equal        '${day_status}'       'False'
+
+    ${start_h_value}=            SL.Get Value                  xpath=//select[@name="select${day}StartHH"]
+    Should Be Equal              '${start_h_value}'            '${start_h}'
+
+    ${start_m_value}=            SL.Get Value                  xpath=//select[@name="select${day}StartMM"]
+    Should Be Equal              '${start_m_value}'            '${start_m}'
+
+    ${end_h_value}=              SL.Get Value                  xpath=//select[@name="select${day}EndHH"]
+    Should Be Equal              '${end_h_value}'              '${end_h}'
+
+    ${end_m_value}=              SL.Get Value                  xpath=//select[@name="select${day}EndMM"]
+    Should Be Equal              '${end_m_value}'              '${end_m}'
+
+    Log To Console               Get Scheduling Rule Has Match With Info Config!

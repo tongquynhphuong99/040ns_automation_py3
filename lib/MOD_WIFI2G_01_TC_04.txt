@@ -1,0 +1,199 @@
+*** Settings ***
+Library                                            SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
+Library                                            SSHLibrary    WITH NAME    SSHL
+Resource                                           selenium/Login/SeleniumLoginLib.txt
+Resource                                           selenium/Maintenance/SeleniumMaintenanceRebootResetLib.txt
+Resource                                           selenium/InterfaceSetup/SeleniumInterfaceSetupWireless24GHzLib.txt
+Resource                                           selenium/InterfaceSetup/SeleniumInterfaceSetupWireless5GHzLib.txt
+Resource                                           selenium/Status/SeleniumStatusDeviceInfoLib.txt
+Resource                                           ssh/SshLib.txt
+
+*** Variables ***
+
+*** Keywords ***
+MOD_WIFI2G_01_TC_04_Teardown
+    ##Teardown
+    Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
+
+    #####Factory Reset Via Web GUI
+    Login To Browser		                 password=&{ONT}[ONT_WEB_PASS]
+    Factory Reset Via Web GUI
+  
+    SL.Go To                                 url=${LOGIN_URL}
+    SL.Wait Until Element Is Visible         ${LOGIN_BUTTON}
+    ...                                      timeout=25s
+    ...                                      error=\nLogin Page Does Not Found!
+    Run Keyword If                           '${SWITCH_VARIABLE}' == '3'      Log To Console	\nDon't need to change password after reset factory
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '2'      Change Password WebGui
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '1'      Change Password WebGui
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '0'      Change Password WebGui    
+    SL.Delete All Cookies
+    SL.Close All Browsers
+
+    Open Connection And Login To Remote Machine    ssh_server_ip=${REMOTE_SERVER_IP}
+    ...                                            ssh_server_username=${REMOTE_SERVER_USERNAME}
+    ...                                            ssh_server_password=${REMOTE_SERVER_PASSWORD}
+    Delete All Wireless
+    Disable Wifi
+    SSHL.Close All Connections
+
+MOD_WIFI2G_01_TC_04
+    [Documentation]    Kiem tra kha nang cau hinh truong Cancel Broadcast SSID Wifi 2.4Ghz
+
+    SL.Set Selenium Speed                          0.5
+    SL.Set Selenium Timeout                        10s
+    Set Test Message                               *HTML* <b>MOD_WIFI2G_01_TC_04</b>
+
+    ### Step 1: On/Off Cancel Broadcast SSID 1 for Wifi 2.4Ghz on WebGui
+    Log To Console                                 \nStep 1: On/Off Cancel Broadcast SSID 1 for Wifi 2.4Ghz on WebGui
+
+    ## Step 1.1: Config Cancel Broadcast SSID 1 mode On
+    Log To Console                                 \nStep 1.1: Config Cancel Broadcast SSID 1 mode On
+    Login To Browser		                       password=&{ONT}[ONT_WEB_PASS]
+    SL.Select Frame                                xpath=//frame[@name="contentfrm"]
+    Open 2.4GHz Wireless Configure Page
+
+    # Config
+    Select SSID 2G Index                           ssid_index=1
+    Enable/Disable SSID 2G                         ssid_mode=On
+    Input SSID 2G Name                             ssid=${WIFI_SSID_1}
+    Config Cancel Broadcast                        cancel_broadcast=On
+    Save Config SSID
+    Logout WebGUI
+
+    # Verify Config: PC Connect to Wifi 2.4Ghz
+    Verify Wifi Rescan Not Contain                 ${WIFI_SSID_1}
+
+    ## Step 1.2: Config Cancel Broadcast SSID 1 mode Off
+    Log To Console                                 \nStep 1.2: Config Cancel Broadcast SSID 1 mode Off
+    Login To Browser		                       password=&{ONT}[ONT_WEB_PASS]
+    SL.Select Frame                                xpath=//frame[@name="contentfrm"]
+    Open 2.4GHz Wireless Configure Page
+
+    # Config
+    Select SSID 2G Index                           ssid_index=1
+    Enable/Disable SSID 2G                         ssid_mode=On
+    Input SSID 2G Name                             ssid=${WIFI_SSID_1}
+    Config Cancel Broadcast                        cancel_broadcast=Off
+    Save Config SSID
+    Logout WebGUI
+
+    # Verify Config: PC Connect to Wifi 2.4Ghz
+    Verify Wifi Rescan Contain                     ${WIFI_SSID_1}
+
+    ### Step 2: On/Off Cancel Broadcast SSID 2 for Wifi 2.4Ghz on WebGui
+    Log To Console                                 \nStep 2: On/Off Cancel Broadcast SSID 2 for Wifi 2.4Ghz on WebGui
+
+    ## Step 2.1: Config Cancel Broadcast SSID 2 mode On
+    Log To Console                                 \nStep 2.1: Config Cancel Broadcast SSID 2 mode On
+    Login To Browser		                       password=&{ONT}[ONT_WEB_PASS]
+    SL.Select Frame                                xpath=//frame[@name="contentfrm"]
+    Open 2.4GHz Wireless Configure Page
+
+    # Config
+    Select SSID 2G Index                           ssid_index=2
+    Enable/Disable SSID 2G                         ssid_mode=On
+    Input SSID 2G Name                             ssid=${WIFI_SSID_2}
+    Config Cancel Broadcast                        cancel_broadcast=On
+    Save Config SSID
+    Logout WebGUI
+
+    # Verify Config: PC Connect to Wifi 2.4Ghz
+    Verify Wifi Rescan Not Contain                 ${WIFI_SSID_2}
+
+    ## Step 2.2: Config Cancel Broadcast SSID 2 mode Off
+    Log To Console                                 \nStep 2.2: Config Cancel Broadcast SSID 2 mode Off
+    Login To Browser		                       password=&{ONT}[ONT_WEB_PASS]
+    SL.Select Frame                                xpath=//frame[@name="contentfrm"]
+    Open 2.4GHz Wireless Configure Page
+
+    # Config
+    Select SSID 2G Index                           ssid_index=2
+    Enable/Disable SSID 2G                         ssid_mode=On
+    Input SSID 2G Name                             ssid=${WIFI_SSID_2}
+    Config Cancel Broadcast                        cancel_broadcast=Off
+    Save Config SSID
+    Logout WebGUI
+
+    # Verify Config: PC Connect to Wifi 2.4Ghz
+    Verify Wifi Rescan Contain                     ${WIFI_SSID_2}
+
+    ### Step 3: On/Off Cancel Broadcast SSID 3 for Wifi 2.4Ghz on WebGui
+    Log To Console                                 \nStep 3: On/Off Cancel Broadcast SSID 3 for Wifi 2.4Ghz on WebGui
+
+    ## Step 3.1: Config Cancel Broadcast SSID 3 mode On
+    Log To Console                                 \nStep 3.1: Config Cancel Broadcast SSID 3 mode On
+    Login To Browser		                       password=&{ONT}[ONT_WEB_PASS]
+    SL.Select Frame                                xpath=//frame[@name="contentfrm"]
+    Open 2.4GHz Wireless Configure Page
+
+    # Config
+    Select SSID 2G Index                           ssid_index=3
+    Enable/Disable SSID 2G                         ssid_mode=On
+    Input SSID 2G Name                             ssid=${WIFI_SSID_3}
+    Config Cancel Broadcast                        cancel_broadcast=On
+    Save Config SSID
+    Logout WebGUI
+
+    # Verify Config: PC Connect to Wifi 2.4Ghz
+    Verify Wifi Rescan Not Contain                 ${WIFI_SSID_3}
+
+    ## Step 3.2: Config Cancel Broadcast SSID 3 mode Off
+    Log To Console                                 \nStep 3.2: Config Cancel Broadcast SSID 3 mode Off
+    Login To Browser		                       password=&{ONT}[ONT_WEB_PASS]
+    SL.Select Frame                                xpath=//frame[@name="contentfrm"]
+    Open 2.4GHz Wireless Configure Page
+
+    # Config
+    Select SSID 2G Index                           ssid_index=3
+    Enable/Disable SSID 2G                         ssid_mode=On
+    Input SSID 2G Name                             ssid=${WIFI_SSID_3}
+    Config Cancel Broadcast                        cancel_broadcast=Off
+    Save Config SSID
+    Logout WebGUI
+
+    # Verify Config: PC Connect to Wifi 2.4Ghz
+    Verify Wifi Rescan Contain                     ${WIFI_SSID_3}
+
+    ### Step 4: On/Off Cancel Broadcast SSID 4 for Wifi 2.4Ghz on WebGui
+    Log To Console                                 \nStep 4: On/Off Cancel Broadcast SSID 4 for Wifi 2.4Ghz on WebGui
+
+    ## Step 4.1: Config Cancel Broadcast SSID 4 mode On
+    Log To Console                                 \nStep 4.1: Config Cancel Broadcast SSID 4 mode On
+    Login To Browser		                       password=&{ONT}[ONT_WEB_PASS]
+    SL.Select Frame                                xpath=//frame[@name="contentfrm"]
+    Open 2.4GHz Wireless Configure Page
+
+    # Config
+    Select SSID 2G Index                           ssid_index=4
+    Enable/Disable SSID 2G                         ssid_mode=On
+    Input SSID 2G Name                             ssid=${WIFI_SSID_4}
+    Config Cancel Broadcast                        cancel_broadcast=On
+    Save Config SSID
+    Logout WebGUI
+
+    # Verify Config: PC Connect to Wifi 2.4Ghz
+    Verify Wifi Rescan Not Contain                 ${WIFI_SSID_4}
+
+    ## Step 4.2: Config Cancel Broadcast SSID 4 mode Off
+    Log To Console                                 \nStep 4.2: Config Cancel Broadcast SSID 4 mode Off
+    Login To Browser		                       password=&{ONT}[ONT_WEB_PASS]
+    SL.Select Frame                                xpath=//frame[@name="contentfrm"]
+    Open 2.4GHz Wireless Configure Page
+
+    # Config
+    Select SSID 2G Index                           ssid_index=4
+    Enable/Disable SSID 2G                         ssid_mode=On
+    Input SSID 2G Name                             ssid=${WIFI_SSID_4}
+    Config Cancel Broadcast                        cancel_broadcast=Off
+    Save Config SSID
+    Logout WebGUI
+
+    # Verify Config: PC Connect to Wifi 2.4Ghz
+    Verify Wifi Rescan Contain                     ${WIFI_SSID_4}
+
+    [Teardown]                                     Run Keyword And Ignore Error        MOD_WIFI2G_01_TC_04_Teardown
+
+# *** Test Cases ***
+# MOD_WIFI2G_01_TC_04
+#     MOD_WIFI2G_01_TC_04

@@ -1,0 +1,151 @@
+*** Settings ***
+Library                      SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
+
+*** Variables ***
+
+*** Keywords ***
+###
+Open DDNS Page
+    Log To Console                             \nAccess to Setup DDNS Page
+    [Arguments]                                ${url}=https://192.168.1.1/cgi-bin/access_ddns.asp
+
+    SL.Go To                                   ${url}
+    SL.Wait Until Page Contains                Dynamic DNS
+    ...                                        timeout=20s
+    ...                                        error=\nDynamic DNS Page Not Found
+    SL.Page Should Contain                     Dynamic DNS
+
+Open No-IP Page
+    Log To Console                             \nAccess to Setup DDNS Page
+    [Arguments]                                ${url}=https://192.168.1.1/cgi-bin/access_ddns.asp
+
+    SL.Go To                                   ${url}
+    SL.Wait Until Page Contains                Dynamic DNS
+    ...                                        timeout=20s
+    ...                                        error=\nDynamic DNS Page Not Found
+    SL.Page Should Contain                     Dynamic DNS
+
+###
+Select DDNS Mode
+    [Arguments]                            ${ddns_mode}=Activated    
+    Log To Console                         \nSelect DDNS ${ddns_mode}
+    Run Keyword If        '${ddns_mode}' == 'Activated'            SL.Execute Javascript        document.getElementsByName('Enable_DyDNS')[0].click();
+    ...   ELSE IF         '${ddns_mode}' == 'Deactivated'          SL.Execute Javascript        document.getElementsByName('Enable_DyDNS')[1].click();
+    Sleep                                  1s
+
+###
+Add Config DDNS
+    [Documentation]    Service Provider:   www.dyndns.org; 
+    ...                                    www.tzo.net; 
+    ...                                    www.zoneedit.com; 
+    ...                                    www.dhs.org; 
+    ...                                    www.hn.org; 
+    ...                                    www.ez-ip.net; 
+    ...                                    www.easydns.com;
+    ...                                    www.no-ip.com;
+
+    [Arguments]                            ${service_provider}    ${ddns_hostname}    ${ddns_username}    ${ddns_password}    ${wildcard_mode}=Yes     
+
+    #Select Service Provider
+    Log To Console                        Select Service Provider
+    SL.Select From List By Value          xpath=//select[@name='ddns_ServerName']      ${service_provider}
+
+    #Input Hostname
+    Log To Console                        Input Hostname
+    SL.Wait Until Element Is Visible      xpath=//input[@name="sysDNSHost"]
+    ...                                   timeout=10s
+    ...                                   error=\nHostname Text Box Not Found
+    SL.Input Text                         xpath=//input[@name="sysDNSHost"]            ${ddns_hostname}
+
+    #Input Username
+    Log To Console                        Input Username
+    SL.Wait Until Element Is Visible      xpath=//input[@name="sysDNSUser"]
+    ...                                   timeout=10s
+    ...                                   error=\nUsername Text Box Not Found
+    SL.Click Element                      xpath=//input[@name="sysDNSUser"]
+    SL.Input Text                         xpath=//input[@name="sysDNSUser"]            ${ddns_username}
+
+    #Input Password
+    Log To Console                        Input Password
+    SL.Wait Until Element Is Visible      xpath=//input[@name="sysDNSPassword"]
+    ...                                   timeout=10s
+    ...                                   error=\nPassword Text Box Not Found
+    SL.Click Element                      xpath=//input[@name="sysDNSPassword"]
+    SL.Input Text                         xpath=//input[@name="sysDNSPassword"]        ${ddns_password}
+
+    Log To Console                        Select Wildcard Support: ${wildcard_mode}
+    Run Keyword If        '${wildcard_mode}' == 'Yes'            SL.Execute Javascript        document.getElementsByName('Enable_Wildcard')[0].click();
+    ...   ELSE IF         '${wildcard_mode}' == 'No'             SL.Execute Javascript        document.getElementsByName('Enable_Wildcard')[1].click();
+
+###
+Save DDNS Settings
+    SL.Wait Until Element Is Visible       xpath=//input[@name="SaveBtn"]
+    ...                                    timeout=10s
+    ...                                    error=\nSave Button Not Found
+    SL.Click Element                       xpath=//input[@name="SaveBtn"]
+    Sleep                                  5s
+
+###
+Clear DDNS
+    Log To Console                         \nClear Rule DDNS
+    SL.Wait Until Element Is Visible       xpath=//input[@name="ClearBtn"]
+    ...                                    timeout=10s
+    ...                                    error=\nClear Button Not Found
+    SL.Click Element                       xpath=//input[@name="ClearBtn"]
+    Sleep                                  5s
+
+Verify DDNS Mode
+    [Arguments]                                             ${mode}
+
+    Log To Console                                          \nVerify DDNS Mode
+    ${status}=             SL.Execute Javascript            return document.querySelector("body > form > div > table:nth-child(1) > tbody > tr:nth-child(2) > td:nth-child(5) > input[type=RADIO]:nth-child(1)").checked
+    Run Keyword If         '${mode}' == 'Active'            Should Be Equal        '${status}'       'True'
+    ...    ELSE IF         '${mode}' == 'Deactive'          Should Be Equal        '${status}'       'False'
+    Log To Console                                          DDNS is ${mode}
+    Sleep                                                   1s
+
+Verify DDNS Rule
+    [Arguments]                            ${service_provider}    ${ddns_hostname}    ${ddns_username}    ${ddns_password}    ${wildcard_mode}=Yes     
+
+    Log To Console                         \nVerify DDNS Rule
+    ${service}=                            Get Value        xpath=//select[@name="ddns_ServerName"]/option[@selected=""]
+    Should Be Equal                        ${service}       ${service_provider}
+
+    ${hostname}=                           Get Value        xpath=//input[@name="sysDNSHost"]
+    Should Be Equal                        ${hostname}      ${ddns_hostname}
+
+    ${username}=                           Get Value        xpath=//input[@name="sysDNSUser"]
+    Should Be Equal                        ${username}      ${ddns_username}
+
+    ${password}=                           Get Value        xpath=//input[@name="sysDNSPassword"]
+    Should Be Equal                        ${password}      ${ddns_password}
+
+    ${wildcard}=           SL.Execute Javascript            return document.querySelector("body > form > div > table:nth-child(1) > tbody > tr:nth-child(7) > td:nth-child(5) > input[type=RADIO]:nth-child(1)").checked
+    Run Keyword If         '${wildcard_mode}' == 'Yes'      Should Be Equal        '${wildcard}'       'True'
+    ...    ELSE IF         '${wildcard_mode}' == 'No'       Should Be Equal        '${wildcard}'       'False'
+
+    Log To Console                         DDNS Rule Info has Match with Info Config!
+
+Verify DDNS Clear
+    # [Arguments]                            ${service_provider}    ${ddns_hostname}    ${ddns_username}    ${ddns_password}    ${wildcard_mode}=Yes     
+
+    Log To Console                         \nVerify DDNS Clear
+
+    Verify DDNS Mode                                       mode=Deactive
+
+    ${service}=                            Get Value        xpath=//select[@name="ddns_ServerName"]/option[@selected=""]
+    Should Be Equal                        '${service}'     'www.dyndns.org' 
+
+    ${hostname}=                           Get Value        xpath=//input[@name="sysDNSHost"]
+    Should Be Equal                        '${hostname}'    ''
+
+    ${username}=                           Get Value        xpath=//input[@name="sysDNSUser"]
+    Should Be Equal                        '${username}'    ''
+
+    ${password}=                           Get Value        xpath=//input[@name="sysDNSPassword"]
+    Should Be Equal                        '${password}'    ''
+
+    ${wildcard}=           SL.Execute Javascript            return document.querySelector("body > form > div > table:nth-child(1) > tbody > tr:nth-child(7) > td:nth-child(5) > input[type=RADIO]:nth-child(1)").checked
+    Should Be Equal        '${wildcard}'                    'False'
+
+    Log To Console                         Clear DDNS Rule Success!

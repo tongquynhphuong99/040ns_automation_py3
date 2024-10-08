@@ -1,0 +1,1198 @@
+*** Settings ***
+Library                                        SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
+
+*** Variables ***
+
+*** Keywords ***
+
+###
+Open Network Settings Wan Page
+    [Arguments]                                ${url}=https://192.168.1.1/cgi-bin/home_wan.asp
+
+    SL.Go To                                   ${url}
+    SL.Wait Until Page Contains                WAN
+    ...                                        timeout=20s
+    ...                                        error=\nNetwork Settings WAN Configure Page Not Found
+    SL.Page Should Contain                     WAN
+
+
+###
+Add New Wan Service
+    [Documentation]                            Adding new WAN service by click Create button.
+    
+    SL.Wait Until Element Is Visible           xpath=//input[@id="btnCreate"]
+    ...                                        timeout=20s
+    ...                                        error=\nCreate Button Does Not Found!
+    SL.Click Element                           xpath=//input[@id="btnCreate"]
+
+###
+Select Activated Button
+    [Documentation]                            	Select WAN Status Activated
+	
+    ### Choose wan status activated
+    SL.Wait Until Element Is Visible    	xpath=//input[@name="wan_VCStatus"]
+    ...                                 	timeout=10s
+    ...                                 	error=\nChoose Status WAN Box Not Found
+    SL.Click Element                    	xpath=//*[@id="div_isipv6sup"]/table/tbody/tr[2]/td[5]/input[1]
+
+###
+Select Deactivated Button
+    [Documentation]                            	Select WAN Status Activated
+	
+    ### Choose wan status activated
+    SL.Wait Until Element Is Visible    	xpath=//input[@name="wan_VCStatus"]
+    ...                                 	timeout=10s
+    ...                                 	error=\nChoose Status WAN Box Not Found    
+    SL.Click Element                    	xpath=//*[@id="div_isipv6sup"]/table/tbody/tr[2]/td[5]/input[2]
+
+###
+Select IPv4 Mode
+    SL.Click Element                           xpath=//div[@id='div_isipv6sup']/table/tbody/tr[3]/td[5]/input[1]
+    Log To Console                             \nSelect IPv4 Mode
+
+###
+Select IPv4/IPv6 Mode
+    SL.Click Element                           xpath=//div[@id='div_isipv6sup']/table/tbody/tr[3]/td[5]/input[2]
+    Log To Console                             \nSelect IPv4/IPv6 Mode
+
+###
+Select IPv6 Mode
+    SL.Click Element                           xpath=//div[@id='div_isipv6sup']/table/tbody/tr[3]/td[5]/input[3]
+    Log To Console                             \nSelect IPv6 Mode
+
+###
+Select Internet Service Protocol
+    [Documentation]                            	Select WAN Status Activated
+    ...						Input: ${isp}: Dynamic/Static/PPPoE/Bride_mode
+
+    [Arguments]                                	${isp}
+
+    # Select Internet Service Provider - Static IPOE
+    SL.Wait Until Element Is Visible    	xpath=//input[@name="wanTypeRadio"]
+    ...                                 	timeout=10s
+    ...                                 	error=\nIPoE Select Box Not Found
+    Run Keyword If		'${isp}' == 'Dynamic'			SL.Click Element                xpath=//*[@id="config"]/div[2]/table/tbody/tr[2]/td[5]/input
+    ...    ELSE IF      	'${isp}' == 'Static'			SL.Click Element                xpath=//*[@id="config"]/div[2]/table/tbody/tr[3]/td[5]/input
+    ...    ELSE IF      	'${isp}' == 'PPPoE'			SL.Click Element                xpath=//*[@id="config"]/div[2]/table/tbody/tr[4]/td[5]/input
+    ...    ELSE IF      	'${isp}' == 'Bride_Mode'		SL.Click Element                xpath=//*[@id="config"]/div[2]/table/tbody/tr[5]/td[5]/input
+
+###
+Input VLAN ID
+    [Arguments]                                ${vlan_id}
+
+    SL.Wait Until Element Is Visible          xpath=//input[@name="wan_vid"]
+    SL.Input Text                             xpath=//input[@name="wan_vid"]      ${vlan_id}
+
+###
+Select Tag Mode
+    SL.Click Element                           xpath=//div[2]/div/table/tbody/tr[2]/td[5]/input
+    Log To Console                             \nSelect Tag Mode
+
+###
+Select Untag Mode
+    SL.Click Element                           xpath=//div[2]/div/table/tbody/tr[2]/td[5]/input[2]
+    Log To Console                             \nSelect Untag Mode
+
+###
+Input 802.1P Priority
+    [Arguments]                                ${priority}
+
+    Log To Console                              \nInput 802.1P Priority
+    SL.Wait Until Element Is Visible            xpath=//input[@name="wan_dot1p"]
+    ...                                         timeout=10s
+    ...                                         error=\nPriority Text Box Not Found
+    SL.Input Text                               xpath=//input[@name="wan_dot1p"]        ${priority}
+
+###
+Select Connection Always On
+    SL.Wait Until Element Is Visible            xpath=//input[@name="wan_ConnectSelect"]
+    ...                                         timeout=10s
+    ...                                         error=\nWAN Connect Select Box Not Found
+    SL.Click Element				xpath=//input[@value="Connect_Keep_Alive"]
+    
+###
+Select Connection Manually
+    SL.Wait Until Element Is Visible            xpath=//input[@name="wan_ConnectSelect"]
+    ...                                         timeout=10s
+    ...                                         error=\nWAN Connect Select Box Not Found
+    SL.Click Element				xpath=//input[@value="Connect_Manually"]
+
+###
+Select Default Route PPPoE
+    SL.Wait Until Element Is Visible              xpath=//input[@name="WAN_DefaultRoute2"]     timeout=10s
+    ...                                           error=\nButton Select Default Route PPPoE does not show up
+    SL.Execute Javascript                         document.getElementsByName("WAN_DefaultRoute2")[0].click();
+    Log To Console                                \nSelect Default Route PPPoE Yes
+
+No Select Default Route PPPoE
+    SL.Wait Until Element Is Visible              xpath=//input[@name="WAN_DefaultRoute2"]     timeout=10s
+    ...                                           error=\nButton Select Default Route PPPoE does not show up
+    SL.Execute Javascript                         document.getElementsByName("WAN_DefaultRoute2")[1].click();
+    Log To Console                                \nSelect Default Route PPPoE No
+
+###
+Select Default Route Static
+    SL.Wait Until Element Is Visible              xpath=//input[@name="WAN_DefaultRoute1"]     timeout=10s
+    ...                                           error=\nButton Select Default Route IPoE Static does not show up
+    SL.Execute Javascript                         document.getElementsByName("WAN_DefaultRoute1")[0].click();
+    Log To Console                                \nSelect Default Route IPoE Static Yes
+
+No Select Default Route Static
+    SL.Wait Until Element Is Visible              xpath=//input[@name="WAN_DefaultRoute1"]     timeout=10s
+    ...                                           error=\nButton Select Default Route IPoE Static does not show up
+    SL.Execute Javascript                         document.getElementsByName("WAN_DefaultRoute1")[1].click();
+    Log To Console                                \nSelect Default Route IPoE Static No
+
+###
+Select Default Route Dynamic
+    SL.Wait Until Element Is Visible              xpath=//input[@name="WAN_DefaultRoute0"]     timeout=10s
+    ...                                           error=\nButton Select Default Route IPoE Dynamic does not show up
+    SL.Execute Javascript                         document.getElementsByName("WAN_DefaultRoute0")[0].click();
+    Log To Console                                \nSelect Default Route IPoE Dynamic Yes
+
+No Select Default Route Dynamic
+    SL.Wait Until Element Is Visible              xpath=//input[@name="WAN_DefaultRoute0"]     timeout=10s
+    ...                                           error=\nButton Select Default Route IPoE Dynamic does not show up
+    SL.Execute Javascript                         document.getElementsByName("WAN_DefaultRoute0")[1].click();
+    Log To Console                                \nSelect Default Route IPoE Dynamic No
+
+###
+Select NAT Mode PPPOE
+    [Arguments]                                	${nat}
+
+    Log To Console                              \nSelect NAT Mode
+    SL.Wait Until Element Is Visible            xpath=//select[@name="wan_NAT2"]
+    ...                                         timeout=10s
+    ...                                         error=\nNAT Selection Not Found
+    Run Keyword If    '${nat}' == 'Enable'      SL.Select From List By Index      xpath=//select[@name="wan_NAT2"]     0
+    ...    ELSE                                 SL.Select From List By Index      xpath=//select[@name="wan_NAT2"]     1
+
+###
+Select NAT Mode Dynamic
+    [Arguments]                                	${nat}
+
+    Log To Console                              \nSelect NAT Mode
+    SL.Wait Until Element Is Visible            xpath=//select[@name="wan_NAT0"]
+    ...                                         timeout=10s
+    ...                                         error=\nNAT Selection Not Found
+    Run Keyword If    '${nat}' == 'Enable'      SL.Select From List By Index      xpath=//select[@name="wan_NAT0"]     0
+    ...    ELSE                                 SL.Select From List By Index      xpath=//select[@name="wan_NAT0"]     1
+
+###
+Select NAT Mode Static
+    [Arguments]                                	${nat}
+
+    Log To Console                              \nSelect NAT Mode
+    SL.Wait Until Element Is Visible            xpath=//select[@name="wan_NAT1"]
+    ...                                         timeout=10s
+    ...                                         error=\nNAT Selection Not Found
+    Run Keyword If    '${nat}' == 'Enable'      SL.Select From List By Index      xpath=//select[@name="wan_NAT1"]     0
+    ...    ELSE                                 SL.Select From List By Index      xpath=//select[@name="wan_NAT1"]     1
+	
+###
+Select IGMP Mode Dynamic
+    [Arguments]                                	${igmp_mode}
+
+    Log To Console				\nSelect IGMP Mode
+    Run Keyword If                            	'${igmp_mode}' == 'Disable'        	SL.Click Element     xpath=//*[@id="div_ipv4IP"]/table/tbody/tr[2]/td[5]/input[2]
+    ...    ELSE IF                            	'${igmp_mode}' == 'Enable'         	SL.Click Element     xpath=//*[@id="div_ipv4IP"]/table/tbody/tr[2]/td[5]/input[1]
+	
+###
+Select IGMP Mode Static
+    [Arguments]                                	${igmp_mode}
+    Log To Console				\nSelect IGMP Mode
+    Run Keyword If                            	'${igmp_mode}' == 'Enable'        	SL.Click Element     xpath=//*[@id="div_ipv4igp"]/td[5]/input[1]
+    ...    ELSE IF                            	'${igmp_mode}' == 'Disable'         	SL.Click Element     xpath=//*[@id="div_ipv4igp"]/td[5]/input[2]
+	
+###
+Input MTU size WAN Dynamic
+    [Arguments]                                	${ppp_mtu_size}
+
+    Log To Console                              \nInput MTU size
+    SL.Wait Until Element Is Visible            xpath=//input[@name="wan_TCPMTU0"]
+    ...                                         timeout=10s
+    ...                                         error=\MTU Size Text Box Not Found
+    SL.Input Text                               xpath=//input[@name="wan_TCPMTU0"]    ${ppp_mtu_size}
+
+###
+Input MTU size WAN Static
+    [Arguments]                                	${ppp_mtu_size}
+
+    Log To Console                              \nInput MTU size
+    SL.Wait Until Element Is Visible            xpath=//input[@name="wan_TCPMTU1"]
+    ...                                         timeout=10s
+    ...                                         error=\MTU Size Text Box Not Found
+    SL.Input Text                               xpath=//input[@name="wan_TCPMTU1"]    ${ppp_mtu_size}
+
+###
+Input MTU size WAN PPPOE
+    [Arguments]                                	${ppp_mtu_size}
+
+    Log To Console                              \nInput MTU size
+    SL.Wait Until Element Is Visible            xpath=//input[@name="wan_TCPMTU2"]
+    ...                                         timeout=10s
+    ...                                         error=\MTU Size Text Box Not Found
+    SL.Input Text                               xpath=//input[@name="wan_TCPMTU2"]    ${ppp_mtu_size}
+
+###
+Input MTU size WAN Bridge
+    [Arguments]                                	${ppp_mtu_size}
+
+    Log To Console                              \nInput MTU size
+    SL.Wait Until Element Is Visible            xpath=//input[@name="wan_TCPBridge"]
+    ...                                         timeout=10s
+    ...                                         error=\MTU Size Text Box Not Found
+    SL.Input Text                               xpath=//input[@name="wan_TCPBridge"]    ${ppp_mtu_size}
+
+###
+Config Static IPv4 Options
+    [Arguments]                                		${static_ip_address}
+    ...                                        		${subnet_mask}
+    ...                                        		${gateway}
+
+    # Config static IP Address
+    SL.Wait Until Element Is Visible    		xpath=//input[@name="wan_StaticIPaddr1"]
+    ...                                 		timeout=10s
+    ...                                 		error=\Static IP Address Selection Not Found
+    SL.Input Text                       		xpath=//input[@name="wan_StaticIPaddr1"]	${static_ip_address}
+
+    # Config IP Subnet Maskn
+    SL.Wait Until Element Is Visible    		xpath=//input[@name="wan_StaticIPSubMask1"]
+    ...                                 		timeout=10s
+    ...                                 		error=\Subnet Mask Selection Not Found
+    SL.Input Text                       		xpath=//input[@name="wan_StaticIPSubMask1"]	${subnet_mask}
+
+    # Config Gateway
+    SL.Wait Until Element Is Visible    		xpath=//input[@name="wan_StaticIpGateway1"]
+    ...                                 		timeout=10s
+    ...                                 		error=\Gateway Selection Not Found
+    SL.Input Text                       		xpath=//input[@name="wan_StaticIpGateway1"]	${gateway}
+
+###
+Config PPP Username Password
+    [Arguments]                                		${ppp_username}
+    ...                                        		${ppp_password}
+
+    # Input PPP Username
+    Log To Console                              	\nInput PPP Username
+    SL.Wait Until Element Is Visible            	xpath=//input[@name="wan_PPPUsername"]
+    ...                                         	timeout=10s
+    ...                                         	error=\nPPP Username Text Box Not Found
+    SL.Input Text                               	xpath=//input[@name="wan_PPPUsername"]    	${ppp_username}
+
+    # Input PPP Password
+    Log To Console                              	\nInput PPP Password
+    SL.Wait Until Element Is Visible            	xpath=//input[@name="wan_PPPPassword"]
+    ...                                         	timeout=10s
+    ...                                         	error=\nPPP Password Text Box Not Found
+    SL.Input Text                               	xpath=//input[@name="wan_PPPPassword"]    	${ppp_password}
+
+###
+Select IPv6 Mode NDRA
+    SL.Click Element                           xpath=//div[@id='div_ipv6pdm']/table/tbody/tr[2]/td[5]/input[2]
+    Log To Console                             \nSelect IPv6 Mode NDRA
+
+###
+Select IPv6 Mode DHCP
+    SL.Click Element                           xpath=//div[@id='div_ipv6pdm']/table/tbody/tr[2]/td[5]/input
+    Log To Console                             \nSelect IPv6 Mode DHCP
+
+###
+Select IPv6 Mode Unnumbered
+    SL.Click Element                           xpath=//div[@id='div_ipv6pdm']/table/tbody/tr[2]/td[5]/input[3]
+    Log To Console                             Select IPv6 Mode Unnumbered
+
+###
+Select DHCP IPv6 Mode
+    [Arguments]                                ${dhcp_ipv6}=NDRA
+    SL.Wait Until Element Is Visible           xpath=//div[@id='div_ipv6pdm']/table/tbody/tr[2]/td[5]/input
+    ...                                        timeout=10s
+    ...                                        error=\nDHCP IPv6 Mode Select Box Not Found
+    Run Keyword If    '${dhcp_ipv6}' == 'NDRA'          Select IPv6 Mode NDRA
+    ...    ELSE IF    '${dhcp_ipv6}' == 'DHCP'          Select IPv6 Mode DHCP
+    ...    ELSE IF    '${dhcp_ipv6}' == 'Unnumbered'    Select IPv6 Mode Unnumbered
+    
+    
+###
+Click Button Save WAN
+    # Save Config WAN
+    SL.Wait Until Element Is Visible          xpath=//input[@name="SaveBtn"]
+    SL.Click Button                           xpath=//input[@name="SaveBtn"]
+    
+    
+Config IPv4 Dynamic WAN IPoE
+	[Documentation]                     Select and configure IPoE WAN Service IPv4
+    ...                                 Input:
+    ...									1. ${vlan_id}		: [0-4094]
+    ...									2. ${802.1p_id}		: [0-7]
+    ...									3. ${mvlan_id}		: [-1-4095] (-1 mean no multi VLAN)
+    ...									4. ${tcp_mtu}		: Default - 1500
+    ...									5. ${igmp_status}	: Enable/Disable
+    
+    [Arguments]                         ${vlan_id}
+    ...									${802.1p_id}
+    ...									${mvlan_id}
+    ...									${tcp_mtu}=1500
+    ...									${igmp_status}=Disable
+    
+    ##### Step1: Choose IPv4 #####
+    
+    ### Choose wan status activated
+    
+    SL.Wait Until Element Is Visible    xpath=//input[@name="wan_VCStatus"]
+    ...                                 timeout=10s
+    ...                                 error=\nChoose Status WAN Box Not Found
+
+    #Select Activated Box
+    SL.Click Element                    xpath=//*[@id="div_isipv6sup"]/table/tbody/tr[2]/td[5]/input[1]
+    	
+    ### Choose IPv4 version
+    	
+    SL.Wait Until Element Is Visible    xpath=//input[@name="ipVerRadio"]
+    ...                                 timeout=10s
+    ...                                 error=\nChoose IPv4 WAN Box Not Found
+    Log To Console						\n
+    SL.Click Element                    xpath=/html/body/form/div/div/div[1]/table/tbody/tr[3]/td[5]/input[1]
+    Log To Console						\n
+
+
+	##### Step2: Config 802.1q #####
+	
+	### Tag 802.1q
+	SL.Wait Until Element Is Visible    xpath=//input[@name="wan_dot1q"]
+    ...                                 timeout=10s
+    ...                                 error=\n802.1q Box Not Found
+	SL.Click Element                    xpath=//*[@id="div_8021q"]/table/tbody/tr[2]/td[5]/input[1]
+	
+	### Input VLAN
+	Input VLAN ID		${vlan_id}
+	
+	### Config 802.1p
+	SL.Wait Until Element Is Visible    xpath=//select[@name="wan_dot1pRemark"]
+    ...                                 timeout=10s
+    ...                                 error=\802.1p Selection Not Found
+	SL.Select From List By Index        xpath=//select[@name="wan_dot1pRemark"]     0
+	Sleep								1s
+	
+	SL.Wait Until Element Is Visible          xpath=//input[@name="wan_dot1p"]
+    SL.Input Text                             xpath=//input[@name="wan_dot1p"]      ${802.1p_id}
+	
+	##### Step3: Config Multi VLAN #####
+	SL.Wait Until Element Is Visible    xpath=//input[@name="wan_mvlan"]
+    ...                                 timeout=10s
+    ...                                 error=\Multi VLAN Selection Not Found
+    SL.Input Text                       xpath=//input[@name="wan_mvlan"]      ${mvlan_id}
+    
+    ##### Step4: Config Dynamic IP #####
+    
+    ##### Step4.1: Config IP Common Options ###
+    ### Bridge Interface - Deactivated
+    SL.Wait Until Element Is Visible    xpath=//input[@name="wan_BridgeInterface0"]
+    ...                                 timeout=10s
+    ...                                 error=\Bridge Interface Selection Not Found
+    SL.Click Element                    xpath=//*[@id="div_isp0encap"]/td[5]/input[2]
+    ### Set default route - yes
+    SL.Wait Until Element Is Visible    xpath=//input[@name="WAN_DefaultRoute0"]
+    ...                                 timeout=10s
+    ...                                 error=\Default Route Selection Not Found
+    SL.Click Element					xpath=//*[@id="div_isp0"]/table/tbody/tr[4]/td[5]/input[1]
+    ### Set TCP MTU Option
+    SL.Wait Until Element Is Visible          xpath=//input[@name="wan_TCPMTU0"]
+    SL.Input Text                             xpath=//input[@name="wan_TCPMTU0"]      ${tcp_mtu}
+    
+    ##### Step 4.2: Config IPv4 Options #####
+    ### Config NAT - Enable
+    SL.Wait Until Element Is Visible    xpath=//select[@name="wan_NAT0"]
+    ...                                 timeout=10s
+    ...                                 error=\NAT Selection Not Found
+	SL.Select From List By Index        xpath=//select[@name="wan_NAT0"]     0
+	Sleep								1s
+	### Config IGMP Proxy
+	Run Keyword If                            '${igmp_status}' == 'Disable'        SL.Click Element     xpath=//*[@id="div_ipv4IP"]/table/tbody/tr[2]/td[5]/input[2]
+    ...    ELSE IF                            '${igmp_status}' == 'Enable'         SL.Click Element     xpath=//*[@id="div_ipv4IP"]/table/tbody/tr[2]/td[5]/input[1]
+
+	### Save Config WAN
+	Click Button Save WAN
+	
+	
+Config Dual IP Dynamic WAN IPoE
+	[Documentation]                     Select and configure IPoE WAN Service Dual IPv4 & IPv6
+    ...                                 Input:
+    ...									1. ${vlan_id}		: [0-4094]
+    ...									2. ${802.1p_id}		: [0-7]
+    ...									3. ${mvlan_id}		: [-1-4095] (-1 mean no multi VLAN)
+    ...									4. ${dhcp_ipv6}		: DHCP/NDRA
+    ...									5. ${dhcp_pd}		: Enable/Disable
+    ...									6. ${mld_proxy}		: Enable/Disable
+    ...									7. ${tcp_mtu}		: Default - 1500
+    ...									8. ${igmp_status}	: Enable/Disable
+    
+    [Arguments]                         ${vlan_id}
+    ...									${802.1p_id}
+    ...									${mvlan_id}
+    ...									${dhcp_ipv6}
+    ...									${dhcp_pd}
+    ...									${mld_proxy}
+    ...									${tcp_mtu}
+    ...									${igmp_status}
+    
+    ##### Step1: Choose IPv4 #####
+    
+    ### Choose wan status activated
+    
+    SL.Wait Until Element Is Visible    xpath=//input[@name="wan_VCStatus"]
+    ...                                 timeout=10s
+    ...                                 error=\nChoose Status WAN Box Not Found
+
+    #Select Activated Box
+    SL.Click Element                    xpath=//*[@id="div_isipv6sup"]/table/tbody/tr[2]/td[5]/input[1]
+    	
+    ### Choose IPv4 & IPv6 version
+    	
+    SL.Wait Until Element Is Visible    xpath=//input[@name="ipVerRadio"]
+    ...                                 timeout=10s
+    ...                                 error=\nChoose IPv4 WAN Box Not Found
+    Log To Console						\n1
+    SL.Click Element                    xpath=//*[@id="div_isipv6sup"]/table/tbody/tr[3]/td[5]/input[2]
+    Log To Console						\n2
+
+
+	##### Step2: Config 802.1q #####
+	
+	### Tag 802.1q
+	SL.Wait Until Element Is Visible    xpath=//input[@name="wan_dot1q"]
+    ...                                 timeout=10s
+    ...                                 error=\n802.1q Box Not Found
+	SL.Click Element                    xpath=//*[@id="div_8021q"]/table/tbody/tr[2]/td[5]/input[1]
+	
+	### Input VLAN
+	SL.Wait Until Element Is Visible          xpath=//input[@name="wan_vid"]
+    SL.Input Text                             xpath=//input[@name="wan_vid"]      ${vlan_id}
+	
+	### Config 802.1p
+	SL.Wait Until Element Is Visible    xpath=//select[@name="wan_dot1pRemark"]
+    ...                                 timeout=10s
+    ...                                 error=\802.1p Selection Not Found
+	SL.Select From List By Index        xpath=//select[@name="wan_dot1pRemark"]     0
+	Sleep								1s
+	
+	SL.Wait Until Element Is Visible          xpath=//input[@name="wan_dot1p"]
+    SL.Input Text                             xpath=//input[@name="wan_dot1p"]      ${802.1p_id}
+	
+	##### Step3: Config Multi VLAN #####
+	SL.Wait Until Element Is Visible    xpath=//input[@name="wan_mvlan"]
+    ...                                 timeout=10s
+    ...                                 error=\Multi VLAN Selection Not Found
+    SL.Input Text                       xpath=//input[@name="wan_mvlan"]      ${mvlan_id}
+    
+    ##### Step4: Config Dynamic IP #####
+    
+    ##### Step4.1: Config IP Common Options ###
+    ### Bridge Interface - Deactivated
+    SL.Wait Until Element Is Visible    xpath=//input[@name="wan_BridgeInterface0"]
+    ...                                 timeout=10s
+    ...                                 error=\Bridge Interface Selection Not Found
+    SL.Click Element                    xpath=//*[@id="div_isp0encap"]/td[5]/input[2]
+    ### Set default route - yes
+    SL.Wait Until Element Is Visible    xpath=//input[@name="WAN_DefaultRoute0"]
+    ...                                 timeout=10s
+    ...                                 error=\Default Route Selection Not Found
+    SL.Click Element					xpath=//*[@id="div_isp0"]/table/tbody/tr[4]/td[5]/input[1]
+    ### Set TCP MTU Option
+    SL.Wait Until Element Is Visible          xpath=//input[@name="wan_TCPMTU0"]
+    SL.Input Text                             xpath=//input[@name="wan_TCPMTU0"]      ${tcp_mtu}
+    
+    ##### Step 4.2: Config IPv4 Options #####
+    ### Config NAT - Enable
+    SL.Wait Until Element Is Visible    xpath=//select[@name="wan_NAT0"]
+    ...                                 timeout=10s
+    ...                                 error=\NAT Selection Not Found
+	SL.Select From List By Index        xpath=//select[@name="wan_NAT0"]     0
+	Sleep								1s
+	### Config IGMP Proxy
+	Run Keyword If                            '${igmp_status}' == 'Disable'        SL.Click Element     xpath=//*[@id="div_ipv4IP"]/table/tbody/tr[2]/td[5]/input[2]
+    ...    ELSE IF                            '${igmp_status}' == 'Enable'         SL.Click Element     xpath=//*[@id="div_ipv4IP"]/table/tbody/tr[2]/td[5]/input[1]
+    
+    ##### Step5: Config IPv6  Address #####
+    ### Config DHCP IPv6
+    Run Keyword If                            '${dhcp_ipv6}' == 'DHCP'        SL.Click Element     xpath=//*[@id="div_ipv6dhcp"]/table/tbody/tr[3]/td[5]/input[1]
+    ...    ELSE IF                            '${dhcp_ipv6}' == 'NDRA'        SL.Click Element     xpath=//*[@id="div_ipv6dhcp"]/table/tbody/tr[3]/td[5]/input[2]
+    ### Config DHCP PD
+    Run Keyword If                            '${dhcp_pd}' == 'Enable'        SL.Click Element     xpath=//*[@id="div_ipv6dhcp"]/table/tbody/tr[4]/td[5]/input[1]
+    ...    ELSE IF                            '${dhcp_pd}' == 'Disable'       SL.Click Element     xpath=//*[@id="div_ipv6dhcp"]/table/tbody/tr[4]/td[5]/input[2]
+    ### Config MLD Proxy
+    Run Keyword If                            '${mld_proxy}' == 'Enable'        SL.Click Element     xpath=//*[@id="div_ipv6dhcp"]/table/tbody/tr[5]/td[5]/input[1]
+    ...    ELSE IF                            '${mld_proxy}' == 'Disable'       SL.Click Element     xpath=//*[@id="div_ipv6dhcp"]/table/tbody/tr[5]/td[5]/input[2]
+
+	### Save Config WAN
+	SL.Wait Until Element Is Visible          xpath=//input[@name="SaveBtn"]
+    SL.Click Button                           xpath=//input[@name="SaveBtn"]
+	
+	
+Create Static IPoE WAN Service
+    [Documentation]                     Create And Configure Static IPoE WAN Service
+    
+    [Arguments]                         				${vlan_id}=1066
+    ...									${802.1p_id}=0
+    ...									${mvlan_id}=-1
+    ...									${static_ip_addres}=10.84.66.105
+    ...									${subnet_mask}=255.255.255.0
+    ...									${gateway}=10.84.66.1
+    ...									${nat}=Enable
+    ...									${igmp_proxy}=Disable
+    ...									${tcp_mtu}=1500
+	
+
+    # Select Internet Service Provider - Static IPOE
+    SL.Wait Until Element Is Visible    xpath=//input[@name="wanTypeRadio"]
+    ...                                 timeout=10s
+    ...                                 error=\nIPoE Select Box Not Found
+    SL.Click Element                    xpath=//*[@id="config"]/div[2]/table/tbody/tr[3]/td[5]/input
+    
+    ##### Step1: Choose IPv4 #####
+    
+    ### Choose wan status activated
+    
+    SL.Wait Until Element Is Visible    xpath=//input[@name="wan_VCStatus"]
+    ...                                 timeout=10s
+    ...                                 error=\nChoose Status WAN Box Not Found
+
+    #Select Activated Box
+    SL.Click Element                    xpath=//*[@id="div_isipv6sup"]/table/tbody/tr[2]/td[5]/input[1]
+    	
+    ### Choose IPv4 version
+    	
+    SL.Wait Until Element Is Visible    xpath=//input[@name="ipVerRadio"]
+    ...                                 timeout=10s
+    ...                                 error=\nChoose IPv4 WAN Box Not Found
+    Log To Console						\n1
+    SL.Click Element                    xpath=/html/body/form/div/div/div[1]/table/tbody/tr[3]/td[5]/input[1]
+    Log To Console						\n2
+
+
+	##### Step2: Config 802.1q #####
+	
+	### Tag 802.1q
+	SL.Wait Until Element Is Visible    xpath=//input[@name="wan_dot1q"]
+    ...                                 timeout=10s
+    ...                                 error=\n802.1q Box Not Found
+	SL.Click Element                    xpath=//*[@id="div_8021q"]/table/tbody/tr[2]/td[5]/input[1]
+	
+	### Input VLAN
+	SL.Wait Until Element Is Visible          xpath=//input[@name="wan_vid"]
+    SL.Input Text                             xpath=//input[@name="wan_vid"]      ${vlan_id}
+	
+	### Config 802.1p
+	SL.Wait Until Element Is Visible    xpath=//select[@name="wan_dot1pRemark"]
+    ...                                 timeout=10s
+    ...                                 error=\802.1p Selection Not Found
+	SL.Select From List By Index        xpath=//select[@name="wan_dot1pRemark"]     0
+	Sleep								1s
+	
+	SL.Wait Until Element Is Visible          xpath=//input[@name="wan_dot1p"]
+    SL.Input Text                             xpath=//input[@name="wan_dot1p"]      ${802.1p_id}
+	
+	##### Step3: Config Multi VLAN #####
+	SL.Wait Until Element Is Visible    xpath=//input[@name="wan_mvlan"]
+    ...                                 timeout=10s
+    ...                                 error=\Multi VLAN Selection Not Found
+    SL.Input Text                       xpath=//input[@name="wan_mvlan"]      ${mvlan_id}
+    
+    ##### Step4: Config Static IP #####
+    
+    ##### Step4.1: Config IP Common Options ###
+    ### Bridge Interface - Deactivated
+    SL.Wait Until Element Is Visible    xpath=//input[@name="wan_BridgeInterface1"]
+    ...                                 timeout=10s
+    ...                                 error=\Bridge Interface Selection Not Found
+    SL.Click Element                    xpath=//*[@id="div_isp1encap"]/td[5]/input[2]
+    ### Set default route - yes
+    SL.Wait Until Element Is Visible    xpath=//input[@name="WAN_DefaultRoute1"]
+    ...                                 timeout=10s
+    ...                                 error=\Default Route Selection Not Found
+    SL.Click Element					xpath=//*[@id="div_isp1"]/table[1]/tbody/tr[4]/td[5]/input[1]
+    ### Set TCP MTU Option
+    SL.Wait Until Element Is Visible          xpath=//input[@name="wan_TCPMTU1"]
+    SL.Input Text                             xpath=//input[@name="wan_TCPMTU1"]      ${tcp_mtu}
+    
+    ##### Step4.2: Config IPv4 Options #####
+    ### Config static IP Address
+    SL.Wait Until Element Is Visible    xpath=//input[@name="wan_StaticIPaddr1"]
+    ...                                 timeout=10s
+    ...                                 error=\Static IP Address Selection Not Found
+    SL.Input Text                       xpath=//input[@name="wan_StaticIPaddr1"]      ${static_ip_addres}
+    ### Config IP Subnet Maskn
+    SL.Wait Until Element Is Visible    xpath=//input[@name="wan_StaticIPSubMask1"]
+    ...                                 timeout=10s
+    ...                                 error=\Subnet Mask Selection Not Found
+    SL.Input Text                       xpath=//input[@name="wan_StaticIPSubMask1"]      ${subnet_mask}
+    ### Config Gateway
+    SL.Wait Until Element Is Visible    xpath=//input[@name="wan_StaticIpGateway1"]
+    ...                                 timeout=10s
+    ...                                 error=\Gateway Selection Not Found
+    SL.Input Text                       xpath=//input[@name="wan_StaticIpGateway1"]      ${gateway}
+    ### Config NAT
+    SL.Wait Until Element Is Visible    xpath=//select[@name="wan_NAT1"]
+    ...                                 timeout=10s
+    ...                                 error=\NAT Selection Not Found
+    Run Keyword If                            '${nat}' == 'Enable'        SL.Select From List By Index        xpath=//select[@name="wan_NAT1"]     0
+    ...    ELSE IF                            '${nat}' == 'Disable'       SL.Select From List By Index        xpath=//select[@name="wan_NAT1"]     1
+    
+    ### Config IGMP Proxy
+    SL.Wait Until Element Is Visible    xpath=//input[@name="wan_IGMP1"]
+    ...                                 timeout=10s
+    ...                                 error=\IGMP Selection Not Found
+    Run Keyword If                            '${igmp_proxy}' == 'Enable'        SL.Click Element     xpath=//*[@id="div_ipv4igp"]/td[5]/input[1]
+    ...    ELSE IF                            '${igmp_proxy}' == 'Disable'       SL.Click Element     xpath=//*[@id="div_ipv4igp"]/td[5]/input[2]
+    ### Save Config WAN
+	SL.Wait Until Element Is Visible          xpath=//input[@name="SaveBtn"]
+    
+    Run Keyword And Continue On Failure       SL.Click Button    xpath=//input[@name="SaveBtn"]
+
+Create Dynamic IPoE WAN Service
+	[Documentation]                     Create And Configure Static IPoE WAN Service
+    ...                                 Input:
+    
+    [Arguments]                         ${vlan_id}
+    ...									${802.1p_id}
+    ...									${mvlan_id}
+    ...									${nat}
+    ...									${igmp_proxy}=Disable
+    ...									${tcp_mtu}=1500
+	
+
+    ### Click button create to create new WAN
+    Add New Wan Service
+    
+    
+    #Select Internet Service Provider - Static IPOE
+    SL.Wait Until Element Is Visible    xpath=//input[@name="wanTypeRadio"]
+    ...                                 timeout=10s
+    ...                                 error=\nIPoE Select Box Not Found
+    SL.Click Element                    xpath=//*[@id="config"]/div[2]/table/tbody/tr[2]/td[5]/input
+    
+    ##### Step1: Choose IPv4 #####
+    
+    ### Choose wan status activated
+    
+    SL.Wait Until Element Is Visible    xpath=//input[@name="wan_VCStatus"]
+    ...                                 timeout=10s
+    ...                                 error=\nChoose Status WAN Box Not Found
+
+    #Select Activated Box
+    SL.Click Element                    xpath=//*[@id="div_isipv6sup"]/table/tbody/tr[2]/td[5]/input[1]
+    	
+    ### Choose IPv4 version
+    	
+    SL.Wait Until Element Is Visible    xpath=//input[@name="ipVerRadio"]
+    ...                                 timeout=10s
+    ...                                 error=\nChoose IPv4 WAN Box Not Found
+    Log To Console						\n1
+    SL.Click Element                    xpath=/html/body/form/div/div/div[1]/table/tbody/tr[3]/td[5]/input[1]
+    Log To Console						\n2
+
+
+	##### Step2: Config 802.1q #####
+	
+	### Tag 802.1q
+	SL.Wait Until Element Is Visible    xpath=//input[@name="wan_dot1q"]
+    ...                                 timeout=10s
+    ...                                 error=\n802.1q Box Not Found
+	SL.Click Element                    xpath=//*[@id="div_8021q"]/table/tbody/tr[2]/td[5]/input[1]
+	
+	### Input VLAN
+	SL.Wait Until Element Is Visible          xpath=//input[@name="wan_vid"]
+    SL.Input Text                             xpath=//input[@name="wan_vid"]      ${vlan_id}
+	
+	### Config 802.1p
+	SL.Wait Until Element Is Visible    xpath=//select[@name="wan_dot1pRemark"]
+    ...                                 timeout=10s
+    ...                                 error=\802.1p Selection Not Found
+	SL.Select From List By Index        xpath=//select[@name="wan_dot1pRemark"]     0
+	Sleep								1s
+	
+	SL.Wait Until Element Is Visible          xpath=//input[@name="wan_dot1p"]
+    SL.Input Text                             xpath=//input[@name="wan_dot1p"]      ${802.1p_id}
+	
+	##### Step3: Config Multi VLAN #####
+	SL.Wait Until Element Is Visible    xpath=//input[@name="wan_mvlan"]
+    ...                                 timeout=10s
+    ...                                 error=\Multi VLAN Selection Not Found
+    SL.Input Text                       xpath=//input[@name="wan_mvlan"]      ${mvlan_id}
+
+    # SL.Wait Until Element Is Visible    xpath=//input[@name="wan_BridgeInterface1"]
+    # ...                                 timeout=10s
+    # ...                                 error=\Bridge Interface Selection Not Found
+    # SL.Click Element                    xpath=//*[@id="div_isp1encap"]/td[5]/input[2]
+    ### Set default route - yes
+    # SL.Wait Until Element Is Visible    xpath=//input[@name="WAN_DefaultRoute1"]
+    # ...                                 timeout=10s
+    # ...                                 error=\Default Route Selection Not Found
+    # SL.Click Element					xpath=//*[@id="div_isp1"]/table[1]/tbody/tr[4]/td[5]/input[1]
+    ### Set TCP MTU Option
+    SL.Wait Until Element Is Visible          xpath=//*[@id="div_isp0"]/table/tbody/tr[5]/td[5]/input
+    SL.Input Text                             xpath=//*[@id="div_isp0"]/table/tbody/tr[5]/td[5]/input     ${tcp_mtu}
+    
+
+    ### Config NAT
+    SL.Wait Until Element Is Visible    xpath=//select[@name="wan_NAT0"]
+    ...                                 timeout=10s
+    ...                                 error=\NAT Selection Not Found
+    Run Keyword If                            '${nat}' == 'Enable'        SL.Select From List By Index        xpath=//select[@name="wan_NAT0"]     0
+    ...    ELSE IF                            '${nat}' == 'Disable'       SL.Select From List By Index        xpath=//select[@name="wan_NAT0"]     1
+    
+    ### Config IGMP Proxy
+    SL.Wait Until Element Is Visible    xpath=//input[@name="wan_IGMP0"]
+    ...                                 timeout=10s
+    ...                                 error=\IGMP Selection Not Found
+    Run Keyword If                            '${igmp_proxy}' == 'Enable'        SL.Click Element     xpath=//*[@id="div_ipv4IP"]/table/tbody/tr[2]/td[5]/input[1]
+    ...    ELSE IF                            '${igmp_proxy}' == 'Disable'       SL.Click Element     xpath=//*[@id="div_ipv4IP"]/table/tbody/tr[2]/td[5]/input[2]
+    ### Save Config WAN
+	SL.Wait Until Element Is Visible          xpath=//input[@name="SaveBtn"]
+    
+    Run Keyword And Continue On Failure       SL.Click Button    xpath=//input[@name="SaveBtn"]
+
+###
+Select PPPoE Wan Service
+    [Documentation]                            Select and configure PPPoE WAN Service
+    ...                                        Input:
+    ...                                        1. Network_protocol (IP Version): IPv4/IPv4&IPv6/IPv6
+    ...                                        2. 802.1q: Tag
+    ...                                        3. VLAN ID: [0-4094]
+    ...                                        4. 802.1p: Remark
+    ...                                        5. Priority: [0-7]
+    ...                                        6. Multi VLan: -1
+    ...                                        7. ppp_username: Default value is empty
+    ...                                        8. ppp_password: Default value is empty
+    ...                                        9. Default Route: Default value is "Yes"
+    ...                                        10. Nat: Enable
+    ...                                        11.TCP MTU Option: Default value is 1492
+    ...                                        12.DHCP IPv6 Mode: Default is NDRA
+
+    [Arguments]                                ${network_protocol}
+    ...                                        ${8021q}
+    ...                                        ${vlan_id}
+    ...                                        ${8021p}
+    ...                                        ${priority}
+    ...                                        ${multi_vLan}
+    ...                                        ${ppp_username}
+    ...                                        ${ppp_password}
+    ...                                        ${default_route}=Yes
+    ...                                        ${nat}=Enable
+    ...                                        ${ppp_mtu_size}=1492
+    ...                                        ${dhcp_ipv6}=NDRA
+
+
+    # Select network procotol
+    SL.Wait Until Element Is Visible           xpath=//div[@id='div_isipv6sup']/table/tbody/tr[3]/td[5]/input
+    ...                                        timeout=20s
+    ...                                        error=\nNetwork Procotol Selection Not Found
+    Run Keyword If    '${network_protocol}' == 'IPv4'         Select IPv4 Mode
+    ...    ELSE IF    '${network_protocol}' == 'IPv4/IPv6'    Select IPv4/IPv6 Mode
+    ...    ELSE IF    '${network_protocol}' == 'IPv6'         Select IPv6 Mode
+
+    # Select Wan Service Mode: PPPoE
+    SL.Click Element                            xpath=//div[@id='config']/div[2]/table/tbody/tr[4]/td[5]/input
+
+    # Select 802.1q Standard: TAG
+    SL.Wait Until Element Is Visible            xpath=//div[2]/div/table/tbody/tr[2]/td[5]/input
+    ...                                         timeout=20s
+    ...                                         error=\n802.1q Standard Selection Not Found
+    Run Keyword If    '${8021q}' == 'Tag'       Select Tag Mode
+    ...    ELSE                                 Select Untag Mode
+
+    #Input VLAN ID
+    Log To Console                              \nInput VLAN ID
+    SL.Wait Until Element Is Visible            xpath=//input[@name="wan_vid"]
+    ...                                         timeout=10s
+    ...                                         error=\nVLAN ID Text Box Not Found
+    SL.Input Text                               xpath=//input[@name="wan_vid"]           ${vlan_id}
+
+    # Choose 802.1p Standard: REMARK
+    Log To Console                              \nChoose 802.1p Standard: REMARK
+    SL.Wait Until Element Is Visible            xpath=//select[@name="wan_dot1pRemark"]
+    ...                                         timeout=10s
+    ...                                         error=\n802.1p Select Box Not Found
+    Run Keyword If    '${8021p}' == 'Remark'    SL.Select From List By Index      xpath=//select[@name="wan_dot1pRemark"]     0
+    ...    ELSE                                 SL.Select From List By Index      xpath=//select[@name="wan_dot1pRemark"]     1
+
+    # Input 802.1P Priority
+    Run Keyword If    '${8021p}' == 'Remark'         Input 802.1P Priority    ${priority}
+
+    # Input Multi VLAN: -1
+    Log To Console                              \nInput Multi VLAN
+    SL.Wait Until Element Is Visible            xpath=//input[@name="wan_mvlan"]
+    ...                                         timeout=10s
+    ...                                         error=\nMulti VLan Text Box Not Found
+    SL.Input Text                               xpath=//input[@name="wan_mvlan"]        ${multi_vLan}
+
+    #Input PPP Username
+    Log To Console                              \nInput PPP Username
+    SL.Wait Until Element Is Visible            xpath=//input[@name="wan_PPPUsername"]
+    ...                                         timeout=10s
+    ...                                         error=\nPPP Username Text Box Not Found
+    SL.Input Text                               xpath=//input[@name="wan_PPPUsername"]    ${ppp_username}
+
+    #Input PPP Password
+    Log To Console                              \nInput PPP Password
+    SL.Wait Until Element Is Visible            xpath=//input[@name="wan_PPPPassword"]
+    ...                                         timeout=10s
+    ...                                         error=\nPPP Password Text Box Not Found
+    SL.Input Text                               xpath=//input[@name="wan_PPPPassword"]    ${ppp_password}
+
+    # Select Default Route: Yes
+    SL.Wait Until Element Is Visible           xpath=//div[@id='div_isp2']/table/tbody/tr[12]/td[5]/input
+    ...                                        timeout=20s
+    ...                                        error=\nDefault Route Selection Not Found
+    Run Keyword If    '${default_route}' == 'Yes'      Select Default Route PPPOE
+    ...    ELSE                                        No Select Default Route PPPOE
+
+    # Select NAT, Only Apply with IPv4 or Dual IPv4-IPv6
+    Run Keyword If    '${network_protocol}' == 'IPv4'         Select NAT Mode PPPOE    ${nat}
+    ...    ELSE IF    '${network_protocol}' == 'IPv4/IPv6'    Select NAT Mode PPPOE    ${nat}
+
+    #Input MTU size, Only Apply with IPv4 or Dual IPv4-IPv6
+    Run Keyword If    '${network_protocol}' == 'IPv4'         Input MTU size WAN PPPOE    ${ppp_mtu_size}
+    ...    ELSE IF    '${network_protocol}' == 'IPv4/IPv6'    Input MTU size WAN PPPOE    ${ppp_mtu_size}
+
+    # Configure DHCP IPv6 Mode
+    Run Keyword If    '${network_protocol}' == 'IPv4'      Log To Console    Don't need to configure DHCP IPv6 Mode
+    ...    ELSE       Select DHCP IPv6 Mode      ${dhcp_ipv6}
+
+###
+Save Wan Settings
+    SL.Wait Until Element Is Visible    xpath=//input[@name="SaveBtn"]
+    ...                                 timeout=10s
+    ...                                 error=\nSave Button Not Found
+    SL.Click Element                    xpath=//input[@name="SaveBtn"]
+    Sleep                               5s
+
+###
+Create New Wan PPPoE
+    [Documentation]              Create new WAN PPPoE. Remove existed WAN PPPoE matching VLAN ID before add a new one.
+    ...                          Input:
+    ...                          1. network_protocol: IPv4/IPv4&IPv6/IPv6
+    ...                          2. 8021q: Tag/Untag
+    ...                          3. vlan_id: [0-4094]
+    ...                          4. 8021p: Remark/Transparent
+    ...                          5. priority: [0-7]
+    ...                          6. multi_vLan
+    ...                          7. ppp_username: Default value is empty
+    ...                          8. ppp_password: Default value is empty
+    ...                          9. default_route: Default value is "Yes"
+    ...                          10. nat: Default value is "Enable"
+    ...                          11. ppp_mtu_size: Default value is 1492
+    ...                          12. dhcp_ipv6: Default value is NDRA
+
+    [Arguments]                  ${network_protocol}
+    ...                          ${8021q}
+    ...                          ${vlan_id}
+    ...                          ${8021p}
+    ...                          ${priority}
+    ...                          ${multi_vLan}
+    ...                          ${ppp_username}
+    ...                          ${ppp_password}
+    ...                          ${default_route}=Yes
+    ...                          ${nat}=Enable
+    ...                          ${ppp_mtu_size}=1492
+    ...                          ${dhcp_ipv6}=NDRA
+
+    Add New Wan Service
+    Select PPPoE Wan Service     network_protocol=${network_protocol}
+    ...                          8021q=${8021q}
+    ...                          vlan_id=${vlan_id}
+    ...                          8021p=${8021p}
+    ...                          priority=${priority}
+    ...                          multi_vLan=${multi_vLan}
+    ...                          ppp_username=${ppp_username}
+    ...                          ppp_password=${ppp_password}
+    ...                          default_route=${default_route}
+    ...                          nat=${nat}
+    ...                          ppp_mtu_size=${ppp_mtu_size}
+    ...                          dhcp_ipv6=${dhcp_ipv6}
+
+    Save Wan Settings
+
+###
+Get Column Index
+    [Documentation]             Get column index base on column name.
+    ...                         Input:
+    ...                         1. column_name
+    ...                         Return:
+    ...                         1. Column index if found, else return 'None'
+
+    [Arguments]                 ${column_name}
+
+    ${index}=                   Set Variable     None
+    SL.Set Selenium Speed       0.1
+    FOR    ${i}    IN RANGE    1    13
+         ${element_is_visible}=    Run Keyword And Return Status       SL.Element Should Be Visible    xpath=//table[@class="tableShowData"]/tbody/tr[1]/td[${i}]
+         Exit For Loop If    '${element_is_visible}' == 'False'
+         ${column_name_tmp}=       SL.Get Text    xpath=//table[@class="tableShowData"]/tbody/tr[1]/td[${i}]
+         ${index}=          Set Variable If    '${column_name_tmp}' == '${column_name}'     ${i}
+         Exit For Loop If   '${column_name_tmp}' == '${column_name}'
+    END
+    SL.Set Selenium Speed       0.3
+    [Return]                    ${index}
+
+###
+Get Row Index
+    [Documentation]             Get row index base on column name and column value.
+    ...                         Input:
+    ...                         1. column_name
+    ...                         2. column_value
+    ...                         Return:
+    ...                         1. Row index if found, else return 'None'
+
+    [Arguments]                 ${column_name}   ${column_value}
+
+    ${index}=                   Set Variable     None
+    SL.Set Selenium Speed       0.1
+    ${column_index_tmp}=        SeleniumNetworkWANLib.Get Column Index            ${column_name}
+    FOR    ${row_i}    IN RANGE    2    20
+        ${element_is_visible}=    Run Keyword And Return Status       SL.Element Should Be Visible    xpath=//table[@class="tableShowData"]/tbody/tr[${row_i}]/td[2]
+        Exit For Loop If    '${element_is_visible}' == 'False'
+        ${column_value_tmp}=     SL.Get Text     xpath=//table[@class="tableShowData"]/tbody/tr[${row_i}]/td[${column_index_tmp}]
+        ${index}=           Set Variable If     '${column_value_tmp}' == '${column_value}'    ${row_i}
+        Exit For Loop If    '${column_value_tmp}' == '${column_value}'
+    END
+    SL.Set Selenium Speed       0.3
+    [Return]                    ${index}
+
+###
+Click Delete Button
+    [Arguments]           ${row_index}       ${remove_column_index}
+
+    Log To Console              \nClick Delete Button
+    SL.Double Click Element      xpath=//table[@id="WanInfoTable"]/tbody/tr[3]/td[1]
+    Sleep                        5s
+    SL.Click Element             xpath=//table[@id="WanInfoTable"]/tbody/tr[${row_index}]/td[${remove_column_index}]/input
+
+###
+Remove Wan Service
+    [Documentation]                            Remove WAN service base on VLAN ID.
+    ...                                        If VLAN ID is found, remove WAN service, else do nothing.
+
+    [Arguments]                 ${vlan_id}
+
+
+# Check WAN service whether it existed
+    ${row_index}=               SeleniumNetworkWANLib.Get Row Index    column_name=VlanMuxId    column_value=${vlan_id}
+    ${remove_column_index}=     SeleniumNetworkWANLib.Get Column Index    column_name=Action
+    Sleep               3s
+    Run Keyword If     '${row_index}' != 'None'            SeleniumNetworkWANLib.Click Delete Button      ${row_index}     ${remove_column_index}
+    Sleep               3s
+
+
+###
+Edit Wan Service
+    [Documentation]             Edit an existed WAN service base on VLAN ID.
+    ...                         If VLAN ID is found, edit WAN service, else log WAN service not found.
+
+    [Arguments]                 ${vlan_id}
+
+    ##Select Interface Setup Tab
+    Log To Console                                \nEdit Wan Service
+
+
+    # Check WAN service whether it existed
+    ${row_index}=               SeleniumNetworkWANLib.Get Row Index    column_name=VlanMuxId    column_value=${vlan_id}
+    Run Keyword If     '${row_index}' != 'None'            SL.Click Element      xpath=//table[@id="WanInfoTable"]/tbody/tr[${row_index}]/td[1]
+    ...       ELSE     Log To Console     WAN service with VLAN ID "${vlan_id}" not found
+    Sleep               3s
+    ###Edit WAN with necessarry parameters then use Keyword: "SL.Unselect Frame" after that
+
+###
+Delete WAN
+    [Arguments]  					${vlan_id}       
+                       		
+    ${row_index_tmp}=                          		SeleniumNetworkWANLib.Get Row Index    VlanMuxId    ${vlan_id}
+    SL.Click Element                          		xpath=//table[@class="tableShowData"]/tbody/tr[${row_index_tmp}]/td[7]
+
+###
+Input MTU Size For Bridge Mode
+    [Arguments]                                ${bridge_mtu_size}
+    Log To Console                              \nInput MTU size
+    SL.Wait Until Element Is Visible            xpath=//input[@name="wan_TCPBridge"]
+    ...                                         timeout=10s
+    ...                                         error=\MTU Size Text Box Not Found
+    SL.Input Text                               xpath=//input[@name="wan_TCPBridge"]    ${bridge_mtu_size}
+
+###
+Select Bridging Wan Service
+    [Documentation]                    Adding new WAN Bridging
+    ...                                Input:
+    ...                                1.Network procotol:IPv4
+    ...                                2. ISP: Bridge Mode
+    ...                                3. 802.1q: Tag
+    ...                                4.vlanid: 12
+    ...                                5.802.1p: REMARK/Priority: 0
+    ...                                6.Multi VLan: -1
+    ...                                7.TCP MTU: 1492
+
+    [Arguments]                                ${network_protocol}
+    ...                                        ${8021q}
+    ...                                        ${vlan_id}
+    ...                                        ${8021p}
+    ...                                        ${priority}
+    ...                                        ${multi_vLan}
+    ...                                        ${bridge_mtu_size}
+
+    # Select network procotol
+    SL.Wait Until Element Is Visible           xpath=//div[@id='div_isipv6sup']/table/tbody/tr[3]/td[5]/input
+    ...                                        timeout=20s
+    ...                                        error=\nNetwork Procotol Selection Not Found
+    Run Keyword If    '${network_protocol}' == 'IPv4'         Select IPv4 Mode
+    ...    ELSE IF    '${network_protocol}' == 'IPv4/IPv6'    Select IPv4/IPv6 Mode
+    ...    ELSE IF    '${network_protocol}' == 'IPv6'         Select IPv6 Mode
+
+    # Select Wan Service Mode: Bridge
+    SL.Click Element                            xpath=//div[@id='config']/div[2]/table/tbody/tr[5]/td[5]/input
+
+    # Select 802.1q Standard: TAG
+    SL.Wait Until Element Is Visible            xpath=//div[2]/div/table/tbody/tr[2]/td[5]/input
+    ...                                         timeout=20s
+    ...                                         error=\n802.1q Standard Selection Not Found
+    Run Keyword If    '${8021q}' == 'Tag'       Select Tag Mode
+    ...    ELSE                                 Select Untag Mode
+
+    #Input VLAN ID
+    Log To Console                              \nInput VLAN ID
+    SL.Wait Until Element Is Visible            xpath=//input[@name="wan_vid"]
+    ...                                         timeout=10s
+    ...                                         error=\nVLAN ID Text Box Not Found
+    SL.Input Text                               xpath=//input[@name="wan_vid"]           ${vlan_id}
+
+    # Choose 802.1p Standard: REMARK
+    Log To Console                              \nChoose 802.1p Standard: REMARK
+    SL.Wait Until Element Is Visible            xpath=//select[@name="wan_dot1pRemark"]
+    ...                                         timeout=10s
+    ...                                         error=\n802.1p Select Box Not Found
+    Run Keyword If    '${8021p}' == 'Remark'    SL.Select From List By Index      xpath=//select[@name="wan_dot1pRemark"]     0
+    ...    ELSE                                 SL.Select From List By Index      xpath=//select[@name="wan_dot1pRemark"]     1
+
+    # Input 802.1P Priority
+    Run Keyword If    '${8021p}' == 'Remark'         Input 802.1P Priority    ${priority}
+
+    # Input Multi VLAN: -1
+    Log To Console                              \nInput Multi VLAN
+    SL.Wait Until Element Is Visible            xpath=//input[@name="wan_mvlan"]
+    ...                                         timeout=10s
+    ...                                         error=\nMulti VLan Text Box Not Found
+    SL.Input Text                               xpath=//input[@name="wan_mvlan"]        ${multi_vLan}
+
+    #Input MTU size
+    Run Keyword If    '${network_protocol}' == 'IPv4'         Input MTU Size For Bridge Mode    ${bridge_mtu_size}
+    ...    ELSE IF    '${network_protocol}' == 'IPv4/IPv6'    Input MTU Size For Bridge Mode    ${bridge_mtu_size}
+
+###
+Create New Wan Bridge
+    [Documentation]              Create new WAN Bridge. Remove existed WAN Bridge matching VLAN ID before add a new one.
+    ...                          Input:
+    ...                          1. network_protocol: IPv4/IPv4&IPv6/IPv6
+    ...                          2. 8021q: Tag/Untag
+    ...                          3. vlan_id: [0-4094]
+    ...                          4. 8021p: Remark/Transparent
+    ...                          5. priority: [0-7]
+    ...                          6. multi_vLan
+    ...                          7. bridge_mtu_size: 1492
+
+    [Arguments]                  ${network_protocol}
+    ...                          ${8021q}
+    ...                          ${vlan_id}
+    ...                          ${8021p}
+    ...                          ${priority}
+    ...                          ${multi_vLan}
+    ...                          ${bridge_mtu_size}=1492
+
+    Add New Wan Service
+    Select Bridging Wan Service     network_protocol=${network_protocol}
+    ...                          8021q=${8021q}
+    ...                          vlan_id=${vlan_id}
+    ...                          8021p=${8021p}
+    ...                          priority=${priority}
+    ...                          multi_vLan=${multi_vLan}
+    ...                          bridge_mtu_size=${bridge_mtu_size}
+    Save Wan Settings
+    
+Popup Wan Ip Address Is Invalid Should Be Visible
+    [Documentation]                     Handle popup WAN IP address is invalid
+    [Arguments]                         ${wan_ip_address}
+
+    ${popup_message}=                   SL.Handle Alert    timeout=10s
+    Log To Console                      Popup message: ${popup_message}
+    Should Contain                      ${popup_message}     Invalid IP address "${wan_ip_address}"
+
+Popup Wan Subnet Mask Is Invalid Should Be Visible
+    [Documentation]                     Handle popup WAN subnet mask is invalid
+    [Arguments]                         ${wan_subnet_mask}
+
+    ${popup_message}=                   SL.Handle Alert    timeout=10s
+    Log To Console                      Popup message: ${popup_message}
+    Should Contain                      ${popup_message}     Invalid subnet mask: "${wan_subnet_mask}"
+
+Popup Wan Gateway Is Invalid Should Be Visible
+    [Documentation]                     Handle popup WAN gateway IP address is invalid
+    [Arguments]                         ${wan_gateway}
+
+    ${popup_message}=                   SL.Handle Alert    timeout=10s
+    Log To Console                      Popup message: ${popup_message}
+    Should Contain                      ${popup_message}     Invalid IP address "${wan_gateway}"
+
+Popup MTU Wan Is Invalid Should Be Visible
+    [Documentation]                     Handle popup MTU WAN is invalid
+    # [Arguments]                         ${mtu_wan}
+
+    ${popup_message}=                   SL.Handle Alert    timeout=10s
+    Log To Console                      Popup message: ${popup_message}
+    Should Contain                      ${popup_message}     The range of TCP MTU: 100 ~ 2000 or 0 as default value
+    
+    
+Popup MTU Wan Bridge -1 Is Invalid Should Be Visible
+    [Documentation]                     Handle popup MTU WAN is invalid
+
+    ${popup_message}=                   SL.Handle Alert    timeout=10s
+    Log To Console                      Popup message: ${popup_message}
+    Should Contain                      ${popup_message}     MTU for bridge must be range from 68 to 2000
+Popup MTU Wan -1 Is Invalid Should Be Visible
+    [Documentation]                     Handle popup MTU WAN is invalid
+
+    ${popup_message}=                   SL.Handle Alert    timeout=10s
+    Log To Console                      Popup message: ${popup_message}
+    Should Contain                      ${popup_message}     TCP MTU must be digits!
+################################
+
+###
+Popup Vlan Priority Out Of Range Should Be Visible
+    [Documentation]                     Handle popup VLAN Priority out of range
+    # [Arguments]                         ${priority}
+
+    ${popup_message}=                   SL.Handle Alert    timeout=10s
+    Log To Console                      Popup message: ${popup_message}
+    Should Contain                      ${popup_message}     802.1p must be in the range 0~7
+
+###
+Popup Vlan Id Out Of Range Should Be Visible
+    [Documentation]                     Handle popup VLAN ID out of range
+    # [Arguments]                         ${vlan_id}
+
+    ${popup_message}=                   SL.Handle Alert    timeout=10s
+    Log To Console                      Popup message: ${popup_message}
+    Should Contain                      ${popup_message}     VLANID must be in the range 0~4095
+    
+###
+Waiting For Save Config WAN
+    [Arguments]                                		${action}
+
+    SL.Wait Until Page Contains                		Service Information Summary
+    ...                                        		timeout=10s
+    ...                                        		error=\WAN Summary Page doesn't show up!
+    Log To Console					\n${action} Success!
+
+###
+Verify WAN Was Created
+    [Arguments]                                		${vlan_id}
+    
+    ${row_index_tmp}=                          		SeleniumNetworkWANLib.Get Row Index    VlanMuxId    ${vlan_id}
+    Should Not Be Equal                        		'${row_index_tmp}'    'None'
+    Log To Console					\nWAN With VLAN ID = ${vlan_id} was created    

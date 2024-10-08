@@ -1,0 +1,159 @@
+*** Settings ***
+Library                                            Collections    WITH NAME    CLT
+
+*** Variables ***
+
+#Selenium
+${SWITCH_VARIABLE}		                1
+${REMOTE_SELENIUM_SERVER}              	10.2.204.152
+${LOGIN_URL}                           	https://192.168.1.1/cgi-bin/login.asp
+${GNMS_URL}                             http://10.149.247.136:8081
+${BROWSER}                             	chrome
+${ONT_WEB_USER}                        	admin
+${ONT_WEB_PASS_DEFAULT}                 admin
+${SERIAL_NUMBER}                        VNPT020f6670
+
+&{ONT}         ONT_WEB_USER=admin        ONT_WEB_PASS=ttcn@99CN        ONT_USER_TELNET=admin         ONT_PASS_TELNET=VnT3ch@dm1n        LAN_NUMBER=GW040        WAN_IPV4_STATUS_COLUMN_NAME=Status        WAN_IPV6_STATUS_COLUMN_NAME=Status        UPTIME=6        SSID_STRING=_        NUM_STRING=-8        SSID_24G=GW040-NS_2.4G        SSID_5G=GW040-NS_5G		SSID_EXPECT_24G_2=GW040-NS_2.4G_Guest2		 SSID_EXPECT_24G_3=GW040-NS_2.4G_Guest3		  SSID_EXPECT_24G_4=GW040-NS_2.4G_Guest4        SSID_EXPECT_5G_2=GW040-NS_5G_Guest2        SSID_EXPECT_5G_3=GW040-NS_5G_Guest3		  SSID_EXPECT_5G_4=GW040-NS_5G_Guest4        INTER_PPPOE=ppp0.4        INTER_VEIP=veip0.4        VLAN_ID=4000        PPP_GROUP_WAN_SUBNET=192.168.3.        LAN_GROUP=1        FIRMWARE_FORMAT=tclinux.bin.signed.G040        FIRMWARE_TESTING=tclinux.bin.signed.G040DEVN00T007_240109_135529        FIRMWARE_CORRECT=tclinux.bin.signed.G040DEVN00T006_231005_163621        FILE_ILLEGAL=note_auto        FIRMWARE_ILLEGAL=tclinux.bin.signed.G020E2VN00T006_231218_134055
+
+${ONT_WEB_PASS_FAIL_1}                  ttcn@55CN
+${ONT_WEB_PASS_FAIL_2}               	ttcn@66CN
+${ONT_WEB_PASS_FAIL_3}               	ttcn@88CN
+
+${IP_GATEWAY}                        	192.168.1.1
+${TO_GOOGLE}                           	8.8.8.8
+${IP_WAN_11}                            123.16.0.254
+# ${TO_IPOE_GATEWAY}                    10.84.14.1
+${ONT_BROWSER}							ontSession
+${GNMS_BROWSER}							gnmsSession
+
+# #PPPoE
+# ${PPPOE_NETWORK_PROTOCOL}              IPv4
+${CORRECT_PPPOE_VLAN_PRIORITY}         0
+${CORRECT_PPPOE_VLAN_ID}               11
+# ${INCORRECT_PPPOE_VLAN_PRIORITY}       8
+# ${INCORRECT_PPPOE_VLAN_ID}             20
+${CORRECT_PPP_USERNAME}                ttcngpon
+${CORRECT_PPP_PASSWORD}                ansv
+${INCORRECT_PPP_USERNAME}              abcdef
+# ${PPPOE_ROUTING_DEFAULT_GW}            Current Interface
+# ${PPPOE_WAN_INTERFACE}                 Current Interface
+# ${PPPOE_MTU_SIZE}                      1492
+${INVALID_PRIORITY}                    234
+${INVALID_VLAN}                        4096
+
+# IP address of test control PC
+${REMOTE_SERVER_IP}                    10.2.204.152
+${REMOTE_SERVER_IP_1}                  10.2.204.152
+${REMOTE_SERVER_IP_2}                  10.2.204.165
+
+# Username and password to login to test control PC
+${REMOTE_SERVER_USERNAME}              telco
+${REMOTE_SERVER_PASSWORD}              123456
+${TEST_CONTROL_PC_LAN_NETWORK_INTERFACE_2}        enp2s0
+# ${PING_PERIOD}                         60
+
+# #IPoE
+# ${IPOE_NETWORK_PROTOCOL}               IPv4
+# ${CORRECT_IPOE_VLAN_PRIORITY}          0
+# ${CORRECT_IPOE_VLAN_ID_DYNAMIC}        1014
+# ${CORRECT_IPOE_VLAN_ID_STATIC}         1129
+# ${CORRECT_WAN_IP_ADDRESS}              10.10.10.2
+# ${CORRECT_WAN_SUBNET_MASK}             255.255.255.252
+# ${CORRECT_WAN_GATEWAY}                 10.10.10.1
+# ${STATIC_IPOE_WAN_IP_ADDRESS}          10.182.146.175
+# ${IPOE_ROUTING_DEFAULT_GW}             Current Interface
+# ${IPOE_WAN_INTERFACE}                  Current Interface
+
+#Interface Grouping mode Bridge
+${CORRECT_BRIDGE_VLAN_PRIORITY}        0
+${CORRECT_BRIDGE_VLAN_ID}              12
+${LAN_INTERFACE_ONT}                   4
+
+${IPOE_WAN_SUBNET}                     192.168.3.
+${PPP_GROUP_WAN_SUBNET}                192.168.2.
+${BRIDGE_WAN_SUBNET}                   10.182.
+${STATIC_ROUTE_DES}					   192.168.10.0
+#Appium
+
+${APPIUM_REMOTE_SERVER}                10.2.204.152
+${APPIUM_REMOTE_PORT}                  7001
+${APPIUM_REMOTE_PORT_1}                7001
+${APPIUM_REMOTE_PORT_2}                7002
+${PLATFORM_NAME}                       Android
+${PLATFORM_VERSION}                    6.0
+${DEVICE_NAME}                         025241011133907
+${DEVICE_NAME_1}                       025242011203371
+${DEVICE_NAME_2}                       c072496c 
+${SETTINGS_PACKAGE_NAME}               com.android.settings
+${WIFI_PICKER_ACTIVITY}                com.android.settings.wifi.WifiPickerActivity
+${SWITCH_WIDGET}                       android.widget.Switch
+${NEW_COMMAND_TIMEOUT}                 300
+
+
+#WiFi
+${WIFI_SSID_MAIN}                      123LanNT
+${WIFI_SSID_1}                         1ttcn1
+${WIFI_SSID_2}                         2ttcn2
+${WIFI_SSID_3}                         3ttcn3
+${WIFI_SSID_4}                         4ttcn4
+${WIFI_SSID_5G_1}                      1_ttcn1_5G
+${WIFI_SSID_5G_2}                      2_ttcn1_5G
+${WIFI_SSID_5G_3}                      3_ttcn1_5G
+${WIFI_SSID_5G_4}                      4_ttcn1_5G
+${WIFI_PASS_FAILED_1}                  ttcn
+${WIFI_PASS_FAILED_2}                  hoalá
+${WIFI_PASS}                           12345678
+${WIFI_PASS_WEP128}                    1234567890123
+
+#ONT Device
+${ONT_SUBNET}                         192.168.1.
+${LOGIN_BUTTON}                                xpath=//button[@class="loginBtn"]
+# #link
+${YOUTUBE_URL}                          https://youtu.be/Llw9Q6akRo4
+${YOUTUBE_DURATION}                     120
+${YOUTUBE_LOGO}                         //a[@id='logo']/div
+# ${YOUTUBE}                            https://www.youtube.com/
+${VLC_DURATION}                       	60
+${VLC_CHANNEL}                        	rtp://@232.84.1.1:7980
+# ${YOUTUBE_DURATION_PC}                120
+# ${YOUTUBE_DURATION_SMPHONE}           120
+# ${VIDEO_YOUTUBE_NAME}                 doraemon tap 1
+${VIDEO_DURATION_SMARTPHONE}            30
+
+
+# # Laptop 1 and laptop 2 information
+# ${ONT2_SSID}                           1_lannnn
+# ${ONT2_PASSWORD}                       1234567890
+
+# ######TC_08
+# ${SPECIAL_WAN_IP_ADDRESS}                      192.168.1.0
+# ${SPECIAL_WAN_SUBNET_MASK}                     255.255.255.255
+# ${SPECIAL_WAN_GATEWAY}                         0.0.0.0
+# ${SPECIAL_LAN_IP_ADDRESS}                      192.168.1.0
+# ${SPECIAL_LAN_SUBNET_MASK}                     255.255.255.255
+# ${SPECIAL_START_IP}                            192.168.1.0
+# ${SPECIAL_END_IP}                              192.168.1.0
+
+# ###TC50_03
+# ${IP_DIAGNOSTIC}                               8.8.8.8
+
+# Test case NIT_DDNS_TS_01
+${DDNS_MODE}								   Activated
+${SERVICE_PROVIDER}							   www.no-ip.com
+${DDNS_HOST_NAME}                              hieudt2.ddns.net
+${DDNS_USERNAME}                               dinhthihieu19@gmail.com
+${DDNS_PASSWORD}                               1!2@3#
+${WILDCARD_SUPPORT}							   Yes
+
+## Backup/Restore
+${CONFIG_FILE_NAME}                            romfile.cfg
+${INVALID_CONFIG_FILE_NAME}                    ONT.conf
+${DOWNLOAD_DIR}                                /home/ubuntu/Downloads
+
+### Repo save firmwares
+${GW020BRC_REPO}							   http://rdrepo.vnpt-technology.vn/repository/GW020BRC_REPO
+
+
+### GNMS Parameters
+${GNMS_CONFIGURATION_URL}						${GNMS_URL}/configuration/initial
+${GNMS_BACKUP_FILE_NAME}                        gnms_backup

@@ -1,0 +1,53 @@
+*** Settings ***
+Library                      SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
+Library						 Process            WITH NAME    PL
+Resource                     ../Status/SeleniumStatusDeviceInfoLib.txt
+Resource                     ../../variables/AllVariables.txt
+
+*** Variables ***
+
+*** Keywords ***
+Open Firmware Upgrade Page
+	[Arguments]                                ${url}=https://192.168.1.1/cgi-bin/tools_update.asp
+    SL.Go To                                   ${url}
+    SL.Wait Until Page Contains                Firmware Upgrade
+    ...                                        timeout=20s
+    ...                                        error=\nFirmware Upgrade Configure Page Not Found
+    SL.Page Should Contain                     Firmware Upgrade
+    
+
+Download Firmware from Repo
+    [Arguments]                         ${firmwareUrl}=${GW020BRC_REPO}
+    ...                                 ${username}=username    ${password}=password
+    ...									${profile}=GW020_INTL
+    PL.Run Process                      curl  --fail  -u  ${username}:${password}  ${firmwareUrl}/broadcom/release/temp/bcm${profile}_nand_cferom_fs_image_128_ubi.w  -o   tclinux.bin.FIRMWARE_NAME
+    
+    
+Upgrade Firmware From PC To ONT
+    [Arguments]                         ${firmware_path}=FIRMWARE_NAME
+    ...                                 ${firmware_format}=tclinux.bin.signed.G040
+
+    Open Firmware Upgrade Page
+
+    SL.Page Should Contain Element      xpath=//input[@name="tools_FW_UploadFile"]    error=\nUpgrade Firmware button did not show up\n
+    SL.Choose File                      xpath=//input[@name="tools_FW_UploadFile"]    ${DOWNLOAD_DIR}/${firmware_path}
+    Sleep                               1s
+
+    SL.Page Should Contain Element		xpath=//input[@value="UPGRADE"]
+    SL.Click Element                    xpath=//input[@value="UPGRADE"]
+    Sleep                               1s
+    
+    ${status}=    Run Keyword If        '${firmware_format}' not in '${firmware_path}'        SL.Get Value         xpath=//input[@name="uiStatus"]      
+    Run Keyword If        'tclinux.bin' in '${firmware_path}'        Log To Console        \nUpgrade in progress, Please wait...
+    ...       ELSE                                                   Log To Console        \n${status}\nWait For ONT Reboot...
+    
+    Sleep								180s
+
+Verify Info Firmware Version
+    [Arguments]                         ${firmware_path}=FIRMWARE_NAME
+
+    Open Device Info Page
+    ${version}    ${time_stamp}=        Get Current Firmware Version
+    Should Contain                      ${firmware_path}        ${version}
+    Should Contain                      ${firmware_path}        ${time_stamp}
+    Log To Console                      \nCurrent Firmware is ${version}_${time_stamp}

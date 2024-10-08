@@ -1,0 +1,76 @@
+*** Settings ***
+Library                                    SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
+Library                                    String                              WITH NAME    STR
+
+*** Variables ***
+
+*** Keywords ***
+###
+Open VPN Setting Page
+    ###Select Advanced Setup Tab
+    [Arguments]                                ${url}=https://192.168.1.1/cgi-bin/adv_vpn_setting.asp
+    Log To Console                              \nSelect VPN Setting Page
+    SL.Go To                                   ${url}
+    SL.Wait Until Page Contains                 VPN Connection List 
+    ...                                         timeout=20s
+    ...                                         error=\nNat Configure Page Not Found
+    SL.Page Should Contain                      VPN Connection List 
+Create VPN Rule
+     [Arguments]           ${rule_name}            ${wan_ip}            ${gateway_wan_ip}
+     ...                   ${local_ip}             ${remote_ip}         ${pre_key}
+     ...                   ${phase_key_1}          ${phase_key_2}
+    SL.Wait Until Element Is Visible           xpath=//input[@name="Add New Connection"]
+    SL.Click Element                           xpath=//input[@name="Add New Connection"]
+    
+
+    
+    
+    SL.Wait Until Element Is Visible           xpath=//input[@name="ConnectionName"]
+    ...                                        timeout=20s
+    ...                                        error=\nConnection Name Does Not Found!
+    SL.Execute Javascript                       document.getElementsByName("ConnectionName")[0].value="${rule_name}"
+    
+    
+
+    SL.Wait Until Element Is Visible            xpath=//input[@name="LocalGatewayIP"] 
+    SL.Execute Javascript                       document.getElementsByName("LocalGatewayIP")[0].value="${wan_ip}"
+    
+    
+    SL.Wait Until Element Is Visible           xpath=//input[@name="GatewayIP"]
+    SL.Execute Javascript                       document.getElementsByName("GatewayIP")[0].value="${gateway_wan_ip}"
+   
+
+    SL.Wait Until Element Is Visible           xpath=//input[@name="LocalIP"]
+    SL.Execute Javascript                       document.getElementsByName("LocalIP")[0].value="${local_ip}"
+
+    
+
+    SL.Wait Until Element Is Visible           xpath=//select[@name="LocalSubnetOrIP"]
+    SL.Select From List By Value               xpath=//select[@name="LocalSubnetOrIP"]         SingleIP
+    
+
+    SL.Wait Until Element Is Visible           xpath=//input[@name="RemoteIP"]
+    SL.Execute Javascript                       document.getElementsByName("RemoteIP")[0].value="${remote_ip}"
+
+    
+    SL.Wait Until Element Is Visible           xpath=//select[@name="RemoteSubnetOrIP"]
+    SL.Select From List By Value               xpath=//select[@name="RemoteSubnetOrIP"]         SingleIP
+
+    SL.Wait Until Element Is Visible           xpath=//input[@name="PreSharedKey"]
+    SL.Execute Javascript                       document.getElementsByName("PreSharedKey")[0].value="${pre_key}"
+   
+    
+    SL.Wait Until Element Is Visible           xpath=//input[@name="Phase1KeyLifeTime"]
+    SL.Execute Javascript                       document.getElementsByName("Phase1KeyLifeTime")[0].value="${phase_key_1}"
+
+    
+    SL.Wait Until Element Is Visible           xpath=//input[@name="Phase2KeyLifeTime"]
+    SL.Execute Javascript                       document.getElementsByName("Phase2KeyLifeTime")[0].value="${phase_key_2}"
+
+Save Config VPN
+    SL.Wait Until Element Is Visible           xpath=//input[@name="VpnSubmit"]
+    SL.Click Element                            xpath=//input[@name="VpnSubmit"]
+Delete Config VPN
+    SL.Execute Javascript                        document.querySelector("img[onclick='doDelete(0);']").click()
+    
+    

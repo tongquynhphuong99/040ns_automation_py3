@@ -1,0 +1,91 @@
+*** Settings ***
+Documentation                Selenium Lib To CronTabs
+Library                      SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
+
+*** Variables ***
+
+*** Keywords ***
+
+###
+Open Crontabs Page
+    [Arguments]                                ${url}=https://192.168.1.1/cgi-bin/tools_crond.asp
+
+    SL.Go To                                   ${url}
+    SL.Wait Until Page Contains                Cron Table 
+    ...                                        timeout=20s
+    ...                                        error=\nCrontabs Configure Page Not Found
+    SL.Page Should Contain                     Cron Table 
+
+Config Crontabs
+    # [Document]       Day: 2-Mon ..... 0-Sun               Month: 01- jan ....  12- Dec
+    # ...              Date:01....31                        Hour: 01....24
+    # ...              Minute:01....60
+    # ...              Default: All
+    [Arguments]        ${name}        ${minute}        ${hour}        ${date}        ${month}        ${day}        ${process}=reboot
+
+    Log To Console                             \nConfig CronTab Rule
+    SL.Wait Until Element Is Visible           xpath=//input[@name="crondName"]
+    ...                                        timeout=10s
+    ...                                        error=\nNew Pass Text Box Not Found
+    
+    Log To Console                             Input Rule Name = ${name}
+    SL.Click Element                           xpath=//input[@name="crondName"]
+    SL.Input Text                              xpath=//input[@name="crondName"]        ${name}
+    Sleep                                      1s
+    
+    Log To Console                             Choose Minute = ${minute}
+    SL.Wait Until Element Is Visible           xpath=//select[@name="minutetime"]
+    SL.Select From List By Value               xpath=//select[@name="minutetime"]      ${minute}
+    Sleep                                      1s
+
+    Log To Console                             Choose Hour = ${hour}
+    SL.Wait Until Element Is Visible           xpath=//select[@name="hourtime"]
+    SL.Select From List By Value               xpath=//select[@name="hourtime"]        ${hour}
+    Sleep                                      1s
+
+    Log To Console                             Choose Date = ${date}
+    SL.Wait Until Element Is Visible           xpath=//select[@name="datetime"]
+    SL.Select From List By Value               xpath=//select[@name="datetime"]        ${date}
+    Sleep                                      1s
+
+    Log To Console                             Choose Month = ${month}
+    SL.Wait Until Element Is Visible           xpath=//select[@name="monthtime"]
+    SL.Select From List By Value               xpath=//select[@name="monthtime"]       ${month}
+    Sleep                                      1s
+
+    Log To Console                             Choose Day = ${day}
+    SL.Wait Until Element Is Visible           xpath=//select[@name="daytime"]
+    SL.Select From List By Value               xpath=//select[@name="daytime"]         ${day}
+    Sleep                                      1s
+
+    Log To Console                             Choose Process Reboot
+    Sleep                                      1s
+
+Save Config Crontab
+    SL.Wait Until Element Is Visible           xpath=//input[@name="SaveBtn"]
+    ...                                        timeout=10s
+    ...                                        error=\nSave Button Not Found
+    SL.Click Element                           xpath=//input[@name="SaveBtn"]
+
+Remove Config Crontab
+    SL.Wait Until Element Is Visible           xpath=//input[@name="check0"]
+    ...                                        timeout=10s
+    ...                                        error=\nRemove Not Found
+    SL.Click Element                           xpath=//input[@name="check0"]
+    
+    SL.Wait Until Element Is Visible           xpath=//input[@name="RemoveBtn"]
+    ...                                        timeout=10s
+    ...                                        error=\nRemove Not Found
+    SL.Click Element                           xpath=//input[@name="RemoveBtn"]
+
+Verify Rule Crontabs
+    [Arguments]        ${name}        ${minute}        ${hour}        ${date}        ${month}        ${day}        ${process}=reboot
+
+    ${name_get}=                      Get Text             xpath=/html/body/form/table[1]/tbody/tr[10]/td[3]/table/tbody/tr[2]/td[1]/div
+    # ${name_get}=                      Evaluate                        '${name_get}'.replace(' ','')
+    Should Be Equal                                        ${name_get}        ${name}
+
+    ${rule_set}=                      Set Variable         ${minute} ${hour} ${date} ${month} ${day} ${process}
+    ${rule_get}=                      Get Text             xpath=/html/body/form/table[1]/tbody/tr[10]/td[3]/table/tbody/tr[2]/td[2]/div
+    Should Be Equal                                        ${rule_set}        ${rule_get}
+    Log To Console                                         \nConfig Rule CronTab ${rule_get} with Name ${name_get} Success!   

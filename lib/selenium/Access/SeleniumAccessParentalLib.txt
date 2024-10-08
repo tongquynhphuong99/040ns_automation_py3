@@ -1,0 +1,246 @@
+*** Settings ***
+Documentation                Selenium Lib To Parental
+Library                      SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
+
+*** Variables ***
+
+*** Keywords ***
+
+###
+Open Parental Page
+    [Arguments]                                ${url}=https://192.168.1.1/cgi-bin/access_parental.asp
+
+    SL.Go To                                   ${url}
+    SL.Wait Until Page Contains                Parental control 
+    ...                                        timeout=20s
+    ...                                        error=\nParental Configure Page Not Found
+    SL.Page Should Contain                     Parental control 
+
+Select Parental Mode
+    [Documentation]           Activated/Deactivated      
+    [Arguments]               ${parental_mode}               
+
+    Log To Console            \nSelect Parental ${parental_mode}
+    Run Keyword If            '${parental_mode}' == 'Activated'          SL.Execute Javascript        document.getElementsByName('tr_Active')[0].click();
+    ...   ELSE IF             '${parental_mode}' == 'Deactivated'        SL.Execute Javascript        document.getElementsByName('tr_Active')[1].click();
+      
+Select Rule Index
+    [Documentation]                                Index: 1-8
+    [Arguments]                                ${rule_index}  
+
+    Log To Console                             \nSelect Rule Index: ${rule_index}
+    ${index_value}=                            Evaluate        ${rule_index} - 1
+    ${index_value}=                            Convert To String        ${index_value}
+    
+    SL.Wait Until Element Is Visible           xpath=//select[@name="Parental_rule_index"]
+    SL.Select From List By Value               xpath=//select[@name="Parental_rule_index"]         ${index_value}  
+
+Select Parental Rule Mode
+    [Documentation]           Activated/Deactivated      
+    [Arguments]               ${rule_mode}               
+
+    Log To Console            Select Rule ${rule_mode}
+    Run Keyword If           '${rule_mode}' == 'Activated'            SL.Execute Javascript        document.getElementsByName('Rule_Active')[0].click();
+    ...   ELSE IF            '${rule_mode}' == 'Deactivated'          SL.Execute Javascript        document.getElementsByName('Rule_Active')[1].click();  
+
+Select Type Rule
+    [Documentation]            MAC/URL      
+    [Arguments]                                ${type}  
+
+    Log To Console            Select Rule Type: ${type}
+    Run Keyword If            '${type}' == 'MAC'            SL.Click Element           xpath=//input[@id="tr_BlockType_MAC"]
+    ...    ELSE IF            '${type}' == 'URL'            SL.Click Element           xpath=//input[@id="tr_BlockType_URL"]
+
+Config MAC Block Manual
+    [Arguments]                                         ${mac_add}
+
+    Log To Console                             Config MAC Block Manual
+    SL.Wait Until Element Is Visible           xpath=//select[@id="mac_list"]
+    SL.Select From List By Index               xpath=//select[@id="mac_list"]          0
+    Log To Console                             Input MAC = "${mac_add}"
+    SL.Wait Until Element Is Visible           xpath=//input[@name="Mac_manual"]
+    SL.Click Element                           xpath=//input[@name="Mac_manual"]
+    SL.Input Text                              xpath=//input[@name="Mac_manual"]       ${mac_add}
+
+Config MAC Block Auto
+    Log To Console                             Config MAC Block Auto
+    SL.Wait Until Element Is Visible           xpath=//select[@id="mac_list"]
+    SL.Select From List By Index               xpath=//select[@id="mac_list"]          1
+
+Config URL  
+    [Arguments]                                ${url} 
+
+    Log To Console                             Input URL = "${url}"
+    SL.Wait Until Element Is Visible           xpath=//input[@name="tr_URL"]
+    SL.Click Element                           xpath=//input[@name="tr_URL"]
+    SL.Input Text                              xpath=//input[@name="tr_URL"]            ${url} 
+
+Config Time Parental
+    [Documentation]      Day: Mon, Tue, Wed, Thu, Fri, Sat, Sun
+    [Arguments]                                ${day}        ${day_mode}        ${start_time}        ${end_time}
+
+    Log To Console                             \nConfig Time Parental
+    Log To Console                             Select ${day_mode} ${day}
+    ${day_status}=         SL.Execute Javascript                    return document.querySelector('[name="tr_${day}"]').checked
+    Run Keyword If        '${day_mode}' == 'Active' and '${day_status}' == 'False'         SL.Execute Javascript        document.querySelector('[name="tr_${day}"]').click();
+    ...   ELSE IF         '${day_mode}' == 'Deactive' and '${day_status}' == 'True'        SL.Execute Javascript        document.querySelector('[name="tr_${day}"]').click();
+
+    Log To Console                             Input Start Time ${start_time}
+    SL.Wait Until Element Is Visible           xpath=//input[@name="tr_Start_${day}"]
+    SL.Input Text                              xpath=//input[@name="tr_Start_${day}"]     ${start_time}
+
+    Log To Console                             Input End Time ${end_time}
+    SL.Wait Until Element Is Visible           xpath=//input[@name="tr_End_${day}"]
+    SL.Input Text                              xpath=//input[@name="tr_End_${day}"]       ${end_time}
+
+Save Config Parental
+    SL.Wait Until Element Is Visible           xpath=//input[@name="SaveBtn"]
+    ...                                        timeout=10s
+    ...                                        error=\nSave Button Not Found
+    SL.Click Element                           xpath=//input[@name="SaveBtn"]
+    Sleep                                                   2s
+
+Verify Parental Mode
+    [Arguments]                                             ${parental_mode}
+
+    Log To Console                                          \nVerify Parental Mode
+    ${status}=            SL.Execute Javascript            return document.querySelector("#tr_Active_Yes").checked
+    Run Keyword If         '${parental_mode}' == 'Activated'         Should Be Equal        '${status}'       'True'
+    ...    ELSE IF         '${parental_mode}' == 'Deactivated'       Should Be Equal        '${status}'       'False'
+    Log To Console                                          Parental is ${parental_mode}    
+    Sleep                                                   2s
+
+###
+Popup Invalid MAC Address Should Be Visible
+    [Documentation]                     Handle popup Invalid MAC Address
+
+    ${popup_message}=                   SL.Handle Alert    timeout=10s
+    Log To Console                      Popup message: ${popup_message}\n
+    Should Contain                      ${popup_message}     Invalid MAC Address
+
+Popup Invalid URL Should Be Visible
+    [Documentation]                     Handle popup Invalid URL
+
+    ${popup_message}=                   SL.Handle Alert    timeout=10s
+    Log To Console                      Popup message: ${popup_message}\n
+    Should Contain                      ${popup_message}     Invalid URL
+
+Popup Invalid Start Time Should Be Visible
+    [Documentation]                     Handle popup Invalid Start Time Format
+
+    ${popup_message}=                   SL.Handle Alert    timeout=10s
+    Log To Console                      Popup message: ${popup_message}\n
+    Should Contain                      ${popup_message}     Invalid Start Time Format
+
+Popup Invalid End Time Should Be Visible
+    [Documentation]                     Handle popup Invalid End Time Format
+
+    ${popup_message}=                   SL.Handle Alert    timeout=10s
+    Log To Console                      Popup message: ${popup_message}\n
+    Should Contain                      ${popup_message}     Invalid End Time Format
+
+Popup Start Time must smaller than End Time Should Be Visible
+    [Documentation]                     Handle popup Start Time must smaller than End Time
+
+    ${popup_message}=                   SL.Handle Alert    timeout=10s
+    Log To Console                      Popup message: ${popup_message}\n
+    Should Contain                      ${popup_message}     Start Time must smaller than End Time
+
+Verify Rule Parental MAC Manual
+    [Arguments]        ${rule_index}        ${rule_mode}        ${mac_add}        ${day}        ${day_mode}        ${start_time}        ${end_time}
+
+    Log To Console                                                  \nVerify Rule Parental MAC Manual
+
+    SL.Wait Until Element Is Visible                                xpath=//select[@name="Parental_rule_index"]
+    ${index_value}=            SL.Get Value                         xpath=//select[@name="Parental_rule_index"]/option[@selected=""]
+    ${index}=                  Evaluate                             ${index_value} + 1
+    ${index}=                  Convert To String                    ${index}    
+    Should Be Equal            '${rule_index}'                      '${index}'
+
+    ${status_active}=          SL.Execute Javascript                return document.querySelector("#Rule_Active_Yes").checked
+    Run Keyword If             '${rule_mode}' == 'Activated'        Should Be Equal        '${status_active}'       'True'
+    ...    ELSE IF             '${rule_mode}' == 'Deactivated'      Should Be Equal        '${status_active}'       'False'
+
+    ${status_type}=            SL.Execute Javascript                return document.querySelector("#tr_BlockType_MAC").checked
+    Should Be Equal            '${status_type}'                     'True'
+
+    ${mac_value}=              SL.Get Value                         xpath=//input[@name="Mac_manual"]
+    Should Be Equal            '${mac_add}'                         '${mac_value}'
+
+    ${day_status}=             SL.Execute Javascript                return document.querySelector('[name="tr_${day}"]').checked
+    Run Keyword If             '${day_mode}' == 'Active'            Should Be Equal        '${day_status}'       'True'
+    ...    ELSE IF             '${day_mode}' == 'Deactive'          Should Be Equal        '${day_status}'       'False'
+    
+    ${start_value}=            SL.Get Value                         xpath=//input[@name="tr_Start_${day}"]
+    Should Be Equal            '${start_time}'                      '${start_value}'    
+    
+    ${end_value}=              SL.Get Value                         xpath=//input[@name="tr_End_${day}"]
+    Should Be Equal            '${end_time}'                        '${end_value}'
+
+    Log To Console                                                  Rule Parental Has Match with Info Config!\n   
+    Sleep                                                           2s
+
+Verify Rule Parental MAC Auto
+    [Arguments]        ${rule_index}        ${rule_mode}        ${day}        ${day_mode}        ${start_time}        ${end_time}
+
+    Log To Console                                                  \nVerify Rule Parental MAC Auto
+
+    SL.Wait Until Element Is Visible                                xpath=//select[@name="Parental_rule_index"]
+    ${index_value}=            SL.Get Value                         xpath=//select[@name="Parental_rule_index"]/option[@selected=""]
+    ${index}=                  Evaluate                             ${index_value} + 1
+    ${index}=                  Convert To String                    ${index}    
+    Should Be Equal            '${rule_index}'                      '${index}'
+
+    ${status_active}=          SL.Execute Javascript                return document.querySelector("#Rule_Active_Yes").checked
+    Run Keyword If             '${rule_mode}' == 'Activated'        Should Be Equal        '${status_active}'       'True'
+    ...    ELSE IF             '${rule_mode}' == 'Deactivated'      Should Be Equal        '${status_active}'       'False'
+
+    ${status_type}=            SL.Execute Javascript                return document.querySelector("#tr_BlockType_MAC").checked
+    Should Be Equal            '${status_type}'                     'True'
+
+    ${day_status}=             SL.Execute Javascript                return document.querySelector('[name="tr_${day}"]').checked
+    Run Keyword If             '${day_mode}' == 'Active'            Should Be Equal        '${day_status}'       'True'
+    ...    ELSE IF             '${day_mode}' == 'Deactive'          Should Be Equal        '${day_status}'       'False'
+    
+    ${start_value}=            SL.Get Value                         xpath=//input[@name="tr_Start_${day}"]
+    Should Be Equal            '${start_time}'                      '${start_value}'    
+    
+    ${end_value}=              SL.Get Value                         xpath=//input[@name="tr_End_${day}"]
+    Should Be Equal            '${end_time}'                        '${end_value}'
+
+    Log To Console                                                  Rule Parental Has Match with Info Config!\n    
+    Sleep                                                           2s
+
+Verify Rule Parental URL
+    [Arguments]        ${rule_index}        ${rule_mode}        ${url}        ${day}        ${day_mode}        ${start_time}        ${end_time}
+
+    Log To Console                                                  \nVerify Rule Parental URL
+
+    SL.Wait Until Element Is Visible                                xpath=//select[@name="Parental_rule_index"]
+    ${index_value}=            SL.Get Value                         xpath=//select[@name="Parental_rule_index"]/option[@selected=""]
+    ${index}=                  Evaluate                             ${index_value} + 1
+    ${index}=                  Convert To String                    ${index}    
+    Should Be Equal            '${rule_index}'                      '${index}'
+
+    ${status_active}=          SL.Execute Javascript                return document.querySelector("#Rule_Active_Yes").checked
+    Run Keyword If             '${rule_mode}' == 'Activated'        Should Be Equal        '${status_active}'       'True'
+    ...    ELSE IF             '${rule_mode}' == 'Deactivated'      Should Be Equal        '${status_active}'       'False'
+
+    ${status_type}=            SL.Execute Javascript                return document.querySelector("#tr_BlockType_URL").checked
+    Should Be Equal            '${status_type}'                     'True'
+
+    ${url_value}=              SL.Get Value                         xpath=//input[@name="tr_URL"]
+    Should Be Equal            '${url}'                             '${url_value}'
+
+    ${day_status}=             SL.Execute Javascript                return document.querySelector('[name="tr_${day}"]').checked
+    Run Keyword If             '${day_mode}' == 'Active'            Should Be Equal        '${day_status}'       'True'
+    ...    ELSE IF             '${day_mode}' == 'Deactive'          Should Be Equal        '${day_status}'       'False'
+    
+    ${start_value}=            SL.Get Value                         xpath=//input[@name="tr_Start_${day}"]
+    Should Be Equal            '${start_time}'                      '${start_value}'    
+    
+    ${end_value}=              SL.Get Value                         xpath=//input[@name="tr_End_${day}"]
+    Should Be Equal            '${end_time}'                        '${end_value}'
+
+    Log To Console                                                  Rule Parental Has Match with Info Config!\n    
+    Sleep                                                           2s

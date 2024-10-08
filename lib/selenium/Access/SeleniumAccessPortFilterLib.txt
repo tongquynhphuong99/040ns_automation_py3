@@ -1,0 +1,400 @@
+*** Settings ***
+Library                      SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
+Resource                     ../Network/SeleniumNetworkWANLib.txt
+
+*** Variables ***
+
+*** Keywords ***
+###
+Open Filter Page
+    Log To Console                             \nAccess to Filter Page
+    [Arguments]                                ${url}=https://192.168.1.1/cgi-bin/access_ipfilter.asp
+
+    SL.Go To                                   ${url}
+    SL.Wait Until Page Contains                Filter
+    ...                                        timeout=20s
+    ...                                        error=\nFilter Page Not Found
+    SL.Page Should Contain                     Filter
+
+Select Filter Type
+    [Documentation]                            0 <=> IP / MAC Filter
+    ...                                        1 <=> Application Filter                
+    ...                                        2 <=> URL Filter
+   
+    [Arguments]                                ${filter_type}
+    Run Keyword If        '${filter_type}' == 'IP / MAC Filter'        SL.Select From List By Index        xpath=//select[@name="FILTERTYPE_index"]        0
+    ...    ELSE IF        '${filter_type}' == 'Application Filter'     SL.Select From List By Index        xpath=//select[@name="FILTERTYPE_index"]        1
+    ...    ELSE IF        '${filter_type}' == 'URL Filter'             SL.Select From List By Index        xpath=//select[@name="FILTERTYPE_index"]        2
+    Log To Console                             \nSelect Type ${filter_type}
+
+###### IP/MAC Filter
+Select Rule Type
+    [Documentation]                            Black/White
+    [Arguments]                                ${rule_type}=Black
+
+    SL.Select From List By Value               xpath=//select[@name='RuleTypeSEL']       ${rule_type}
+    Log To Console                             Select Rule Type ${rule_type} List 
+
+Select Filter Rule Index
+    [Documentation]                            0 => 15
+    [Arguments]                                ${index}
+
+    ${index_value}=                            Evaluate                 ${index} - 1
+    ${index_value}=                            Convert To String        ${index_value}
+    SL.Select From List By Value               xpath=//select[@name='RuleIndexSEL']       ${index_value}
+    Log To Console                             Select Rule Index ${index}
+
+Select Filter Rule Active
+    [Documentation]                            Yes/No
+    [Arguments]                                ${filter_mode}=Yes    
+
+    Log To Console                             Select Rule Active: ${filter_mode}
+    Run Keyword If        '${filter_mode}' == 'Yes'        SL.Execute Javascript        document.getElementsByName('RuleActiveRDO')[0].click();
+    ...    ELSE IF        '${filter_mode}' == 'No'         SL.Execute Javascript        document.getElementsByName('RuleActiveRDO')[1].click();
+    
+Select Direction       
+    [Documentation]                            Both/Incoming/Outgoing
+    [Arguments]                                ${direction}
+
+    Log To Console                             Select Filter Direction ${direction} 
+    SL.Select From List By Value               xpath=//select[@name='DirectionSEL']       ${direction}
+    
+Select Interface Filter
+    [Documentation]                            PVC0......PVC7 <=> WAN0...... WAN7    and    LAN
+    [Arguments]                                ${interface}
+
+    SL.Select From List By Value               xpath=//select[@name='InterfaceSEL']       ${interface}
+    Log To Console                             Select Filter Interface 
+    
+Select Rule 
+    [Documentation]                            IP/MAC
+    [Arguments]                                ${rule}
+
+    SL.Select From List By Value               xpath=//select[@name='FILTERRuleTypeSEL']       ${rule}
+    Log To Console                             Select Filter Rule ${rule}
+
+Config IP Address Filter
+    [Documentation]                            0.0.0.0 means Don't care
+    [Arguments]                                ${start_ip}=0.0.0.0        
+    ...                                        ${start_subnet}=0.0.0.0             
+    ...                                        ${source_port}=0
+    ...                                        ${des_ip}=0.0.0.0    
+    ...                                        ${des_subnet}=0.0.0.0      
+    ...                                        ${des_port}=0
+    
+    Log To Console                        \nConfig IP Address Filter
+    SL.Click Element                      xpath=//input[@name="SrcIPTXT"]
+    SL.Input Text                         xpath=//input[@name="SrcIPTXT"]         ${start_ip}
+    
+    SL.Click Element                      xpath=//input[@name="SrcMaskTXT"]
+    SL.Input Text                         xpath=//input[@name="SrcMaskTXT"]       ${start_subnet}
+    
+    SL.Click Element                      xpath=//input[@name="SrcPortTXT"]
+    SL.Input Text                         xpath=//input[@name="SrcPortTXT"]       ${source_port}
+    
+    SL.Click Element                      xpath=//input[@name="DestIPTXT"]
+    SL.Input Text                         xpath=//input[@name="DestIPTXT"]        ${des_ip}
+    
+    SL.Click Element                      xpath=//input[@name="DestMaskTXT"]
+    SL.Input Text                         xpath=//input[@name="DestMaskTXT"]      ${des_subnet}
+    
+    SL.Click Element                      xpath=//input[@name="DestPortTXT"]
+    SL.Input Text                         xpath=//input[@name="DestPortTXT"]      ${des_port}
+
+Input DSCP
+    [Documentation]                       Value Range:0~64, 64 means Don't care
+    [Arguments]                           ${dscp}
+
+    Log To Console                        Input DSCP=${dscp}
+    SL.Click Element                      xpath=//input[@name="DSCPTXT"]
+    SL.Input Text                         xpath=//input[@name="DSCPTXT"]       ${dscp}  
+
+Select Protocol
+    [Documentation]                        TCP/UDP/ICMP
+    [Arguments]                            ${protocol}   
+
+    SL.Select From List By Value           xpath=//select[@name='ProtocolSEL']       ${protocol}
+    Log To Console                         Select Protocol ${protocol}
+
+Config MAC Address
+    [Arguments]                           ${mac_add}
+
+    Log To Console                        \nConfig MAC Address
+    SL.Wait Until Element Is Visible      xpath=//input[@name="MacAddrTXT"] 
+    ...                                   timeout=10s
+    ...                                   error=\nMAC Address Text Box Not Found
+    SL.Click Element                      xpath=//input[@name="MacAddrTXT"]   
+    SL.Input Text                         xpath=//input[@name="MacAddrTXT"]        ${mac_add}
+
+Save Config IP/MAC Filter
+    SL.Click Element                      xpath=//input[@name="IpFilterApply"]
+
+Delete Config IP/MAC Filter
+    [Arguments]                           ${index}
+
+    Log To Console                        Delete Rule Filter
+    ${i}=                                 SeleniumNetworkWANLib.Get Row Index        column_name=#        column_value=${index}
+    SL.Click Element                      xpath=//table[@class="tableShowData"]/tbody/tr[${i}]/td[12]/img
+
+Popup Invalid IP Address Should Be Visible
+    [Documentation]                     Handle popup IP address is empty or wrong format!
+
+    ${popup_message}=                   SL.Handle Alert    timeout=10s
+    Log To Console                      Popup message: ${popup_message}\n
+    Should Contain                      ${popup_message}     IP address is empty or wrong format!
+
+Popup Invalid Subnet Mask Should Be Visible
+    [Documentation]                     Handle popup Invalid subnet mask!
+
+    ${popup_message}=                   SL.Handle Alert    timeout=10s
+    Log To Console                      Popup message: ${popup_message}\n
+    Should Contain                      ${popup_message}     Invalid subnet mask!
+
+Popup Invalid Port Number Should Be Visible
+    [Documentation]                     Handle popup Invalid port number
+
+    ${popup_message}=                   SL.Handle Alert    timeout=10s
+    Log To Console                      Popup message: ${popup_message}\n
+    Should Contain                      ${popup_message}     Invalid port number
+
+Popup Invalid DSCP Should Be Visible
+    [Documentation]                     Handle popup Invalid DSCP
+
+    ${popup_message}=                   SL.Handle Alert    timeout=10s
+    Log To Console                      Popup message: ${popup_message}\n
+    Should Contain                      ${popup_message}     DSCP's range: 0 ~ 64
+
+Message Empty MAC Should Be Visible
+    [Documentation]                     Handle message Empty MAC Address
+
+    ${message}=                         SL.Get Text            xpath=//span[@id="checkMacMsg"]
+    Log To Console                      Popup message: ${message}\n
+    Should Contain                      ${message}             Empty MAC Address!
+
+Message Invalid MAC Should Be Visible
+    [Documentation]                     Handle message Invalid MAC Address
+
+    ${message}=                         SL.Get Text            xpath=//span[@id="checkMacMsg"]
+    Log To Console                      Popup message: ${message}\n
+    Should Contain                      ${message}             Invalid MAC Address
+
+Verify IP/MAC Filter Rule
+    [Arguments]                                ${index}=2
+    ...                                        ${rule}=IP
+    ...                                        ${rule_type}=Black      
+    ...                                        ${rule_mode}=Yes      
+    ...                                        ${interface}=LAN        
+    ...                                        ${direction}=Both        
+    ...                                        ${mac_add}=N/A        
+    ...                                        ${protocol}=N/A
+    ...                                        ${start_ip}=0.0.0.0        
+    ...                                        ${start_subnet}=0.0.0.0             
+    ...                                        ${source_port}=0
+    ...                                        ${des_ip}=0.0.0.0    
+    ...                                        ${des_subnet}=0.0.0.0      
+    ...                                        ${des_port}=0
+    ...                                        ${dscp}=0
+    
+    ${i}=                  SeleniumNetworkWANLib.Get Row Index        column_name=#        column_value=${index}
+
+    ${type_get}=           SL.Get Value               xpath=//select[@name="RuleTypeSEL"]/option[@selected=""]
+    Should Be Equal        '${type_get}'              '${rule_type}'
+
+    ${active}=             SL.Get Text                     xpath=//table[@class="tableShowData"]/tbody/tr[${i}]/td[2]
+    Run Keyword If         '${rule_mode}' == 'Yes'         Should Be Equal        '${active}'       'Yes'
+    ...    ELSE IF         '${rule_mode}' == 'No'          Should Be Equal        '${active}'       'No'
+
+    ${if_get}=             SL.Get Text                xpath=//table[@class="tableShowData"]/tbody/tr[${i}]/td[3]
+    Should Be Equal        '${if_get}'                '${interface}'
+
+    ${direc_get}=          SL.Get Text                xpath=//table[@class="tableShowData"]/tbody/tr[${i}]/td[4]
+    Should Be Equal        '${direc_get}'             '${direction}'
+
+    ${src_ip_get}=         SL.Get Text                xpath=//table[@class="tableShowData"]/tbody/tr[${i}]/td[5]
+    Run Keyword If         '${rule}' == 'IP'          Should Be Equal        '${src_ip_get}'            '${start_ip}/\n${start_subnet}'
+    ...    ELSE IF         '${rule}' == 'MAC'         Should Be Equal        '${src_ip_get}'            'N/A'
+
+    ${des_ip_get}=         SL.Get Text                xpath=//table[@class="tableShowData"]/tbody/tr[${i}]/td[6]
+    Run Keyword If         '${rule}' == 'IP'          Should Be Equal        '${des_ip_get}'            '${des_ip}/\n${des_subnet}'
+    ...    ELSE IF         '${rule}' == 'MAC'         Should Be Equal        '${des_ip_get}'            'N/A'
+
+    ${mac_get}=            SL.Get Text                xpath=//table[@class="tableShowData"]/tbody/tr[${i}]/td[7]
+    Run Keyword If         '${rule}' == 'IP'          Should Be Equal        '${mac_get}'               'N/A'
+    ...    ELSE IF         '${rule}' == 'MAC'         Should Be Equal        '${mac_get}'               '${mac_add}'
+    
+    ${src_port_get}=       SL.Get Text                xpath=//table[@class="tableShowData"]/tbody/tr[${i}]/td[8]
+    Run Keyword If         '${rule}' == 'IP'          Should Be Equal        '${src_port_get}'          '${source_port}'
+    ...    ELSE IF         '${rule}' == 'MAC'         Should Be Equal        '${src_port_get}'          'N/A'    
+    
+    ${des_port_get}=       SL.Get Text                xpath=//table[@class="tableShowData"]/tbody/tr[${i}]/td[9]
+    Run Keyword If         '${rule}' == 'IP'          Should Be Equal        '${des_port_get}'          '${des_port}'
+    ...    ELSE IF         '${rule}' == 'MAC'         Should Be Equal        '${des_port_get}'          'N/A'  
+
+    ${dscp_get}=           SL.Get Text                xpath=//table[@class="tableShowData"]/tbody/tr[${i}]/td[10]
+    Run Keyword If         '${rule}' == 'IP'          Should Be Equal        '${dscp_get}'              '${dscp}'
+    ...    ELSE IF         '${rule}' == 'MAC'         Should Be Equal        '${dscp_get}'              'N/A'  
+
+    ${pro_get}=            SL.Get Text                xpath=//table[@class="tableShowData"]/tbody/tr[${i}]/td[11]
+    Run Keyword If         '${rule}' == 'IP'          Should Be Equal        '${pro_get}'               '${protocol}'
+    ...    ELSE IF         '${rule}' == 'MAC'         Should Be Equal        '${pro_get}'               'N/A'      
+
+    Log To Console         \nRule IP/MAC Filter Match with Info Config!
+
+# Verify Config IP Address Filter
+#     [Arguments]                                ${start_ip}=0.0.0.0        
+#     ...                                        ${start_subnet}=0.0.0.0             
+#     ...                                        ${source_port}=0
+#     ...                                        ${des_ip}=0.0.0.0    
+#     ...                                        ${des_subnet}=0.0.0.0      
+#     ...                                        ${des_port}=0
+#     ...                                        ${dscp}=0
+
+
+
+
+Verify Delete IP/MAC Filter Rule
+    [Arguments]            ${index}=2
+
+    ${i}=                  SeleniumNetworkWANLib.Get Row Index        column_name=#        column_value=${index}
+    Should Be Equal        '${i}'        'None'
+    Log To Console         \nDelete IP/MAC Filter Rule Success!
+
+###### Application Filter
+Config Application Filter
+    [Documentation]            Activated/Deactivated      
+    ...                        Allow/Deny
+    
+    [Arguments]                ${app_mode}=Activated
+    ...                        ${icq}=Allow
+    ...                        ${msn}=Allow
+    ...                        ${ymsg}=Allow
+    ...                        ${real_audio}=Allow               
+    # ...    ${url}=https://192.168.1.1/cgi-bin/access_appfilter.asp
+
+    # SL.Go To                                   ${url}	
+    Log To Console        \nSelect Rule Mode ${app_mode}
+    Run Keyword IF        '${app_mode}' == 'Activated'          SL.Execute Javascript        document.getElementsByName('APPFilter_status')[0].click();
+    ...   ELSE IF         '${app_mode}' == 'Deactivated'        SL.Execute Javascript        document.getElementsByName('APPFilter_status')[1].click();
+    
+    Log To Console        Config ${icq} ICQ
+    Run Keyword IF        '${icq}' == 'Allow'                   SL.Execute Javascript        document.getElementsByName('ICQ_allowance')[0].click();
+    ...   ELSE IF         '${icq}' == 'Deny'                    SL.Execute Javascript        document.getElementsByName('ICQ_allowance')[1].click();
+
+    Log To Console        Config ${msn} MSN
+    Run Keyword IF        '${msn}' == 'Allow'                   SL.Execute Javascript        document.getElementsByName('MSN_allowance')[0].click();
+    ...   ELSE IF         '${msn}' == 'Deny'                    SL.Execute Javascript        document.getElementsByName('MSN_allowance')[1].click();
+
+    Log To Console        Config ${ymsg} YMSG
+    Run Keyword IF        '${ymsg}' == 'Allow'                  SL.Execute Javascript        document.getElementsByName('YMSG_allowance')[0].click();
+    ...   ELSE IF         '${ymsg}' == 'Deny'                   SL.Execute Javascript        document.getElementsByName('YMSG_allowance')[1].click();
+
+    Log To Console        Config ${real_audio} Real Audio/Video
+    Run Keyword IF        '${real_audio}' == 'Allow'            SL.Execute Javascript        document.getElementsByName('RA_allowance')[0].click();
+    ...   ELSE IF         '${real_audio}' == 'Deny'             SL.Execute Javascript        document.getElementsByName('RA_allowance')[1].click();
+
+Save Config App Filter
+    SL.Click Element                      xpath=//input[@name="APPFilterApply"]
+    
+Verify App Filter Config
+    [Arguments]                ${app_mode}=Activated
+    ...                        ${icq}=Allow
+    ...                        ${msn}=Allow
+    ...                        ${ymsg}=Allow
+    ...                        ${real_audio}=Allow 
+    
+    ${app_status}=        SL.Get Value                          xpath=//input[@name="APPFilter_status" and @checked] 
+    Run Keyword If        '${app_mode}' == 'Activated'          Should Be Equal        '${app_status}'       '1'
+    ...    ELSE IF        '${app_mode}' == 'Deactivated'        Should Be Equal        '${app_status}'       '0'
+
+    ${icq_status}=        SL.Get Value                          xpath=//input[@name="ICQ_allowance" and @checked] 
+    Run Keyword If        '${icq}' == 'Allow'                   Should Be Equal        '${icq_status}'       '0'
+    ...    ELSE IF        '${icq}' == 'Deny'                    Should Be Equal        '${icq_status}'       '1'
+
+    ${msn_status}=        SL.Get Value                          xpath=//input[@name="MSN_allowance" and @checked] 
+    Run Keyword If        '${msn}' == 'Allow'                   Should Be Equal        '${msn_status}'       '0'
+    ...    ELSE IF        '${msn}' == 'Deny'                    Should Be Equal        '${msn_status}'       '1'
+
+    ${ymsg_status}=       SL.Get Value                          xpath=//input[@name="YMSG_allowance" and @checked] 
+    Run Keyword If        '${ymsg}' == 'Allow'                  Should Be Equal        '${ymsg_status}'      '0'
+    ...    ELSE IF        '${ymsg}' == 'Deny'                   Should Be Equal        '${ymsg_status}'      '1'
+
+    ${real_status}=        SL.Get Value                         xpath=//input[@name="RA_allowance" and @checked] 
+    Run Keyword If        '${real_audio}' == 'Allow'            Should Be Equal        '${real_status}'       '0'
+    ...    ELSE IF        '${real_audio}' == 'Deny'             Should Be Equal        '${real_status}'       '1'
+
+    Log To Console         \nRule Application Filter Match with Info Config!
+
+###### URL Filter
+Select URL Filter Mode
+    [Documentation]            Yes/No
+    [Arguments]                ${url_mode}=Yes
+
+    Log To Console        \nSelect Active URL Filter: ${url_mode}
+    Run Keyword IF        '${url_mode}' == 'Yes'        SL.Execute Javascript        document.getElementsByName('RuleIndex_active')[0].click();
+    ...   ELSE IF         '${url_mode}' == 'No'         SL.Execute Javascript        document.getElementsByName('RuleIndex_active')[1].click();
+
+Config URL Filter Rule
+    [Documentation]            Index: 1=>8
+    ...                        Yes/No        
+    [Arguments]                ${index}=1        ${individual}=Yes        ${url_add}=http://facebook.com
+    
+    ${index_value}=                        Evaluate                 ${index} - 1
+    ${index_value}=                        Convert To String        ${index_value}
+    SL.Select From List By Value           xpath=//select[@name='UrlFilter_index']       ${index_value}
+    Log To Console                         Select Rule Index ${index}
+    
+    Run Keyword If        '${individual}' == 'Yes'        SL.Execute Javascript        document.getElementsByName('SingleRule_active')[0].click();
+    ...    ELSE IF        '${individual}' == 'No'         SL.Execute Javascript        document.getElementsByName('SingleRule_active')[1].click();
+    Log To Console        \nSelect Individual Active: ${individual}
+    
+    SL.Input Text                          xpath=//input[@name="UrlFilter_URL"]       ${url_add}
+    Log To Console                         \nInput URL Address ${url_add}
+    
+Save Config Url Filter
+    SL.Click Element                       xpath=//input[@name="UrlFilterApply"]
+    Sleep                                  2s
+
+Delete Config Url Filter
+    [Arguments]                            ${index}=1
+
+    ${index_value}=                        Evaluate                 ${index} - 1
+    ${index_value}=                        Convert To String        ${index_value}
+    SL.Select From List By Value           xpath=//select[@name='UrlFilter_index']       ${index_value}
+    Log To Console                         Select Rule Index ${index}
+    SL.Click Element                       xpath=//input[@name="UrlFilterDelete"]
+    Sleep                                  2s
+
+Verify URL Filter Mode
+    [Arguments]                ${url_mode}=Yes
+
+    ${url_status}=        SL.Get Value                          xpath=//input[@name="RuleIndex_active" and @checked] 
+    Run Keyword If        '${url_mode}' == 'Yes'        Should Be Equal        '${url_status}'       '1'
+    ...    ELSE IF        '${url_mode}' == 'No'         Should Be Equal        '${url_status}'       '0'
+
+Verify URL Filter Rule
+    [Arguments]            ${index}=2        ${individual}=Yes        ${url_add}=http://facebook.com  
+
+    ${i}=                  SeleniumNetworkWANLib.Get Row Index        column_name=Index        column_value=${index}
+
+    ${active}=             SL.Get Text                     xpath=//table[@class="tableShowData"]/tbody/tr[${i}]/td[2]
+    Run Keyword If         '${individual}' == 'Yes'        Should Be Equal        '${active}'       'Yes'
+    ...    ELSE IF         '${individual}' == 'No'         Should Be Equal        '${active}'       'No'
+
+    ${url_get}=            SL.Get Text                xpath=//table[@class="tableShowData"]/tbody/tr[${i}]/td[3]
+    Should Be Equal        '${url_get}'                '${url_add}'
+
+    Log To Console         \nRule URL Filter Match with Info Config!
+
+Verify Delete URL Filter
+    [Arguments]            ${index}=2
+
+    ${i}=                  SeleniumNetworkWANLib.Get Row Index        column_name=Index        column_value=${index}
+    Should Be Equal        '${i}'        'None'
+    Log To Console         \nDelete URL Filter Rule Success!
+
+Popup Invalid URL Filter Should Be Visible
+    [Documentation]                     Handle popup Invalid URL
+
+    ${popup_message}=                   SL.Handle Alert    timeout=10s
+    Log To Console                      Popup message: ${popup_message}\n
+    Should Contain                      ${popup_message}     Invalid url

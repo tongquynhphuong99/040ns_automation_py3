@@ -1,0 +1,257 @@
+*** Settings ***
+Library                                            SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
+Library                                            SSHLibrary    WITH NAME    SSHL
+Resource                                           selenium/Login/SeleniumLoginLib.txt
+Resource                                           selenium/Maintenance/SeleniumMaintenanceRebootResetLib.txt
+Resource                                           selenium/InterfaceSetup/SeleniumInterfaceSetupWireless24GHzLib.txt
+Resource                                           selenium/InterfaceSetup/SeleniumInterfaceSetupWireless5GHzLib.txt
+Resource                                           selenium/Status/SeleniumStatusDeviceInfoLib.txt
+Resource                                           ssh/SshLib.txt
+
+*** Variables ***
+
+*** Keywords ***
+MOD_WIFI2G_01_TC_12_Teardown
+    ##Teardown
+    Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
+
+    #####Factory Reset Via Web GUI
+    Login To Browser		                 password=&{ONT}[ONT_WEB_PASS]
+    Factory Reset Via Web GUI
+  
+    SL.Go To                                 url=${LOGIN_URL}
+    SL.Wait Until Element Is Visible         ${LOGIN_BUTTON}
+    ...                                      timeout=25s
+    ...                                      error=\nLogin Page Does Not Found!
+    Run Keyword If                           '${SWITCH_VARIABLE}' == '3'      Log To Console	\nDon't need to change password after reset factory
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '2'      Change Password WebGui
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '1'      Change Password WebGui
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '0'      Change Password WebGui    
+    SL.Delete All Cookies
+    SL.Close All Browsers
+
+MOD_WIFI2G_01_TC_12
+    [Documentation]    Kiem tra kha nang cau hinh Security Configure Type WPA2-PSK/WPA3-PSK Wifi 2.4Ghz
+
+    SL.Set Selenium Speed                         0.5
+    SL.Set Selenium Timeout                       10s
+    Set Test Message                              *HTML* <b>MOD_WIFI2G_01_TC_12</b>
+    Login To Browser		                      password=&{ONT}[ONT_WEB_PASS]
+    SL.Select Frame                               xpath=//frame[@name="contentfrm"]
+    Open 2.4GHz Wireless Configure Page
+
+    ### Step 1: Config Security mode WPA2-PSK/WPA3-PSK Password Empty for Wifi 2.4GHz
+    Log To Console                                \nStep 1: Config Security mode WPA2-PSK/WPA3-PSK Password Empty for Wifi 2.4GHz
+    
+    Select SSID 2G Index                          ssid_index=1
+    Select 2G Security Mode                       secu_mode=WPA2-PSK/WPA3-PSK
+    Configure 2G Security Mode WPA                encry_type=AES
+    ...                                           password=${EMPTY}
+    Save Config SSID
+    # Verify Config
+    Popup WPA Password Invalid Should Be Visible
+
+    # ### Step 2: Config Security mode WPA2-PSK/WPA3-PSK Password All Space for Wifi 2.4GHz
+    # Log To Console                                \nStep 2: Config Security mode WPA2-PSK/WPA3-PSK Password All Space for Wifi 2.4GHz
+    
+    # Select SSID 2G Index                          ssid_index=1
+    # Select 2G Security Mode                       secu_mode=WPA2-PSK/WPA3-PSK
+    # Configure 2G Security Mode WPA                encry_type=AES
+    # ...                                           password=${SPACE*8}
+    # Save Config SSID
+    # # Verify Config
+    # Popup WPA Password Invalid Should Be Visible
+
+    ### Step 3: Config Security mode WPA2-PSK/WPA3-PSK Password Special Characters &|;$><`\!'" for Wifi 2.4GHz
+    Log To Console                                \nStep 3: Config Security mode WPA2-PSK/WPA3-PSK Password Special Characters &|;$><`\!'" for Wifi 2.4GHz
+    
+    Log To Console					              Step 3.1: WPA2-PSK/WPA3-PSK Password with &
+    Select SSID 2G Index                          ssid_index=1
+    Select 2G Security Mode                       secu_mode=WPA2-PSK/WPA3-PSK
+    Configure 2G Security Mode WPA                encry_type=AES
+    ...                                           password=${WIFI_PASS}&
+    Save Config SSID
+    # Verify Config
+    Popup WPA Password Invalid Should Be Visible
+
+    Log To Console					              Step 3.2: WPA2-PSK/WPA3-PSK Password with |
+    Select SSID 2G Index                          ssid_index=1
+    Select 2G Security Mode                       secu_mode=WPA2-PSK/WPA3-PSK
+    Configure 2G Security Mode WPA                encry_type=AES
+    ...                                           password=${WIFI_PASS}|
+    Save Config SSID
+    # Verify Config
+    Popup WPA Password Invalid Should Be Visible
+
+    Log To Console					              Step 3.3: WPA2-PSK/WPA3-PSK Password with ;
+    Select SSID 2G Index                          ssid_index=1
+    Select 2G Security Mode                       secu_mode=WPA2-PSK/WPA3-PSK
+    Configure 2G Security Mode WPA                encry_type=AES
+    ...                                           password=${WIFI_PASS};
+    Save Config SSID
+    # Verify Config
+    Popup WPA Password Invalid Should Be Visible
+
+    Log To Console					              Step 3.4: WPA2-PSK/WPA3-PSK Password with $
+    Select SSID 2G Index                          ssid_index=1
+    Select 2G Security Mode                       secu_mode=WPA2-PSK/WPA3-PSK
+    Configure 2G Security Mode WPA                encry_type=AES
+    ...                                           password=${WIFI_PASS}$
+    Save Config SSID
+    # Verify Config
+    Popup WPA Password Invalid Should Be Visible
+
+    Log To Console					              Step 3.5: WPA2-PSK/WPA3-PSK Password with >
+    Select SSID 2G Index                          ssid_index=1
+    Select 2G Security Mode                       secu_mode=WPA2-PSK/WPA3-PSK
+    Configure 2G Security Mode WPA                encry_type=AES
+    ...                                           password=${WIFI_PASS}>
+    Save Config SSID
+    # Verify Config
+    Popup WPA Password Invalid Should Be Visible
+
+    Log To Console					              Step 3.6: WPA2-PSK/WPA3-PSK Password with <
+    Select SSID 2G Index                          ssid_index=1
+    Select 2G Security Mode                       secu_mode=WPA2-PSK/WPA3-PSK
+    Configure 2G Security Mode WPA                encry_type=AES
+    ...                                           password=${WIFI_PASS}<
+    Save Config SSID
+    # Verify Config
+    Popup WPA Password Invalid Should Be Visible
+
+    Log To Console					              Step 3.7: WPA2-PSK/WPA3-PSK Password with `
+    Select SSID 2G Index                          ssid_index=1
+    Select 2G Security Mode                       secu_mode=WPA2-PSK/WPA3-PSK
+    Configure 2G Security Mode WPA                encry_type=AES
+    ...                                           password=${WIFI_PASS}`
+    Save Config SSID
+    # Verify Config
+    Popup WPA Password Invalid Should Be Visible
+
+    Log To Console					              Step 3.8: WPA2-PSK/WPA3-PSK Password with \\\
+    Select SSID 2G Index                          ssid_index=1
+    Select 2G Security Mode                       secu_mode=WPA2-PSK/WPA3-PSK
+    Configure 2G Security Mode WPA                encry_type=AES
+    ...                                           password=${WIFI_PASS}\\
+    Save Config SSID
+    # Verify Config
+    Popup WPA Password Invalid Should Be Visible
+
+    Log To Console					              Step 3.9: WPA2-PSK/WPA3-PSK Password with !
+    Select SSID 2G Index                          ssid_index=1
+    Select 2G Security Mode                       secu_mode=WPA2-PSK/WPA3-PSK
+    Configure 2G Security Mode WPA                encry_type=AES
+    ...                                           password=${WIFI_PASS}!
+    Save Config SSID
+    # Verify Config
+    Popup WPA Password Invalid Should Be Visible
+
+    Log To Console					              Step 3.10: WPA2-PSK/WPA3-PSK Password with '
+    Select SSID 2G Index                          ssid_index=1
+    Select 2G Security Mode                       secu_mode=WPA2-PSK/WPA3-PSK
+    Configure 2G Security Mode WPA                encry_type=AES
+    ...                                           password=${WIFI_PASS}'
+    Save Config SSID
+    # Verify Config
+    Popup WPA Password Invalid Should Be Visible
+
+    Log To Console					              Step 3.11: WPA2-PSK/WPA3-PSK Password with "
+    Select SSID 2G Index                          ssid_index=1
+    Select 2G Security Mode                       secu_mode=WPA2-PSK/WPA3-PSK
+    Configure 2G Security Mode WPA                encry_type=AES
+    ...                                           password=${WIFI_PASS}"
+    Save Config SSID
+    # Verify Config
+    Popup WPA Password Invalid Should Be Visible
+
+    ### Step 4: Config Security mode WPA2-PSK/WPA3-PSK Password Invalid Length for Wifi 2.4GHz
+    Log To Console                                \nStep 4: Config Security mode WPA2-PSK/WPA3-PSK Password Invalid Length for Wifi 2.4GHz
+    Open 2.4GHz Wireless Configure Page
+
+    Log To Console					              Step 4.1: WPA2-PSK/WPA3-PSK Password with Length < 8 characters/numbers
+    Select SSID 2G Index                          ssid_index=1
+    Select 2G Security Mode                       secu_mode=WPA2-PSK/WPA3-PSK
+    Configure 2G Security Mode WPA                encry_type=AES
+    ...                                           password=1234567
+    Save Config SSID
+    # Verify Config
+    Popup WPA Password Length Should Be Visible
+
+    Log To Console					              Step 4.2: WPA2-PSK/WPA3-PSK Password with Length > 63 characters ASCII
+    Select SSID 2G Index                          ssid_index=1
+    Select 2G Security Mode                       secu_mode=WPA2-PSK/WPA3-PSK
+    Configure 2G Security Mode WPA                encry_type=AES
+    ...                                           password=abcdefghabcdefghabcdefghabcdefghabcdefghabcdefghabcdefghabcdefgh
+    Save Config SSID
+    # Verify Config
+    Popup WPA Password Length Should Be Visible
+
+    Log To Console					              Step 4.3: WPA2-PSK/WPA3-PSK Password with Length > 64 hexadecimal numbers
+    Select SSID 2G Index                          ssid_index=1
+    Select 2G Security Mode                       secu_mode=WPA2-PSK/WPA3-PSK
+    Configure 2G Security Mode WPA                encry_type=AES
+    ...                                           password=12345678123456781234567812345678123456781234567812345678123456782
+    Save Config SSID
+    # Verify Config
+    Popup WPA Password Length Should Be Visible
+
+    ### Step 5: Config Security mode WPA2-PSK/WPA3-PSK Password Valid for Wifi 2.4GHz
+    Log To Console                                \nStep 5: Config Security mode WPA2-PSK/WPA3-PSK Password Valid for Wifi 2.4GHz
+
+    Log To Console					              Step 5.1: WPA2-PSK/WPA3-PSK Password with Length = 63 characters ASCII
+    Select SSID 2G Index                          ssid_index=1
+    Select 2G Security Mode                       secu_mode=WPA2-PSK/WPA3-PSK
+    Configure 2G Security Mode WPA                encry_type=AES
+    ...                                           password=abcdefghabcdefghabcdefghabcdefghabcdefghabcdefghabcdefghabcdefg
+    Save Config SSID
+    # Verify Config
+    Verify Config 2G Security mode WPA            secu_mode=WPA2-PSK/WPA3-PSK
+    ...                                           encry_type=AES
+    ...                                           password=abcdefghabcdefghabcdefghabcdefghabcdefghabcdefghabcdefghabcdefg
+
+    Log To Console					              Step 5.2: WPA2-PSK/WPA3-PSK Password with Length = 64 hexadecimal numbers
+    Select SSID 2G Index                          ssid_index=1
+    Select 2G Security Mode                       secu_mode=WPA2-PSK/WPA3-PSK
+    Configure 2G Security Mode WPA                encry_type=AES
+    ...                                           password=1234567812345678123456781234567812345678123456781234567812345678
+    Save Config SSID
+    # Verify Config
+    Verify Config 2G Security mode WPA            secu_mode=WPA2-PSK/WPA3-PSK
+    ...                                           encry_type=AES
+    ...                                           password=1234567812345678123456781234567812345678123456781234567812345678
+
+    Log To Console					              Step 5.3: WPA2-PSK/WPA3-PSK Password with Length = 8 characters/numbers
+    Select SSID 2G Index                          ssid_index=1
+    Select 2G Security Mode                       secu_mode=WPA2-PSK/WPA3-PSK
+    Configure 2G Security Mode WPA                encry_type=AES
+    ...                                           password=12345678
+    Save Config SSID
+    # Verify Config
+    Verify Config 2G Security mode WPA            secu_mode=WPA2-PSK/WPA3-PSK
+    ...                                           encry_type=AES
+    ...                                           password=12345678
+
+    ### Step 6: Check Status Encryption Type with Security mode WPA2-PSK/WPA3-PSK for Wifi 2.4GHz
+    Log To Console                                \nStep 6: Check Status Encryption Type with Security mode WPA2-PSK/WPA3-PSK for Wifi 2.4GHz
+    Log To Console    \nWith Security Mode WPA3-PSK and WPA2-PSK/WPA3-PSK Only Allow Select Option AES (Option TKIP and TKIP+AES is Disabled)
+
+    Log To Console					              Step 6.1: WPA2-PSK/WPA3-PSK Encryption Type TKIP
+    Select SSID 2G Index                          ssid_index=1
+    Select 2G Security Mode                       secu_mode=WPA2-PSK/WPA3-PSK
+    Check Status Encryption Type Mode WPA3        encry_type=TKIP
+
+    Log To Console					              Step 6.2: WPA2-PSK/WPA3-PSK Encryption Type TKIP+AES
+    Select SSID 2G Index                          ssid_index=1
+    Select 2G Security Mode                       secu_mode=WPA2-PSK/WPA3-PSK
+    Check Status Encryption Type Mode WPA3        encry_type=TKIP+AES
+
+    Log To Console					              Step 6.3: WPA2-PSK/WPA3-PSK Encryption Type AES
+    Select SSID 2G Index                          ssid_index=1
+    Select 2G Security Mode                       secu_mode=WPA2-PSK/WPA3-PSK
+    Check Status Encryption Type Mode WPA3        encry_type=AES
+    
+    [Teardown]                                     Run Keyword And Ignore Error        MOD_WIFI2G_01_TC_12_Teardown
+
+*** Test Cases ***
+MOD_WIFI2G_01_TC_12
+    MOD_WIFI2G_01_TC_12    

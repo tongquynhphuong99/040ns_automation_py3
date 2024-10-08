@@ -1,0 +1,35 @@
+*** Settings ***
+Library                          SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
+
+*** Variables ***
+${WIFI_STATION_URL}				https://192.168.1.1/cgi-bin/status_wifi_station.asp
+
+*** Keywords ***
+
+Open Wifi Station Page
+	[Documentation]              Open Wifi Station url to open wifi station page.
+	
+	SL.Go To                     ${WIFI_STATION_URL}
+    SL.Wait Until Page Contains  Wifi Station
+    ...                          timeout=10s
+    ...                          error=\nWifi Station Page Not Found
+    SL.Page Should Contain       Wifi Station
+
+Counting Number Wifi Station
+	[Documentation]              Count number of wifi stations connect to ont via wireless.
+    ${row_number}=                       Set Variable    ${0}
+    FOR    ${i}    IN RANGE    1    9999
+        ${check_row_exist}=        Run Keyword And Return Status    SL.Page Should Contain Element    xpath=//table[@class="tableShowData"]/tbody/tr[${i}]
+        Exit For Loop If           not ${check_row_exist}
+        ${row_number}=             Evaluate    ${row_number} + ${1}
+    END
+    ${row_number}=                       Evaluate    ${row_number} - ${1}
+    [Return]                             ${row_number}
+Get MAC Device Connect To Wifi
+    ${mac_device}=                       SL.GetText       xpath=//html/body/form/div/table/tbody/tr[2]/td[3]/table/tbody/tr[2]/td[2]/font
+    [Return]                             ${mac_device}
+Get Wifi Name  
+     ${wifi_name}=                       SL.GetText       xpath=/html/body/form/div/table/tbody/tr[2]/td[3]/table/tbody/tr[2]/td[5]/font
+    [Return]                             ${wifi_name}
+
+

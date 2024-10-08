@@ -1,0 +1,111 @@
+*** Settings ***
+Library                                 SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
+Library                                 String     WITH NAME    STR
+
+*** Keywords ***
+###
+Open Device Info Page
+    # SL.Select Frame                                 xpath=//frame[@name="contentfrm"]
+    Click Element                                   xpath=//*[@id="status_deviceinfo"]
+
+    SL.Wait Until Page Contains         Device Information
+    ...                                 timeout=10s
+    ...                                 error=\nOpen Device Info Summary Page did not show up
+    SL.Page Should Contain              Device Information
+    SL.Select Frame                                 xpath=//frame[@name="contentfrm"]
+    
+###
+Get Uptime From Device Info Page
+    [Documentation]                     Get uptime from device info
+    ...                                 Store in array [minute,hour,day]
+    ${uptime_from_device_info}=         SL.Get Text      xpath=//tr[5]/td[5]
+    ${uptime_from_device_info_array}=   STR.Get Regexp Matches    ${uptime_from_device_info}    [0-9]+
+    ${uptime_array}=                    Set Variable    @{uptime_from_device_info_array}[${2}]
+    ...                                                 @{uptime_from_device_info_array}[${1}]
+    ...                                                 @{uptime_from_device_info_array}[${0}]
+    [return]                            ${uptime_array}
+    
+    
+Get BSSID
+    Open Device Info Page
+    SL.Wait Until Element Is Visible       xpath=//table[@class='tableW']/tbody/tr[4]/td[5]
+    ...                                    timeout=10s
+    ...                                    error=\nMAC Address Does Not Show Up
+    ${bssid}=                              SL.Get Text           xpath=//table[@class='tableW']/tbody/tr[4]/td[5]
+    Return From Keyword                    ${bssid}
+    
+    
+Get DNS Server IPv4 From Device Info Page
+    [Documentation]                     Get dns server from device info page
+    ${dns_server}=                      Set Variable         None
+    ${primary_dns}=                     SL.Get Text          xpath=/html/body/form/table[2]/tbody/tr[10]/td[5]
+    # ${secondary_dns}=                   SL.Get Text          xpath=/html/body/blockquote/form/table[3]/tbody/tr[11]/td[2]
+    ${dns_server}=                      Set Variable         ${primary_dns}
+    [Return]                            ${dns_server}
+    
+    
+Get DNS Server IPv6 From Device Info Page
+    [Documentation]                     Get dns server from device info page
+    ${dns_server}=                      Set Variable         None
+    ${primary_dns}=                     SL.Get Text          xpath=/html/body/form/table[2]/tbody/tr[16]/td[5]
+    # ${secondary_dns}=                   SL.Get Text          xpath=/html/body/blockquote/form/table[3]/tbody/tr[11]/td[2]
+    ${dns_server}=                      Set Variable         ${primary_dns}
+    [Return]                            ${dns_server}
+    
+    
+Get Serial Number
+    [Documentation]                   Get Serial Number
+
+    SL.Element Should Be Visible      xpath=/html/body/form/table[3]/tbody/tr[6]/td[5]
+    ${serial}=                        SL.Get Text     xpath=/html/body/form/table[3]/tbody/tr[6]/td[5]
+    ${serial}=                        STR.Convert To Uppercase    ${serial}
+    ${serial}=                        STR.Strip String    string=${serial}
+    [return]                          ${serial}
+
+
+Get Optics Module Temperature
+    [Documentation]                   Get Optics Module Temperature
+    SL.Element Should Be Visible      xpath=/html/body/form/table[3]/tbody/tr[11]/td[5]
+    ${optical_temperature}=           SL.Get Text     xpath=/html/body/form/table[3]/tbody/tr[11]/td[5]
+    ${optical_temperature}=           STR.Strip String    string=${optical_temperature}
+    [return]                          ${optical_temperature}
+    
+    
+Get Rx Optics Signal Level
+    [Documentation]                   Get Rx Optics Signal Level
+
+    SL.Element Should Be Visible      xpath=/html/body/form/table[3]/tbody/tr[7]/td[5]
+    ${rx}=                            SL.Get Text     xpath=/html/body/form/table[3]/tbody/tr[7]/td[5]
+    ${rx_rm}=                         STR.Get Regexp Matches    ${rx}    [0-9]+
+    ${rx_rm_1}=                       STR.Strip String    string=@{rx_rm}[0]
+    [return]                          ${rx_rm_1}
+    
+
+Get Tx Optics Signal Level
+    [Documentation]                   Get Tx Optics Signal Level
+
+    SL.Element Should Be Visible      xpath=/html/body/form/table[3]/tbody/tr[8]/td[5]
+    ${tx}=                            SL.Get Text     xpath=/html/body/form/table[3]/tbody/tr[8]/td[5]
+    ${tx_rm}=                         STR.Get Regexp Matches    ${tx}    [0-9]+
+    ${tx_rm_1}=                       STR.Strip String    string=@{tx_rm}[0]
+    [return]                          ${tx}
+    
+    
+Get Current Firmware Version
+    Open Device Info Page
+    
+    # Get Firmware Version
+    SL.Wait Until Element Is Visible    xpath=//tbody/tr[2]/td[5]
+    ...                                 timeout=10s
+    ...                                 error=\nSoftware Version Not Found
+    ${softwareVersion}=                 SL.Get Text				  xpath=//tbody/tr[2]/td[5]
+    
+    # Get Build Timestamp
+    SL.Wait Until Element Is Visible    xpath=//tbody/tr[3]/td[5]
+    ...                                 timeout=10s
+    ...                                 error=\nBuild Timestamp Not Found
+    ${buildTimestamp}=                  SL.Get Text               xpath=//tbody/tr[3]/td[5]     
+    [Return]                            ${softwareVersion}			${buildTimestamp}
+    
+    
+    

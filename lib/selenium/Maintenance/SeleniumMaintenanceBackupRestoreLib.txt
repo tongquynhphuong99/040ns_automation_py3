@@ -1,0 +1,31 @@
+*** Settings ***
+Library                                 SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
+
+*** Variables ***
+
+*** Keywords ***
+###
+Open Backup Restore Page
+	[Arguments]                                ${url}=https://192.168.1.1/cgi-bin/tools_backup.asp
+    SL.Go To                                   ${url}
+    SL.Wait Until Page Contains                Backup/Restore
+    ...                                        timeout=20s
+    ...                                        error=\nBackup Restore Configure Page Not Found
+    SL.Page Should Contain                     Backup/Restore
+    
+Backup Config ONT
+    Open Backup Restore Page
+    SL.Page Should Contain Element           xpath=//input[@value="BACKUP CONFIGURED FILE"]
+    SL.Click Element                         xpath=//input[@value="BACKUP CONFIGURED FILE"]
+    Sleep                                    5s
+    
+Restore Config ONT
+	[Documentation]                          Click button update and validate result.
+	[Arguments]                              ${config_file_path}
+	
+	Open Backup Restore Page
+	SL.Page Should Contain Element           xpath=//input[@name="tools_FW_UploadFile"]    error=\nUpload config button did not show up\n
+    SL.Choose File                           xpath=//input[@name="tools_FW_UploadFile"]    ${config_file_path}
+    SL.Click Button                          xpath=//input[@name="FW_apply"]
+    Log To Console                           Waiting 180s for restore config
+    Sleep                                    180s

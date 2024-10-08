@@ -1,0 +1,52 @@
+*** Settings ***
+Documentation                Selenium Lib To Administration
+Library                      SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
+
+*** Variables ***
+
+*** Keywords ***
+
+###
+Open Time Zone Page
+    [Arguments]                                ${url}=https://192.168.1.1/cgi-bin/tools_time.asp
+
+    SL.Go To                                   ${url}
+    SL.Wait Until Page Contains                Time Zone	
+    ...                                        timeout=20s
+    ...                                        error=\nTime Zone Configure Page Not Found
+    SL.Page Should Contain                     Time Zone	
+
+Select Synchronize Time
+    [Documentation]                             0/1/2
+    [Arguments]                                ${syn_time}                    
+    SL.Wait Until Element Is Visible           xpath=//input[@name="uiViewSyncWith" and @value='${syn_time}']  
+    ...                                        timeout=10s
+    ...                                        error=\nNew Pass Text Box Not Found
+    SL.Click Element                           xpath=//input[@name="uiViewSyncWith" and @value='${syn_time}']  
+Config Time Manually 
+     [Arguments]                                 ${date}=12      ${month}=12         ${year}=2020          ${hour}=20            ${minu}=20       ${second}=20
+     Run Keyword If    '${month}' == '12'         SL.Select From List By Value      xpath=//select[@name="uiPCdateMonth"]    12
+     SL.Input Text                              xpath=//input[@name="uiPCdateDay"]            ${date}
+     SL.Input Text                              xpath=//input[@name="uiPCdateYear"]           ${year}
+     SL.Input Text                              xpath=//input[@name="uiPCdateHour"]           ${hour}
+     SL.Input Text                              xpath=//input[@name="uiPCdateMinute"]         ${minu} 
+     SL.Input Text                              xpath=//input[@name="uiPCdateSec"]            ${second}
+Select Time Zone
+    [Documentation]                            GMT-12:00  =>     GMT+13:00
+    [Arguments]                                ${time_zone}=GMT+07:00  
+    SL.Wait Until Element Is Visible           xpath=//select[@name="uiViewdateToolsTZ"]
+    ...                                        timeout=10s
+    ...                                        error=\nTimeZone Text Box Not Found
+    SL.Select From List By Value               xpath=//select[@name="uiViewdateToolsTZ"]        ${time_zone}
+Get Time Current
+    SL.Wait Until Element Is Visible     xpath=//input[@name="uiCurrentTime1"]
+    ...                                  timeout=15s
+    ...                                  error=\nSSID Textbox Does Not Show Up
+    ${time_cur}=     SL.Get Value        xpath=//input[@name="uiCurrentTime1"]
+    Return From Keyword                  ${time_cur}
+Save Config Time Zone
+    SL.Wait Until Element Is Visible      xpath=//input[@name="SaveBtn"]
+    ...                                   timeout=10s
+    ...                                   error=\nSave Button Not Found
+    SL.Click Element                      xpath=//input[@name="SaveBtn"]
+

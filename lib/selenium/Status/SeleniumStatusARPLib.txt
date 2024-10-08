@@ -1,0 +1,22 @@
+*** Settings ***
+Library                          SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
+
+*** Variables ***
+${ARP_URL}          https://192.168.1.1/cgi-bin/status_arp.asp
+
+*** Keywords ***
+
+Open ARP Page
+	[Documentation]              Open ARP URL to open ARP page.
+	
+	SL.Go To                     ${ARP_URL}
+    SL.Wait Until Page Contains  ARP
+    ...                          timeout=10s
+    ...                          error=\nARP Page Not Found
+    SL.Page Should Contain       ARP
+
+Get MAC Device 
+
+    ${mac_add}=                            SL.Get Text      xpath=//*[@id="arp4_list"]/tbody/tr[4]/td[3]
+    Return From Keyword                    ${mac_add}
+    

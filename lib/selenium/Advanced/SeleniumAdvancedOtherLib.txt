@@ -1,0 +1,100 @@
+*** Settings ***
+Library                                    SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
+
+*** Variables ***
+
+*** Keywords ***
+###
+Open Bandwidth Control Config Page
+    ###Select Advanced Setup Tab
+    [Arguments]                                ${url}=https://192.168.1.1/cgi-bin/adv_bandlimit_VNPTT.asp
+
+    SL.Go To                                   ${url}
+    SL.Wait Until Page Contains                Bandwidth Control
+    ...                                        timeout=20s
+    ...                                        error=\nBandwidth Control Configure Page Not Found
+    SL.Page Should Contain                     Bandwidth Control
+    Sleep                                      2s
+
+Active L2B
+    Log To Console                           \nConfig Active L2B
+    SL.Page Should Contain Element           xpath=//input[@name="L2B_Active"]    timeout=10s
+    SL.Execute Javascript                    document.getElementsByName("L2B_Active")[0].click()
+    Sleep                                    2s
+
+Deactive L2B 
+    Log To Console                           \nConfig Deactive L2B
+    SL.Page Should Contain Element           xpath=//input[@name="L2B_Active"]    timeout=10s
+    SL.Execute Javascript                    document.getElementsByName("L2B_Active")[1].click()
+    Sleep                                    2s
+    
+Enable Bandwidth LAN
+    [Documentation]                          1/2/3/4
+    [Arguments]                              ${rule}
+
+    Log To Console                           Enable Rule BW LAN${rule}          
+    SL.Click Element                         xpath=//input[@name="Lan${rule}_Enabled" and @value='0']  
+    Sleep                                    2s
+
+Config Bandwidth Control LAN
+    [Arguments]                               ${rule}
+    ...                                       ${download}              
+    ...                                       ${upload}     
+
+    Log To Console                            \n---Config Downstream=${download} & Upstream=${upload} for LAN${rule}---   
+    Log To Console                            Input Downstream  
+    SL.Page Should Contain Element            xpath=//input[@name="DownRate_Lan${rule}"]
+    SL.Input Text                             xpath=//input[@name="DownRate_Lan${rule}"]        ${download} 
+    Sleep                                     2s
+    
+    Log To Console                            Input Upstream        
+    SL.Page Should Contain Element            xpath=//input[@name="UpRate_Lan${rule}"]
+    SL.Input Text                             xpath=//input[@name="UpRate_Lan${rule}"]          ${upload} 
+    Sleep                                     2s
+
+Save Config
+    Log To Console                           Click Button Save Config
+    SL.Page Should Contain Element           xpath=//input[@value="Save"]
+    SL.Click Element                         xpath=//input[@value="Save"]
+    Sleep                                    2s
+
+Verify L2B Mode
+    [Arguments]                                             ${mode}
+
+    Log To Console                                          \nVerify L2B Mode
+    ${status}=             SL.Execute Javascript            return document.querySelector("body > form > div > table > tbody > tr:nth-child(2) > td:nth-child(4) > input[type=radio]:nth-child(1)").checked
+    Run Keyword If         '${mode}' == 'Active'            Should Be Equal        '${status}'       'True'
+    ...    ELSE IF         '${mode}' == 'Deactive'          Should Be Equal        '${status}'       'False'
+    Log To Console                                          L2B is ${mode}
+    Sleep                                                   5s
+
+Popup Download Is Special Should Be Visible
+    [Documentation]                     Handle popup Download is special
+    ${popup_message}=                   SL.Handle Alert    timeout=10s
+    Log To Console                      Popup message: ${popup_message}
+    Should Contain                      ${popup_message}      Invalid Downstream rate value!
+
+Popup Upload Is Special Should Be Visible
+    [Documentation]                     Handle popup Upload is special
+    ${popup_message}=                   SL.Handle Alert    timeout=10s
+    Log To Console                      Popup message: ${popup_message}
+    Should Contain                      ${popup_message}      Invalid Upstream rate value!
+
+Verify Config Bandwidth Control LAN
+    [Arguments]                                    ${rule}
+    ...                                            ${down_set}
+    ...                                            ${up_set}
+
+    Log To Console                                 \n**Verify Config Bandwidth Control LAN**
+    ${option}=        Evaluate                     ${rule}+1
+    ${status}=        SL.Execute Javascript        return document.querySelector("body > form > div > table > tbody > tr:nth-child(4) > td.tabdata > table > tbody > tr:nth-child(${option}) > td:nth-child(1) > div > input[type=checkbox]").checked
+    Should Be Equal                                '${status}'        'True'
+    Log To Console                                 Status Rule BW LAN${rule} is Enable
+
+    ${down_get}=        Get Value                  xpath=//input[@name="DownRate_Lan${rule}"]
+    Should Be Equal                                '${down_get}'        '${down_set}'
+    Log To Console                                 Downstream Rule BW LAN${rule} is ${down_get}
+
+    ${up_get}=          Get Value                  xpath=//input[@name="UpRate_Lan${rule}"]
+    Should Be Equal                                '${up_get}'          '${up_set}'
+    Log To Console                                 Upstream Rule BW LAN${rule} is ${up_get}      
