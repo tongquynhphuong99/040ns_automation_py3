@@ -53,7 +53,7 @@ Login To Browser
     Sleep                                     3s
 
 Logout WebGUI
-    Reload Page
+    SL.Reload Page
     SL.Select Frame                                 xpath=//frame[@name="header"]
     SL.Click Element                                xpath=//*[@id="logOut"]
     SL.Close All Browsers

@@ -1,0 +1,107 @@
+*** Settings ***
+Library                                            SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
+Resource                                           selenium/Login/SeleniumLoginLib.txt
+Resource                                           selenium/Network/SeleniumNetworkWLAN24GHzLib.txt
+Resource                                           selenium/Network/SeleniumNetworkWLAN5GHzLib.txt
+Resource                                           selenium/Maintenance/SeleniumMaintenanceRebootResetLib.txt
+*** Variables ***
+
+*** Keywords ***
+MOD_WIFI5G_01_TC_18_Teardown
+    ##Teardown
+    Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
+    
+    #####Factory Reset Via Web GUI
+    Login To Browser		                 password=${ONT}[ONT_WEB_PASS]
+    Factory Reset Via Web GUI
+  
+    SL.Go To                                 url=${LOGIN_URL}
+    SL.Wait Until Element Is Visible         ${LOGIN_BUTTON}
+    ...                                      timeout=25s
+    ...                                      error=\nLogin Page Does Not Found!
+    Run Keyword If                           '${SWITCH_VARIABLE}' == '3'      Log To Console	\nDon't need to change password after reset factory
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '2'      Change Password WebGui
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '1'      Change Password WebGui
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '0'      Change Password WebGui    
+    SL.Delete All Cookies
+    SL.Close All Browsers
+
+Popup Fragmentation Threshold Is Special Should Be Visible
+    [Documentation]                          Handle popup Fragmentation Threshold is special
+    ${popup_message}=                        SL.Handle Alert    timeout=10s
+    Log To Console                           Popup Message: ${popup_message}
+    Should Contain                           ${popup_message}    Fragmentation Threshold value must be between 256 and 2346
+MOD_WIFI5G_01_TC_18
+    [Documentation]    Kiem tra kha nang thay doi Fragmentation Threshold Wifi 5Ghz
+    SL.Set Selenium Speed                          0.5
+    SL.Set Selenium Timeout                        10s
+    Set Test Message                               *HTML* <b>MOD_WIFI5G_01_TC_18</b>
+    
+    # Open WebGUI    
+    Login To Browser
+    SL.Select Frame                                xpath=//frame[@name="contentfrm"]
+    Open 5GHz Wireless Configure Page
+    SL.Maximize Browser Window
+
+    ### Step 1: Config Fragmentation Threshold Wifi 5Ghz with SSID index 1
+    Select SSID 5G Index                           ssid_index=1
+    ## Step 1.1: Config Fragmentation Threshold Wifi 5Ghz Wrong
+    Config Fragmentation Threshold                 frag_threshold=200
+    Save Config SSID
+    Popup Fragmentation Threshold Is Special Should Be Visible
+    ## Step 1.2: Config Fragmentation Threshold Wifi 5Ghz Wrong
+    Config Fragmentation Threshold                 frag_threshold=2500
+    Save Config SSID
+    Popup Fragmentation Threshold Is Special Should Be Visible
+    # Step 1.3: Config Fragmentation Threshold Wifi 5Ghz Correct
+    Config Fragmentation Threshold and Verify      fragment_Threshold=2000
+
+
+    ### Step 2: Config Fragmentation Threshold Wifi 5Ghz with SSID index 2
+    Select SSID 5G Index                           ssid_index=2
+    ## Step 2.1: Config Fragmentation Threshold Wifi 5Ghz Wrong
+    Config Fragmentation Threshold                 frag_threshold=200
+    Save Config SSID
+    Popup Fragmentation Threshold Is Special Should Be Visible
+    ## Step 2.2: Config Fragmentation Threshold Wifi 5Ghz Wrong
+    Config Fragmentation Threshold                 frag_threshold=2500
+    Save Config SSID
+    Popup Fragmentation Threshold Is Special Should Be Visible
+    ## Step 2.3: Config Fragmentation Threshold Wifi 5Ghz Correct
+    Config Fragmentation Threshold and Verify      fragment_Threshold=2000
+
+
+    ### Step 3: Config Fragmentation Threshold Wifi 5Ghz with SSID index 3
+    Select SSID 5G Index                           ssid_index=3
+    ## Step 3.1: Config Fragmentation Threshold Wifi 5Ghz Wrong
+    Config Fragmentation Threshold                 frag_threshold=200
+    Save Config SSID
+    Popup Fragmentation Threshold Is Special Should Be Visible
+    ## Step 3.2: Config Fragmentation Threshold Wifi 5Ghz Wrong
+    Config Fragmentation Threshold                 frag_threshold=2500
+    Save Config SSID
+    Popup Fragmentation Threshold Is Special Should Be Visible
+    ## Step 3.3: Config Fragmentation Threshold Wifi 5Ghz Correct
+    Config Fragmentation Threshold and Verify      fragment_Threshold=2000
+
+
+    ### Step 4: Config Fragmentation Threshold Wifi 5Ghz with SSID index 4
+    Select SSID 5G Index                           ssid_index=4
+    ## Step 4.1: Config Fragmentation Threshold Wifi 5Ghz Wrong
+    Config Fragmentation Threshold                 frag_threshold=200
+    Save Config SSID
+    Popup Fragmentation Threshold Is Special Should Be Visible
+    ## Step 4.2: Config Fragmentation Threshold Wifi 5Ghz Wrong
+    Config Fragmentation Threshold                 frag_threshold=2500
+    Save Config SSID
+    Popup Fragmentation Threshold Is Special Should Be Visible
+    ## Step 4.3: Config Fragmentation Threshold Wifi 5Ghz Correct
+    Config Fragmentation Threshold and Verify      fragment_Threshold=2000
+
+    Logout WebGUI
+
+    [Teardown]                               Run Keyword And Ignore Error        MOD_WIFI5G_01_TC_18_Teardown
+
+*** Test Cases ***
+MOD_WIFI5G_01_TC_18
+    MOD_WIFI5G_01_TC_18

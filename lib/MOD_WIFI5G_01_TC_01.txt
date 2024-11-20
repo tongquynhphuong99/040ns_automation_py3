@@ -3,8 +3,8 @@ Library                                            SeleniumLibrary   run_on_fail
 Library                                            SSHLibrary    WITH NAME    SSHL
 Resource                                           selenium/Login/SeleniumLoginLib.txt
 Resource                                           selenium/Maintenance/SeleniumMaintenanceRebootResetLib.txt
-Resource                                           selenium/InterfaceSetup/SeleniumInterfaceSetupWireless24GHzLib.txt
-Resource                                           selenium/InterfaceSetup/SeleniumInterfaceSetupWireless5GHzLib.txt
+Resource                                           selenium/Network/SeleniumNetworkWLAN24GHzLib.txt
+Resource                                           selenium/Network/SeleniumNetworkWLAN5GHzLib.txt
 Resource                                           selenium/Status/SeleniumStatusDeviceInfoLib.txt
 
 *** Variables ***
@@ -15,7 +15,7 @@ MOD_WIFI5G_01_TC_01_Teardown
     Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
     
     #####Factory Reset Via Web GUI
-    Login To Browser		                 password=&{ONT}[ONT_WEB_PASS]
+    Login To Browser		                 password=${ONT}[ONT_WEB_PASS]
     Factory Reset Via Web GUI
   
     SL.Go To                                 url=${LOGIN_URL}
@@ -35,7 +35,7 @@ MOD_WIFI5G_01_TC_01
     SL.Set Selenium Speed                    				    0.5
     SL.Set Selenium Timeout                  				    10s
     Set Test Message                         				    *HTML* <b>MOD_WIFI5G_01_TC_01</b>
-    Login To Browser		             				        password=&{ONT}[ONT_WEB_PASS]
+    Login To Browser		             				        password=${ONT}[ONT_WEB_PASS]
 
     ### Step 1: Check name SSID 1 for WiFi 5GHz
     Log To Console                           				    \nStep 1: Check name SSID 1 for WiFi 5GHz
@@ -50,24 +50,24 @@ MOD_WIFI5G_01_TC_01
     Open 5GHz Wireless Configure Page
     Select SSID 5G Index                        				ssid_index=2
     Save Config SSID
-    Compare Get SSID 5GHz With SSID Expected Index 2,3,4		ssid_expect=&{ONT}[SSID_EXPECT_5G_2]
+    Compare Get SSID 5GHz With SSID Expected Index 2,3,4		ssid_expect=${ONT}[SSID_EXPECT_5G_2]
 
     ### Step 3: Check name SSID 3 for WiFi 5GHz
     Log To Console                           				    \nStep 3: Check name SSID 3 for WiFi 5GHz
     Open 5GHz Wireless Configure Page
     Select SSID 5G Index                        				ssid_index=3
     Save Config SSID
-    Compare Get SSID 5GHz With SSID Expected Index 2,3,4		ssid_expect=&{ONT}[SSID_EXPECT_5G_3]
+    Compare Get SSID 5GHz With SSID Expected Index 2,3,4		ssid_expect=${ONT}[SSID_EXPECT_5G_3]
 
     ### Step 4: Check name SSID 4 for WiFi 5GHz
     Log To Console                           				    \nStep 4: Check name SSID 4 for WiFi 5GHz
     Open 5GHz Wireless Configure Page
     Select SSID 5G Index                        				ssid_index=4
     Save Config SSID
-    Compare Get SSID 5GHz With SSID Expected Index 2,3,4		ssid_expect=&{ONT}[SSID_EXPECT_5G_4]
+    Compare Get SSID 5GHz With SSID Expected Index 2,3,4		ssid_expect=${ONT}[SSID_EXPECT_5G_4]
 
     [Teardown]                               Run Keyword And Ignore Error        MOD_WIFI5G_01_TC_01_Teardown
 
-# *** Test Cases ***
-# MOD_WIFI5G_01_TC_01
-#     MOD_WIFI5G_01_TC_01      
+*** Test Cases ***
+MOD_WIFI5G_01_TC_01
+    MOD_WIFI5G_01_TC_01      

@@ -3,8 +3,8 @@ Library                                            SeleniumLibrary   run_on_fail
 Library                                            SSHLibrary    WITH NAME    SSHL
 Resource                                           selenium/Login/SeleniumLoginLib.txt
 Resource                                           selenium/Maintenance/SeleniumMaintenanceRebootResetLib.txt
-Resource                                           selenium/InterfaceSetup/SeleniumInterfaceSetupWireless24GHzLib.txt
-Resource                                           selenium/InterfaceSetup/SeleniumInterfaceSetupWireless5GHzLib.txt
+Resource                                           selenium/Network/SeleniumNetworkWLAN24GHzLib.txt
+Resource                                           selenium/Network/SeleniumNetworkWLAN5GHzLib.txt
 Resource                                           selenium/Status/SeleniumStatusDeviceInfoLib.txt
 Resource                                           ssh/SshLib.txt
 
@@ -16,7 +16,7 @@ MOD_WIFI5G_01_TC_08_Teardown
     Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
 
     #####Factory Reset Via Web GUI
-    Login To Browser		                 password=&{ONT}[ONT_WEB_PASS]
+    Login To Browser		                 password=${ONT}[ONT_WEB_PASS]
     Factory Reset Via Web GUI
   
     SL.Go To                                 url=${LOGIN_URL}
@@ -36,7 +36,8 @@ MOD_WIFI5G_01_TC_08
     SL.Set Selenium Speed                         0.5
     SL.Set Selenium Timeout                       10s
     Set Test Message                              *HTML* <b>MOD_WIFI5G_01_TC_08</b>
-    Login To Browser		                      password=&{ONT}[ONT_WEB_PASS]
+    Login To Browser		                      password=${ONT}[ONT_WEB_PASS]
+    SL.Maximize Browser Window
     SL.Select Frame                               xpath=//frame[@name="contentfrm"]
     Open 5GHz Wireless Configure Page
 
@@ -167,7 +168,7 @@ MOD_WIFI5G_01_TC_08
     Save Config SSID
     # Verify Config
     Message WPA Password Invalid Should Be Visible
-
+    SL.Maximize Browser Window
     Log To Console					              Step 3.11: WPA-PSK Password with "
     Select SSID 5G Index                          ssid_index=1
     Select 5G Security Mode                       secu_mode=WPA-PSK
@@ -184,6 +185,7 @@ MOD_WIFI5G_01_TC_08
 
     Log To Console					              Step 4.1: WPA-PSK Password with Length < 8 characters/numbers
     Select SSID 5G Index                          ssid_index=1
+    SL.Maximize Browser Window
     Select 5G Security Mode                       secu_mode=WPA-PSK
     Configure 5G Security Mode WPA-PSK            password=1234567
     ...                                           encry_type=AES
@@ -207,6 +209,7 @@ MOD_WIFI5G_01_TC_08
 
     Log To Console					              Step 5.1: WPA-PSK Password with Length = 63 characters ASCII
     Select SSID 5G Index                          ssid_index=1
+    SL.Maximize Browser Window
     Select 5G Security Mode                       secu_mode=WPA-PSK
     Configure 5G Security Mode WPA-PSK            password=abcdefghabcdefghabcdefghabcdefghabcdefghabcdefghabcdefghabcdefg
     ...                                           encry_type=AES
@@ -246,6 +249,7 @@ MOD_WIFI5G_01_TC_08
 
     Log To Console					              Step 6.1: WPA-PSK Encryption Type TKIP
     Select SSID 5G Index                          ssid_index=1
+    SL.Maximize Browser Window
     Select 5G Security Mode                       secu_mode=WPA-PSK
     Configure 5G Security Mode WPA-PSK            password=12345678
     ...                                           encry_type=TKIP
@@ -285,6 +289,7 @@ MOD_WIFI5G_01_TC_08
 
     Log To Console					              Step 7.1: WPA-PSK Key Renewal Interval Non-integer
     Select SSID 5G Index                          ssid_index=1
+    SL.Maximize Browser Window
     Select 5G Security Mode                       secu_mode=WPA-PSK
     Configure 5G Security Mode WPA-PSK            password=12345678
     ...                                           encry_type=AES

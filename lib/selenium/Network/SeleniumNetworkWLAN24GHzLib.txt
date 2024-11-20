@@ -8,7 +8,6 @@ Resource                                ../../variables/AllVariables.txt
 
 *** Variables ***
 
-
 *** Keywords ***
 
 Open 2.4GHz Wireless Configure Page
@@ -16,8 +15,8 @@ Open 2.4GHz Wireless Configure Page
 
     # SL.Go To                                   ${url}
 
-    Click Element                                   xpath=//*[@id="net-wanset"]
-    Click Element                                   xpath=//*[@id="net-wlan"]
+    SL.Click Element                                   xpath=//*[@id="net-wanset"]
+    SL.Click Element                                   xpath=//*[@id="net-wlan"]
 
     SL.Wait Until Page Contains                     SSID Setting
     ...                                             timeout=20s
@@ -168,7 +167,7 @@ Configure 2G Security Mode WPA
     SL.Select From List By Value                xpath=//select[@name="wlWpa"]        ${encry_value}
 
     # Input Password
-    SL.Wait Until Element Is Visible            xpath=//input[@name="wlWpaPsk"]
+    SL.Wait Until Element Is Visible            xpath=//input[@name="wlWpaPsk"] 
     ...                                         timeout=2s
     ...                                         error=\nWPA Password Input Does Not Show Up
     SL.Input Password                           xpath=//input[@name="wlWpaPsk"]          ${password}
@@ -180,7 +179,7 @@ Save Config SSID
     ...                                 timeout=10s
     ...                                 error=\nSave Button Not Found
     SL.Click Element                    xpath=//input[@value="SAVE"]    
-    Sleep								20s
+    Sleep								25s
 
 ################
 Get SSID 2G
@@ -368,24 +367,6 @@ Config Name SSID 2G Correct On WebGui
     # Verify SSID Change Success
     Verify Wifi Rescan Contain                      ${ssid_change}
     Log To Console                                  \nConfig Name SSID Success!
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ###################
 #######ONT-H#######
 Turn On Access Point
@@ -483,10 +464,10 @@ Config Beacon Interval
     [Arguments]                                  ${beacon_interval}=300 
     ### Input Beacon Interval
     Log To Console                              \nInput Beacon Interval
-    SL.Wait Until Element Is Visible             xpath=//input[@name="BeaconInterval"]
+    SL.Wait Until Element Is Visible             xpath=//*[@id="BeaconInterval"]
     ...                                          timeout=15s
     ...                                          error=\nBeacon Interval Textbox Does Not Show Up
-    SL.Input Text                                xpath=//input[@name="BeaconInterval"]         ${beacon_interval}
+    SL.Input Text                                xpath=//*[@id="BeaconInterval"]         ${beacon_interval}
 
 Config RTS/CTS Threshold
     
@@ -508,28 +489,19 @@ Config Fragmentation Threshold
     ...                                          error=\nFragmentation Threshold Textbox Does Not Show Up
     SL.Input Text                                xpath=//input[@name="FragmentThreshold"]         ${frag_threshold}
 
-Config DTIM
-    [Arguments]                                  ${dtim}=1
-    ### Input Beacon Interval
-    Log To Console                              \nInput DTIM
-    SL.Wait Until Element Is Visible             xpath=//input[@name="DTIM"]
-    ...                                          timeout=15s
-    ...                                          error=\nDTIM Textbox Does Not Show Up
-    SL.Input Text                                xpath=//input[@name="DTIM"]         ${dtim}
+# Config Channel
+#     [Arguments]                                  ${channel}=AUTO
+#     ### Input Channel
+#     ### Select Channel Wifi 2.4GHZ (channel=AUTO/01/02/03/04/05/06/07/08/09/10/11)
+#     ### Select Channel Wifi 5GHZ (channel=AUTO/36/40/44/48/52/56/60/64/100/104/108/112/116/120/124/128/132/136/140/144/149/153/157/161/165)
+#     Log To Console                              Select Channel
+#     SL.Wait Until Element Is Visible            xpath=//select[@name="Channel_ID"]
+#     ...                                         timeout=10s
+#     ...                                         error=\nChannel Select Box Does Not Show Up
+# 	${channel_value}=                           SL.Get Value        xpath=//select[@name="Channel_ID"]/option[normalize-space(text())="${channel}"]
+#     SL.Select From List By Value                xpath=//select[@name="Channel_ID"]         ${channel_value}
 
-Config Channel
-    [Arguments]                                  ${channel}=AUTO
-    ### Input Channel
-    ### Select Channel Wifi 2.4GHZ (channel=AUTO/01/02/03/04/05/06/07/08/09/10/11)
-    ### Select Channel Wifi 5GHZ (channel=AUTO/36/40/44/48/52/56/60/64/100/104/108/112/116/120/124/128/132/136/140/144/149/153/157/161/165)
-    Log To Console                              Select Channel
-    SL.Wait Until Element Is Visible            xpath=//select[@name="Channel_ID"]
-    ...                                         timeout=10s
-    ...                                         error=\nChannel Select Box Does Not Show Up
-	${channel_value}=                           SL.Get Value        xpath=//select[@name="Channel_ID"]/option[normalize-space(text())="${channel}"]
-    SL.Select From List By Value                xpath=//select[@name="Channel_ID"]         ${channel_value}
-
-Config Station Number
+Config Station Number 
     [Arguments]                                  ${station_number}
 	###Input Station Number
     Log To Console                              \nInput Station Number
@@ -539,18 +511,18 @@ Config Station Number
     SL.Execute Javascript                        document.getElementsByName("StationNum")[0].value=''   
     SL.Input Text                                xpath=//input[@name="StationNum"]         ${station_number}
 
-Config BandSteering
-    [Documentation]                                   Disable
-    ...                                               Enable
-    [Arguments]                                  ${bandsteering_mode}
-		###Select BandSteering mode
-    Log To Console                       \nSelect BandSteering mode
-    SL.Wait Until Element Is Visible     xpath=//select[@name='BandSteering']
-    ...                                  timeout=20s
-    ...                                  error=\nBandSteering mode Box Does Not Show Up
-    Run Keyword If    '${bandsteering_mode}' == 'Disable'     SL.Select From List By Value      xpath=//select[@name='BandSteering']    0
-    ...    ELSE                                               SL.Select From List By Value      xpath=//select[@name='BandSteering']    1
-
+# Config BandSteering
+    # [Documentation]                                   Disable
+    # ...                                               Enable
+    # [Arguments]                                  ${bandsteering_mode}
+	# 	###Select BandSteering mode
+    # Log To Console                       \nSelect BandSteering mode
+    # SL.Wait Until Element Is Visible     xpath=//*[@id="wlanBandSteeringEnable"]
+    # ...                                  timeout=20s
+    # ...                                  error=\nBandSteering mode Box Does Not Show Up
+    # Run Keyword If    '${bandsteering_mode}' == 'Disable'     SL.Select From List By Value      xpath=//*[@id="wlanBandSteeringEnable"]    0
+    # ...    ELSE                                               SL.Select From List By Value      xpath=//*[@id="wlanBandSteeringEnable"]    1
+    
 Config AirTime Fairness
     [Documentation]                                   Disable
     ...                                               Enable
@@ -564,20 +536,20 @@ Config AirTime Fairness
     Run Keyword If    '${airtime_fairness}' == 'Disable'     SL.Select From List By Value      xpath=//select[@name='AirTimeFairness']    0
     ...    ELSE                                              SL.Select From List By Value      xpath=//select[@name='AirTimeFairness']    1
 
-Config Guard Interval
-    [Documentation]                              800 nsec
-    ...                                          AUTO
+# Config Guard Interval
+#     [Documentation]                              800 nsec
+#     ...                                          AUTO
     
-    [Arguments]                                  ${g_interval}=AUTO
+#     [Arguments]                                  ${g_interval}=AUTO
 
-    Log To Console                              \nConfig Guard Interval
-    SL.Wait Until Element Is Visible            xpath=//select[@name="WLANGuardInterval"]
-    ...                                         timeout=10s
-    ...                                         error=\nGuard Interval Box Does Not Show Up
+#     Log To Console                              \nConfig Guard Interval
+#     SL.Wait Until Element Is Visible            xpath=//select[@name="WLANGuardInterval"]
+#     ...                                         timeout=10s
+#     ...                                         error=\nGuard Interval Box Does Not Show Up
     
-    Run Keyword If    '${g_interval}' == '800 nsec'       SL.Select From List By Value      xpath=//select[@name='WLANGuardInterval']    0
-    ...    ELSE IF    '${g_interval}' == 'AUTO'           SL.Select From List By Value      xpath=//select[@name='WLANGuardInterval']    1
-	Sleep                                       2s
+#     Run Keyword If    '${g_interval}' == '800 nsec'       SL.Select From List By Value      xpath=//select[@name='WLANGuardInterval']    0
+#     ...    ELSE IF    '${g_interval}' == 'AUTO'           SL.Select From List By Value      xpath=//select[@name='WLANGuardInterval']    1
+# 	Sleep                                       2s
 
 Config MCS
     [Documentation]                              0/1/2/3/4/5/6/7/AUTO
@@ -1440,3 +1412,205 @@ Verify Scheduling Rule
     Should Be Equal              '${end_m_value}'              '${end_m}'
 
     Log To Console               Get Scheduling Rule Has Match With Info Config!
+
+######### HoaLK
+Config Access Point 2G
+    [Documentation]    Kiem tra kha nang On/Off Access Point - func cu: Turn On Access Point/Turn Off Acces Point
+    [Arguments]                                ${access_point}
+    SL.Wait Until Element Is Visible           xpath=//*[@id="wlEnbl"]    timeout=10s    
+    ...                                        error=\nAccess Point 2.4G Checkbox Does Not Show Up
+    Log To Console                             \nConfig Access Point mode: ${access_point}
+    ${status}=                                 SL.Execute Javascript    return document.querySelector("#wlEnbl").checked
+    Run Keyword If    '${access_point}' == 'On' and '${status}' == 'False'    SL.Execute Javascript    document.querySelector("#wlEnabl").click()
+    ...  ELSE IF      '${access_point}' == 'On' and '${status}' == 'False'    SL.Execute Javascript    document.querySelector("#wlEnabl").click()
+
+Config Channel Wifi 2G
+    [Arguments]                                 ${input_channel}
+    Log To Console                              Select Channel
+    SL.Wait Until Element Is Visible            xpath=//*[@id="Countries_Channels"]   
+    ...                                         timeout=10s
+    ...                                         error=\nChannel Select Box Does Not Show Up
+    ${value}=                                   SL.Get Value    xpath=//*[@id="wlChannel"]/option[normalize-space(text())="${input_channel}"]
+    SL.Select From List By Value                xpath=//*[@id="wlChannel"]    ${value}
+
+Config RTS/CTS Threshold and Verify
+    [Arguments]                                 ${RTS_CTS_Threshold}
+    #Config
+    Config RTS/CTS Threshold                    threshold=${RTS_CTS_Threshold}
+    Save Config SSID
+    #Verify
+    ${current_RTS_CTS_Threshold}=               SL.Get Value    xpath=//*[@id="RTSThreshold"] 
+    Should Be Equal                             ${RTS_CTS_Threshold}    ${current_RTS_CTS_Threshold}
+    Log To Console                              RTS_CTS_Threshold is ${RTS_CTS_Threshold}
+
+Config Fragmentation Threshold and Verify
+    [Arguments]                                 ${fragment_Threshold}
+    #Config
+    Config Fragmentation Threshold              frag_threshold=${fragment_Threshold}
+    Save Config SSID
+    #Verify
+    ${current_Fragment_Threshold}=              SL.Get Value   xpath=//*[@id="FragmentThreshold"]
+    Should Be Equal                             ${fragment_Threshold}    ${current_Fragment_Threshold}
+    Log To Console                              Fragment Threshold is ${fragment_Threshold}
+
+Config Select Mode 2G
+    [Documentation]                            func cu: Select Wireless Mode
+    [Arguments]                                ${input_select_mode}
+    SL.Wait Until Element Is Visible           xpath=//*[@id="wlgMode"]    timeout=10s
+    ...                                        error=Select Mode Textbox Does Not Show Up
+    ${value_get}=    SL.Get Value              xpath=//*[@id="wlgMode"]//option[normalize-space(text())="${input_select_mode}"]
+    SL.Select From List By Value               xpath=//*[@id="wlgMode"]    ${value_get}
+
+Config Station Number 2G 
+    [Arguments]                                ${input_station_number}
+    SL.Wait Until Element Is Visible           css=#wlInfo > tbody > tr:nth-child(3) > td.tabdata.oneline > input    timeout=10s
+    ...                                        error=Station Number Textbox Does Not Show Up
+    SL.Input Text                              css=#wlInfo > tbody > tr:nth-child(3) > td.tabdata.oneline > input  ${input_station_number}
+
+Config Transmitted Power
+    [Arguments]                              ${transmitted_power}
+    SL.Wait Until Element Is Visible         xpath=//*[@id="wlTxPwr"]   timeout=10s
+    ...                                      error=\nTransmitted Power Textbox Does Not Show Up
+    ${value_get}=                            SL.Get Value    xpath=//*[@id="wlTxPwr"]/option[contains(text(), "${transmitted_power}")]
+    SL.Select From List By Value             xpath=//*[@id="wlTxPwr"]    ${value_get}
+
+Verify Transmitted Power
+    [Arguments]                              ${current_Tx}
+    SL.Wait Until Element Is Visible         xpath=//*[@id="wlTxPwr"]     timeout=10s
+    ...                                      error=\nTransmitted Power Textbox Does Not Show Up
+    ${value}=                                SL.Get Text    xpath=//*[@id="wlTxPwr"]/option[contains(text(), "${current_Tx}")]
+    Should Be Equal                          ${value}    ${current_Tx}
+    Log To Console                           Transmitted Power is ${value}
+
+Config Channel WiFi and Verify 2G
+    [Arguments]                               ${channel}
+    ### Config Channel 
+    Log To Console                            \n----Config Channel Wifi 2.4G = ${channel}----
+    Config Channel Wifi 2G                    input_channel=${channel}
+    Save Config SSID
+    ### Check Channel Wifi
+    Log To Console                            \nCheck Channel Wifi 2.4G on WebGUI
+    ${output}=                                SL.Get Value    xpath=//*[@id="CurrentChannel_Common"]
+    ${value_get}=                             SL.Get Value    xpath=//*[@id="wlChannel"]/option[normalize-space(text())="${channel}"]
+    Run Keyword If    '${output}' == '${value_get}'    Log To Console    Channel Wifi 2.4G is ${output}
+
+Config Select Mode and Verify 2G
+    [Arguments]                         ${select_mode}
+    #Config
+    Config Select Mode 2G               input_select_mode=${select_mode}
+    Save Config SSID
+    #Verify
+    ${current_select_mode}=             SL.Get Text    xpath=//*[@id="wlgMode"]/option[normalize-space(text())="${select_mode}"]
+    Should Contain                      '${current_select_mode}'    '${select_mode}'
+
+Verify Beacon Interval
+    [Arguments]                              ${current_beacon_interval}
+    SL.Wait Until Element Is Visible         xpath=//*[@id="BeaconInterval"]     timeout=10s
+    ...                                      error=\nTransmitted Power Textbox Does Not Show Up 
+    ${value}=                                SL.Get Value    xpath=//*[@id="BeaconInterval"]
+    Should Be Equal                          ${value}    ${current_beacon_interval}
+    Log To Console                           Transmitted Power is ${value}
+
+Config Station Number and Verify 2G
+    [Arguments]                               ${station_number}
+    #Config
+    Config Station Number 2G                   input_station_number=${station_number}
+    Save Config SSID
+    #Verify
+    ${value_get}=                             SL.Get Value    xpath=//*[@id="wlInfo"]/tbody/tr[3]/td[5]/input
+    Should Be Equal                           ${value_get}    ${station_number}
+
+Config BandSteering 2G
+    [Arguments]                               ${value}
+    SL.Wait Until Element Is Visible          xpath=//*[@id="wlanBandSteeringEnable"]    timeout=10s
+    ...                                       error=\nBandSteering Checkbox Does Not Show Up
+    ${status}=                                SL.Execute Javascript        return document.querySelector("#wlanBandSteeringEnable").checked
+    
+    Run Keyword If        '${value}' == 'on' and '${status}' == 'False'        SL.Execute Javascript        document.querySelector("#wlanBandSteeringEnable").click();
+    ...   ELSE IF         '${value}' == 'off' and '${status}' == 'True'        SL.Execute Javascript        document.querySelector("#wlanBandSteeringEnable").click();
+
+Verify BandSteering 2G
+    [Arguments]                               ${bandsteering}
+    ${value_get}=                             SL.Execute Javascript        return document.querySelector("#wlanBandSteeringEnable").checked
+    Should Contain                            '${value_get}'    '${bandsteering}'
+
+Config AirTime FairNess 2G
+    [Arguments]                                ${value}
+    SL.Wait Until Element Is Visible           xpath=//*[@id="wlanAirTimeFairNessEnable"]    timeout=10s
+    ...                                        error=\nAirTime FairNess Checkbox Does Not Show Up
+    ${status}=                                 SL.Execute Javascript        return document.querySelector("#wlanAirTimeFairNessEnable").checked
+    
+    Run Keyword If        '${value}' == 'on' and '${status}' == 'False'        SL.Execute Javascript        document.querySelector("#wlanAirTimeFairNessEnable").click();
+    ...   ELSE IF         '${value}' == 'off' and '${status}' == 'True'        SL.Execute Javascript        document.querySelector("#wlanAirTimeFairNessEnable").click();
+
+Verify AirTime FairNess 2G
+    [Arguments]                                ${airTime_fairNess}
+    ${value_get}=                              SL.Execute Javascript        return document.querySelector("#wlanAirTimeFairNessEnable").checked
+    Should Contain                             '${value_get}'    '${airTime_fairNess}'
+
+Config BandWidth 2G
+    [Arguments]                                ${input_bandwidth}
+    SL.Wait Until Element Is Visible           xpath=//*[@id="bwControl"]    timeout=10s
+    ...                                        error=\nBandWidth Checkbox Does Not Show Up
+    ${value_get}=                              SL.Get Value    xpath=//*[@id="bwControl"]/option[normalize-space(text())="${input_bandwidth}"]
+    SL.Select From List By Value               xpath=//*[@id="bwControl"]    ${value_get}
+    
+Config Bandwidth and Verify 2G
+    [Arguments]                                ${bandwidth}
+    Config BandWidth 2G                        input_bandwidth=${bandwidth}
+    Save Config SSID
+    ${current_bandwidth}=                      SL.Get Text    xpath=//*[@id="bwControl"]/option[normalize-space(text())="${bandwidth}"]
+    Should Be Equal                            ${current_bandwidth}    ${bandwidth}
+
+Config Guard Interval 2G
+    [Arguments]    ${input_GI}
+    SL.Wait Until Element Is Visible           xpath=//*[@id="giControl"]    timeout=10s
+    ...                                        error=\Guard Interval Checkbox Does Not Show Up
+    ${value_get}=    SL.Get Value              xpath=//*[@id="giControl"]/option[contains(text(),"${input_GI}")]
+    SL.Select From List By Value               xpath=//*[@id="giControl"]    ${value_get}
+
+Config Guard Interval and Verify 2G
+    [Arguments]                                ${guard_interval}
+    Config Guard Interval 2G                   input_GI=${guard_interval}
+    Save Config SSID
+    ${current_GI}=                             SL.Get Text    xpath=//*[@id="giControl"]/option[contains(text(),"${guard_interval}")]
+    Should Be Equal                            ${current_GI}    ${guard_interval}
+
+Config Mac Filter and Verify
+    [Arguments]                                ${mode}    ${action}    ${mac}
+    SL.Wait Until Element Is Visible           xpath=//*[@id="WLAN_FltActive_Open"]      timeout=10s
+    ...                                        error=\Mac Filter Checkbox Does Not Show Up
+    #Config Mac filter Open-1/Close-0
+    SL.Click Element                           xpath=//*[@id="WLAN_FltActive_Open" and @value="${mode}"] 
+    #Config Action Allow-1/Deny-2
+    ${value_get}=                              SL.Get Value    xpath=//*[@id="WLAN_FltAction"]/option[contains(text(),"${action}")]
+    SL.Select From List By Value               xpath=//*[@id="WLAN_FltAction"]    ${value_get}
+    #Config Mac Address #1
+    SL.Execute Javascript                      document.querySelector("#WLANFLT_MAC1").value=''
+    SL.Input Text                              xpath=//*[@id="WLANFLT_MAC1"]    ${mac}
+    Save Config SSID
+
+    #Verify Mac filter Open/Close
+    ${curr_mode}=                              SL.Get Value    xpath=//*[@id="WLAN_FltActive_Open" and 'checked'] 
+    Should Be Equal                            ${mode}    ${curr_mode}
+    #Verify Action
+    ${curr_action}=                            SL.Get Value    xpath=//*[@id="WLAN_FltAction" and 'selected']
+    Run Keyword If    '${curr_action}' == '1' and '${action}' == 'Allow'   Log To Console    Action is ${action}
+    ...             ELSE IF    '${curr_action}' == '2' and '${action}' == 'Deny'     Log To Console    Action is ${action}
+    #Verify Mac
+    ${curr_mac}=                               SL.Get Value    xpath=//*[@id="WLANFLT_MAC1"]
+    Should Be Equal                            ${mac}    ${curr_mac}
+
+Config TWT Button 2G
+    [Arguments]                         ${input_twt_button}
+    SL.Wait Until Element Is Visible    xpath=//*[@id="TWTSupport"]    timeout=10s
+    ...                                 error=\nTWT Button Checkbox Does Not Show Up
+    ${value_get}=                       SL.Get Value    xpath=//*[@id="TWTSupport"]/option[contains(text(),"${input_twt_button}")]
+    SL.Select From List By Value        xpath=//*[@id="TWTSupport"]    ${value_get}
+
+Config TWT Button and Verify 2G
+    [Arguments]                         ${twt_button}
+    Config TWT Button 2G                input_twt_button=${twt_button}
+    Save Config SSID
+    ${curr_twt_button}=                 SL.Get Text    xpath=//*[@id="TWTSupport"]/option[contains(text(),"${twt_button}")]
+    Should Be Equal                     ${curr_twt_button}    ${twt_button}

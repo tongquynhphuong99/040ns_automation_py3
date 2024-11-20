@@ -3,8 +3,8 @@ Library                                            SeleniumLibrary   run_on_fail
 Library                                            SSHLibrary    WITH NAME    SSHL
 Resource                                           selenium/Login/SeleniumLoginLib.txt
 Resource                                           selenium/Maintenance/SeleniumMaintenanceRebootResetLib.txt
-Resource                                           selenium/InterfaceSetup/SeleniumInterfaceSetupWireless24GHzLib.txt
-Resource                                           selenium/InterfaceSetup/SeleniumInterfaceSetupWireless5GHzLib.txt
+Resource                                           selenium/Network/SeleniumNetworkWLAN24GHzLib.txt
+Resource                                           selenium/Network/SeleniumNetworkWLAN5GHzLib.txt
 Resource                                           selenium/Status/SeleniumStatusDeviceInfoLib.txt
 Resource                                           ssh/SshLib.txt
 
@@ -16,7 +16,7 @@ MOD_WIFI2G_01_TC_07_Teardown
     Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
 
     #####Factory Reset Via Web GUI
-    Login To Browser		                 password=&{ONT}[ONT_WEB_PASS]
+    Login To Browser		                 password=${ONT}[ONT_WEB_PASS]
     Factory Reset Via Web GUI
   
     SL.Go To                                 url=${LOGIN_URL}
@@ -36,7 +36,7 @@ MOD_WIFI2G_01_TC_07
     SL.Set Selenium Speed                         0.5
     SL.Set Selenium Timeout                       10s
     Set Test Message                              *HTML* <b>MOD_WIFI2G_01_TC_07</b>
-    Login To Browser		                      password=&{ONT}[ONT_WEB_PASS]
+    Login To Browser		                      password=${ONT}[ONT_WEB_PASS]
     SL.Select Frame                               xpath=//frame[@name="contentfrm"]
     Open 2.4GHz Wireless Configure Page
 
@@ -195,6 +195,6 @@ MOD_WIFI2G_01_TC_07
     
     [Teardown]                                     Run Keyword And Ignore Error        MOD_WIFI2G_01_TC_07_Teardown
     
-# *** Test Cases ***
-# MOD_WIFI2G_01_TC_07
-#     MOD_WIFI2G_01_TC_07    
+*** Test Cases ***
+MOD_WIFI2G_01_TC_07
+    MOD_WIFI2G_01_TC_07    

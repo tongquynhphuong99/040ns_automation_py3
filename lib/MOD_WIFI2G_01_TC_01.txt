@@ -31,7 +31,7 @@ MOD_WIFI2G_01_TC_01_Teardown
     SL.Close All Browsers
 
 MOD_WIFI2G_01_TC_01
-    [Documentation]                           Kiem tra kha nang cau hinh SSID Index Wifi 2.4Ghz
+    [Documentation]                          Kiem tra kha nang cau hinh SSID Index Wifi 2.4Ghz
 
     SL.Set Selenium Speed                    				    0.5
     SL.Set Selenium Timeout                  				    10s

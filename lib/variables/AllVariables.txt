@@ -42,12 +42,12 @@ ${INVALID_PRIORITY}                    234
 ${INVALID_VLAN}                        4096
 
 # IP address of test control PC
-${REMOTE_SERVER_IP}                    10.2.204.152
+${REMOTE_SERVER_IP}                    10.2.204.164
 ${REMOTE_SERVER_IP_1}                  10.2.204.152
 ${REMOTE_SERVER_IP_2}                  10.2.204.165
 
 # Username and password to login to test control PC
-${REMOTE_SERVER_USERNAME}              telco
+${REMOTE_SERVER_USERNAME}              fixed
 ${REMOTE_SERVER_PASSWORD}              123456
 ${TEST_CONTROL_PC_LAN_NETWORK_INTERFACE_2}        enp2s0
 # ${PING_PERIOD}                         60
