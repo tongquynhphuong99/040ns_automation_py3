@@ -7,43 +7,55 @@ Library                                        SeleniumLibrary   run_on_failure=
 
 ###
 Open Network Settings Wan Page
-    [Arguments]                                ${url}=https://192.168.1.1/cgi-bin/home_wan.asp
+    # [Arguments]                                ${url}=https://192.168.1.1/cgi-bin/home_wan.asp
 
-    SL.Go To                                   ${url}
-    SL.Wait Until Page Contains                WAN
-    ...                                        timeout=20s
-    ...                                        error=\nNetwork Settings WAN Configure Page Not Found
-    SL.Page Should Contain                     WAN
+    # SL.Go To                                   ${url}
+    # SL.Wait Until Page Contains                WAN
+    # ...                                        timeout=20s
+    # ...                                        error=\nNetwork Settings WAN Configure Page Not Found
+    # SL.Page Should Contain                     WAN
+    
+    SL.Click Element                                   xpath=//*[@id="net-wanset"]
 
+    SL.Wait Until Page Contains                     WAN
+    ...                                             timeout=20s
+    ...                                             error=\nNetwork Settings WAN Configure Page Not Found
+    SL.Page Should Contain                          WAN
+
+    SL.Select Frame                                 xpath=//frame[@name="contentfrm"]
 
 ###
 Add New Wan Service
     [Documentation]                            Adding new WAN service by click Create button.
     
-    SL.Wait Until Element Is Visible           xpath=//input[@id="btnCreate"]
+    SL.Wait Until Element Is Visible           xpath=//*[@id="btnAddCnt"]
     ...                                        timeout=20s
     ...                                        error=\nCreate Button Does Not Found!
-    SL.Click Element                           xpath=//input[@id="btnCreate"]
+    SL.Click Element                           xpath=//*[@id="btnAddCnt"]
 
 ###
-Select Activated Button
-    [Documentation]                            	Select WAN Status Activated
-	
+Select Enable/Disable Button
+    [Documentation]                            	Select WAN Status Enable
+	[Arguments]                                   ${enable}
+
     ### Choose wan status activated
-    SL.Wait Until Element Is Visible    	xpath=//input[@name="wan_VCStatus"]
+    SL.Wait Until Element Is Visible    	xpath=//*[@id="cb_enblService"]
     ...                                 	timeout=10s
     ...                                 	error=\nChoose Status WAN Box Not Found
-    SL.Click Element                    	xpath=//*[@id="div_isipv6sup"]/table/tbody/tr[2]/td[5]/input[1]
+    ${status}=        SL.Execute Javascript        return document.querySelector("#cb_enblService").checked
+    
+    Run Keyword If        '${enable}' == 'On' and '${status}' == 'False'        SL.Execute Javascript        document.querySelector("#cb_enblService").click();
+    ...   ELSE IF         '${enable}' == 'Off' and '${status}' == 'True'        SL.Execute Javascript        document.querySelector("#cb_enblService").click();
 
 ###
-Select Deactivated Button
-    [Documentation]                            	Select WAN Status Activated
+# Select Deactivated Button
+#     [Documentation]                            	Select WAN Status Activated
 	
-    ### Choose wan status activated
-    SL.Wait Until Element Is Visible    	xpath=//input[@name="wan_VCStatus"]
-    ...                                 	timeout=10s
-    ...                                 	error=\nChoose Status WAN Box Not Found    
-    SL.Click Element                    	xpath=//*[@id="div_isipv6sup"]/table/tbody/tr[2]/td[5]/input[2]
+#     ### Choose wan status activated
+#     SL.Wait Until Element Is Visible    	xpath=//input[@name="wan_VCStatus"]
+#     ...                                 	timeout=10s
+#     ...                                 	error=\nChoose Status WAN Box Not Found    
+#     SL.Click Element                    	xpath=//*[@id="div_isipv6sup"]/table/tbody/tr[2]/td[5]/input[2]
 
 ###
 Select IPv4 Mode
@@ -78,12 +90,45 @@ Select Internet Service Protocol
 
 ###
 Input VLAN ID
-    [Arguments]                                ${vlan_id}
+    [Arguments]                               ${vlan_id}
 
-    SL.Wait Until Element Is Visible          xpath=//input[@name="wan_vid"]
-    SL.Input Text                             xpath=//input[@name="wan_vid"]      ${vlan_id}
+    SL.Wait Until Element Is Visible          xpath=//*[@id="vlan"]
+    SL.Input Text                             xpath=//*[@id="vlan"]     ${vlan_id}
 
 ###
+Input 802.1P
+    [Arguments]                               ${input}
+
+    SL.Wait Until Element Is Visible          xpath=//*[@id="v8021P"]
+    SL.Input Text                             xpath=//*[@id="v8021P"]    ${input}
+
+###
+Input Multicast VLAN ID
+    [Arguments]                               ${input}
+
+    SL.Wait Until Element Is Visible          xpath=//*[@id="MulticastVID"]
+    SL.Input Text                             xpath=//*[@id="MulticastVID"]    ${input}
+
+###
+Input MTU
+    [Arguments]                               ${input}
+
+    SL.Wait Until Element Is Visible          xpath=//*[@id="MTU"]
+    SL.Input Text                             xpath=//*[@id="MTU"]    ${input}
+
+###
+Select Enable/Disable NAT
+    [Documentation]                            	  Select Enable/Disable NAT
+	[Arguments]                                   ${enable}
+
+    SL.Wait Until Element Is Visible    	xpath=//*[@id="cb_nat"]
+    ...                                 	timeout=10s
+    ...                                 	error=\nChoose Enable NAT Box Not Found
+    ${status}=        SL.Execute Javascript        return document.querySelector("#cb_nat").checked
+    
+    Run Keyword If        '${enable}' == 'On' and '${status}' == 'False'        SL.Execute Javascript        document.querySelector("#cb_nat").click();
+    ...   ELSE IF         '${enable}' == 'Off' and '${status}' == 'True'        SL.Execute Javascript        document.querySelector("#cb_nat").click();
+
 Select Tag Mode
     SL.Click Element                           xpath=//div[2]/div/table/tbody/tr[2]/td[5]/input
     Log To Console                             \nSelect Tag Mode
@@ -316,9 +361,9 @@ Select DHCP IPv6 Mode
 ###
 Click Button Save WAN
     # Save Config WAN
-    SL.Wait Until Element Is Visible          xpath=//input[@name="SaveBtn"]
-    SL.Click Button                           xpath=//input[@name="SaveBtn"]
-    
+    SL.Wait Until Element Is Visible          xpath=//*[@id="btnOK"]
+    SL.Click Button                           xpath=//*[@id="btnOK"]
+    Sleep                                     20s
     
 Config IPv4 Dynamic WAN IPoE
 	[Documentation]                     Select and configure IPoE WAN Service IPv4
@@ -913,6 +958,56 @@ Create New Wan PPPoE
 
     Save Wan Settings
 
+# Get Column Indexx
+#     [Documentation]             Get column index base on column name.
+#     ...                         Input:
+#     ...                         1. column_name
+#     ...                         Return:
+#     ...                         1. Column index if found, else return 'None'
+
+#     [Arguments]                 ${column_name}=NAT
+    
+#     # SL.Click Element                          xpath=//*[@id="status_deviceinfo"]
+#     # SL.Click Element                          xpath=//*[@id="sta-network"]
+    
+#     ${index}=                   Set Variable     None
+#     SL.Set Selenium Speed       0.1
+#     FOR    ${i}    IN RANGE    2    7                                                                      
+#         ${element_is_visible}=    Run Keyword And Return Status       SL.Element Should Be Visible    xpath=//*[@id="network_info"]/tbody/tr[1]/td[${i}]
+#         ${column_name_tmp}=       SL.Get Text    xpath=/*[@id="network_info"]/tbody/tr[1]/td[${i}]
+#         ${index}=          Set Variable If    '${column_name_tmp}' == '${column_name}'     ${i}
+#         Exit For Loop If   '${column_name_tmp}' == '${column_name}'
+#     END
+#     SL.Set Selenium Speed       0.3
+#     RETURN                    ${index}
+
+# Get Row Indexx
+#     [Documentation]             Get row index base on column name and column value.
+#     ...                         Input:
+#     ...                         1. column_name
+#     ...                         2. column_value
+#     ...                         Return:
+#     ...                         1. Row index if found, else return 'None'
+
+#     [Arguments]                 ${column_name}   ${column_value}
+    
+#     SL.Click Element                          xpath=//*[@id="status_deviceinfo"]
+#     SL.Click Element                          xpath=//*[@id="sta-network"]
+    
+#     ${index}=                   Set Variable     None 
+#     SL.Set Selenium Speed       0.1
+#     ${column_index_tmp}=        SeleniumNetworkWANLib.Get Column Index            ${column_name}
+#     FOR    ${row_i}    IN RANGE    2    20
+#         ${element_is_visible}=    Run Keyword And Return Status       SL.Element Should Be Visible    xpath=//*[@id="network_info"]/tbody/tr[${row_i}]/td[4]
+#         Exit For Loop If    '${element_is_visible}' == 'False'
+#         ${column_value_tmp}=     SL.Get Text     xpath=//*[@id="network_info"]/tbody/tr[${row_i}]/td[${column_index_tmp}]
+#         ${index}=           Set Variable If     '${column_value}' in '${column_value_tmp}'    ${row_i}
+#         Exit For Loop If    '${column_value}' in '${column_value_tmp}'
+#     END
+#     SL.Set Selenium Speed       0.3
+#     RETURN                    ${index}
+# ###
+
 ###
 Get Column Index
     [Documentation]             Get column index base on column name.
@@ -925,17 +1020,16 @@ Get Column Index
 
     ${index}=                   Set Variable     None
     SL.Set Selenium Speed       0.1
-    FOR    ${i}    IN RANGE    1    13
-         ${element_is_visible}=    Run Keyword And Return Status       SL.Element Should Be Visible    xpath=//table[@class="tableShowData"]/tbody/tr[1]/td[${i}]
-         Exit For Loop If    '${element_is_visible}' == 'False'
-         ${column_name_tmp}=       SL.Get Text    xpath=//table[@class="tableShowData"]/tbody/tr[1]/td[${i}]
-         ${index}=          Set Variable If    '${column_name_tmp}' == '${column_name}'     ${i}
-         Exit For Loop If   '${column_name_tmp}' == '${column_name}'
+    FOR    ${i}    IN RANGE    2    7                                                                      
+        ${element_is_visible}=    Run Keyword And Return Status       SL.Element Should Be Visible    xpath=//*[@id="WanInfoTable"]/tbody/tr[1]/td[${i}]
+        Exit For Loop If    '${element_is_visible}' == 'False'   
+        ${column_name_tmp}=       SL.Get Text    xpath=//*[@id="WanInfoTable"]/tbody/tr[1]/td[${i}]
+        ${index}=          Set Variable If    '${column_name_tmp}' == '${column_name}'     ${i}
+        Exit For Loop If   '${column_name_tmp}' == '${column_name}'
     END
     SL.Set Selenium Speed       0.3
-    [Return]                    ${index}
+    RETURN                    ${index}
 
-###
 Get Row Index
     [Documentation]             Get row index base on column name and column value.
     ...                         Input:
@@ -950,15 +1044,14 @@ Get Row Index
     SL.Set Selenium Speed       0.1
     ${column_index_tmp}=        SeleniumNetworkWANLib.Get Column Index            ${column_name}
     FOR    ${row_i}    IN RANGE    2    20
-        ${element_is_visible}=    Run Keyword And Return Status       SL.Element Should Be Visible    xpath=//table[@class="tableShowData"]/tbody/tr[${row_i}]/td[2]
+        ${element_is_visible}=    Run Keyword And Return Status       SL.Element Should Be Visible    xpath=//*[@id="WanInfoTable"]/tbody/tr[${row_i}]/td[4]
         Exit For Loop If    '${element_is_visible}' == 'False'
-        ${column_value_tmp}=     SL.Get Text     xpath=//table[@class="tableShowData"]/tbody/tr[${row_i}]/td[${column_index_tmp}]
-        ${index}=           Set Variable If     '${column_value_tmp}' == '${column_value}'    ${row_i}
-        Exit For Loop If    '${column_value_tmp}' == '${column_value}'
+        ${column_value_tmp}=     SL.Get Text     xpath=//*[@id="WanInfoTable"]/tbody/tr[${row_i}]/td[${column_index_tmp}]
+        ${index}=           Set Variable If     '${column_value}' in '${column_value_tmp}'    ${row_i}
+        Exit For Loop If    '${column_value}' in '${column_value_tmp}'
     END
     SL.Set Selenium Speed       0.3
-    [Return]                    ${index}
-
+    RETURN                    ${index}
 ###
 Click Delete Button
     [Arguments]           ${row_index}       ${remove_column_index}
@@ -1006,9 +1099,9 @@ Edit Wan Service
 Delete WAN
     [Arguments]  					${vlan_id}       
                        		
-    ${row_index_tmp}=                          		SeleniumNetworkWANLib.Get Row Index    VlanMuxId    ${vlan_id}
-    SL.Click Element                          		xpath=//table[@class="tableShowData"]/tbody/tr[${row_index_tmp}]/td[7]
-
+    ${row_index_tmp}=                          		SeleniumNetworkWANLib.Get Row Index    VLAN/Priority    ${vlan_id}
+    SL.Click Element                          		xpath=//*[@id="WanInfoTable"]/tbody/tr[${row_index_tmp}]/td[6]
+    
 ###
 Input MTU Size For Bridge Mode
     [Arguments]                                ${bridge_mtu_size}
@@ -1180,15 +1273,6 @@ Popup Vlan Id Out Of Range Should Be Visible
     Log To Console                      Popup message: ${popup_message}
     Should Contain                      ${popup_message}     VLANID must be in the range 0~4095
     
-###
-Waiting For Save Config WAN
-    [Arguments]                                		${action}
-
-    SL.Wait Until Page Contains                		Service Information Summary
-    ...                                        		timeout=10s
-    ...                                        		error=\WAN Summary Page doesn't show up!
-    Log To Console					\n${action} Success!
-
 ###
 Verify WAN Was Created
     [Arguments]                                		${vlan_id}

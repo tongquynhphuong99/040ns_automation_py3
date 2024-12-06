@@ -33,8 +33,8 @@ MOD_WIFI2G_01_TC_08_Teardown
 MOD_WIFI2G_01_TC_08
     [Documentation]    Kiem tra kha nang cau hinh Security Configure Type WPA-PSK Wifi 2.4Ghz
 
-    SL.Set Selenium Speed                         0.5
-    SL.Set Selenium Timeout                       10s
+    # SL.Set Selenium Speed                         0.5
+    # SL.Set Selenium Timeout                       10s
     Set Test Message                              *HTML* <b>MOD_WIFI2G_01_TC_08</b>
     Login To Browser		                      password=${ONT}[ONT_WEB_PASS]
     SL.Select Frame                               xpath=//frame[@name="contentfrm"]
@@ -50,17 +50,6 @@ MOD_WIFI2G_01_TC_08
     Save Config SSID
     # Verify Config
     Popup WPA Password Invalid Should Be Visible
-
-    # ### Step 2: Config Security mode WPA-PSK Password All Space for Wifi 2.4GHz
-    # Log To Console                                \nStep 2: Config Security mode WPA-PSK Password All Space for Wifi 2.4GHz
-    
-    # Select SSID 2G Index                          ssid_index=1
-    # Select 2G Security Mode                       secu_mode=WPA-PSK
-    # Configure 2G Security Mode WPA                encry_type=AES
-    # ...                                           password=${SPACE*8}
-    # Save Config SSID
-    # # Verify Config
-    # Popup WPA Password Invalid Should Be Visible
 
     ### Step 3: Config Security mode WPA-PSK Password Special Characters &|;$><`\!'" for Wifi 2.4GHz
     Log To Console                                \nStep 3: Config Security mode WPA-PSK Password Special Characters &|;$><`\!'" for Wifi 2.4GHz
@@ -163,6 +152,7 @@ MOD_WIFI2G_01_TC_08
     Save Config SSID
     # Verify Config
     Popup WPA Password Invalid Should Be Visible
+
 
     ### Step 4: Config Security mode WPA-PSK Password Invalid Length for Wifi 2.4GHz
     Log To Console                                \nStep 4: Config Security mode WPA-PSK Password Invalid Length for Wifi 2.4GHz
@@ -267,8 +257,21 @@ MOD_WIFI2G_01_TC_08
     ...                                           encry_type=AES
     ...                                           password=12345678
     
+    # ### Step 2: Config Security mode WPA-PSK Password All Space for Wifi 2.4GHz
+    # Log To Console                                \nStep 2: Config Security mode WPA-PSK Password All Space for Wifi 2.4GHz
+    
+    # Select SSID 2G Index                          ssid_index=1
+    # Select 2G Security Mode                       secu_mode=WPA-PSK
+    # Configure 2G Security Mode WPA                encry_type=AES
+    # ...                                           password=${SPACE*8}
+    # Save Config SSID
+    # # Verify Config
+    # Popup WPA Password Invalid Should Be Visible
+
+    Logout WebGUI 
+
     [Teardown]                                     Run Keyword And Ignore Error        MOD_WIFI2G_01_TC_08_Teardown
 
-*** Test Cases ***
-MOD_WIFI2G_01_TC_08
-    MOD_WIFI2G_01_TC_08    
+# *** Test Cases ***
+# MOD_WIFI2G_01_TC_08
+#     MOD_WIFI2G_01_TC_08    

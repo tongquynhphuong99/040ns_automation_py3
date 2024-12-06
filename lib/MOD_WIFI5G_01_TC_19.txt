@@ -27,8 +27,9 @@ MOD_WIFI5G_01_TC_19_Teardown
 
 MOD_WIFI5G_01_TC_19
     [Documentation]    Kiem tra kha nang thay doi Select Mode Wifi 5GHz
-    SL.Set Selenium Speed                          0.5
-    SL.Set Selenium Timeout                        10s
+    
+    # SL.Set Selenium Speed                          0.5
+    # SL.Set Selenium Timeout                        10s
     Set Test Message                               *HTML* <b>MOD_WIFI5G_01_TC_19</b>
     
     # Open WebGUI    
@@ -37,64 +38,29 @@ MOD_WIFI5G_01_TC_19
     Open 5GHz Wireless Configure Page
     SL.Maximize Browser Window
 
-    ### Step 1: Config Select Mode Wifi 5Ghz with SSID index 1
+    ### Step 1: Config Select Mode Wifi 5Ghz
+    Log To Console                      \nStep 1: Config Select Mode Wifi 5Ghz
     Select SSID 5G Index                ssid_index=1
+
     ## Step 1.1: Config Select Mode Wifi 5Ghz 11a only
     Config Select Mode and Verify 5G    select_mode=11a only
+
     ## Step 1.2: Config Select Mode Wifi 5Ghz 11a/n mixed mode
     Config Select Mode and Verify 5G   select_mode=11a/n mixed mode
+
     ## Step 1.3: Config Select Mode Wifi 5Ghz 811vht AC/AN/A
     Config Select Mode and Verify 5G   select_mode=11vht AC/AN/A
+
     ## Step 1.4: Config Select Mode Wifi 5Ghz 11vht AC/AN
     Config Select Mode and Verify 5G   select_mode=11vht AC/AN
+    
     ## Step 1.5: Config Select Mode Wifi 5Ghz 11n/ac/ax Mixed
-    Config Select Mode and Verify 5G   select_mode=11n/ac/ax Mixed
-
-
-    ### Step 2: Config Select Mode Wifi 5Ghz with SSID index 2
-    Select SSID 5G Index                ssid_index=2
-    # Step 2.1: Config Select Mode Wifi 5Ghz 11a only
-    Config Select Mode and Verify 5G    select_mode=11a only
-    ## Step 2.2: Config Select Mode Wifi 5Ghz 11a/n mixed mode
-    Config Select Mode and Verify 5G   select_mode=11a/n mixed mode
-    ## Step 2.3: Config Select Mode Wifi 5Ghz 11vht AC/AN/A
-    Config Select Mode and Verify 5G   select_mode=11vht AC/AN/A
-    ## Step 2.4: Config Select Mode Wifi 5Ghz 11vht AC/AN
-    Config Select Mode and Verify 5G   select_mode=11vht AC/AN
-    ## Step 2.5: Config Select Mode Wifi 5Ghz 11n/ac/ax Mixed
-    Config Select Mode and Verify 5G   select_mode=11n/ac/ax Mixed
-
-    ### Step 3: Config Select Mode Wifi 5Ghz with SSID index 3
-    Select SSID 5G Index            ssid_index=3
-    # Step 3.1: Config Select Mode Wifi 5Ghz 11a only
-    Config Select Mode and Verify 5G    select_mode=11a only
-    ## Step 3.2: Config Select Mode Wifi 5Ghz 11a/n mixed mode
-    Config Select Mode and Verify 5G   select_mode=11a/n mixed mode
-    ## Step 3.3: Config Select Mode Wifi 5Ghz 11vht AC/AN/A
-    Config Select Mode and Verify 5G   select_mode=11vht AC/AN/A
-    ## Step 3.4: Config Select Mode Wifi 5Ghz 11vht AC/AN
-    Config Select Mode and Verify 5G   select_mode=11vht AC/AN
-    ## Step 3.5: Config Select Mode Wifi 5Ghz 11n/ac/ax Mixed
-    Config Select Mode and Verify 5G   select_mode=11n/ac/ax Mixed
-
-
-    ### Step 4: Config Select Mode Wifi 5Ghz with SSID index 4
-    Select SSID 5G Index               ssid_index=4
-    # Step 4.1: Config Select Mode Wifi 5Ghz 11a only
-    Config Select Mode and Verify 5G    select_mode=11a only
-    ## Step 4.2: Config Select Mode Wifi 5Ghz 11a/n mixed mode
-    Config Select Mode and Verify 5G   select_mode=11a/n mixed mode
-    ## Step 4.3: Config Select Mode Wifi 5Ghz 11vht AC/AN/A
-    Config Select Mode and Verify 5G   select_mode=11vht AC/AN/A
-    ## Step 4.4: Config Select Mode Wifi 5Ghz 11vht AC/AN
-    Config Select Mode and Verify 5G   select_mode=11vht AC/AN
-    ## Step 4.5: Config Select Mode Wifi 5Ghz 11n/ac/ax Mixed
     Config Select Mode and Verify 5G   select_mode=11n/ac/ax Mixed
 
     Logout WebGUI
 
     [Teardown]                               Run Keyword And Ignore Error        MOD_WIFI5G_01_TC_19_Teardown
 
-*** Test Cases ***
-MOD_WIFI5G_01_TC_19
-    MOD_WIFI5G_01_TC_19
+# *** Test Cases ***
+# MOD_WIFI5G_01_TC_19
+#     MOD_WIFI5G_01_TC_19

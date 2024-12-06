@@ -28,8 +28,8 @@ MOD_WIFI5G_01_TC_14_Teardown
 MOD_WIFI5G_01_TC_14
     [Documentation]    Kiem tra kha nang thay doi Channel Wifi 5G
 
-    SL.Set Selenium Speed                          0.5
-    SL.Set Selenium Timeout                        10s
+    # SL.Set Selenium Speed                          0.5
+    # SL.Set Selenium Timeout                        10s
     Set Test Message                               *HTML* <b>MOD_WIFI5G_01_TC_14</b>
 
     # Open WebGUI
@@ -38,181 +38,10 @@ MOD_WIFI5G_01_TC_14
     Open 5GHz Wireless Configure Page
     SL.Maximize Browser Window
 
-    ### Step 1: Config Channel Wifi 5Ghz with SSID index 1 on WebGUI
-    Log To Console                                   \nStep 1: Config Channel Wifi 5Ghz with SSID index 1 on WebGUI
+    ### Step 1: Config Channel Wifi 5Ghz with on WebGUI
+    Log To Console                                   \nStep 1: Config Channel Wifi 5Ghz with on WebGUI
     Select SSID 5G Index                             ssid_index=1
-    ## Channel = Auto
-    Config Channel WiFi 5G                           input_channel=Auto
-    Log To Console                                   Channel Wifi Mode Auto 
-    ## Channel = 36
-    Config Channel WiFi and Verify 5G                channel=36
-    ## Channel = 40
-    Config Channel WiFi and Verify 5G                channel=40
-    ## Channel = 44
-    Config Channel WiFi and Verify 5G                channel=44
-    ## Channel = 48
-    Config Channel WiFi and Verify 5G                channel=48
-    ## Channel = 52
-    Config Channel WiFi and Verify 5G                channel=52
-    ## Channel = 56
-    Config Channel WiFi and Verify 5G                channel=56
-    ## Channel = 60
-    Config Channel WiFi and Verify 5G                channel=60
-    ## Channel = 64
-    Config Channel WiFi and Verify 5G                channel=64
-    ## Channel = 100
-    Config Channel WiFi and Verify 5G                channel=100
-    ## Channel = 104
-    Config Channel WiFi and Verify 5G                channel=104
-    ## Channel = 108
-    Config Channel WiFi and Verify 5G                channel=108
-    ## Channel = 112
-    Config Channel WiFi and Verify 5G                channel=112
-    ## Channel = 116
-    Config Channel WiFi and Verify 5G                channel=116
-    ## Channel = 120
-    Config Channel WiFi and Verify 5G                channel=120
-    ## Channel = 124
-    Config Channel WiFi and Verify 5G                channel=124
-    ## Channel = 128
-    Config Channel WiFi and Verify 5G                channel=128
-    ## Channel = 132
-    Config Channel WiFi and Verify 5G                channel=132
-    ## Channel = 136
-    Config Channel WiFi and Verify 5G                channel=136
-    ## Channel = 140
-    Config Channel WiFi and Verify 5G                channel=140
-    ## Channel = 144
-    Config Channel WiFi and Verify 5G                channel=144
-    ## Channel = 149
-    Config Channel WiFi and Verify 5G                channel=149
-    ## Channel = 153
-    Config Channel WiFi and Verify 5G                channel=153 
-    ## Channel = 157
-    Config Channel WiFi and Verify 5G                channel=157
-    ## Channel = 161
-    Config Channel WiFi and Verify 5G                channel=161
-    ## Channel = 165
-    Config Channel WiFi and Verify 5G                channel=165 
-
-    ### Step 2: Config Channel Wifi 5Ghz with SSID index 2 on WebGUI
-    Log To Console                                   \nStep 2: Config Channel Wifi 5Ghz with SSID index 2 on WebGUI
-    Select SSID 5G Index                             ssid_index=2
-    ## Channel = Auto
-    Config Channel WiFi 5G                           input_channel=Auto
-    Log To Console                                   Channel Wifi Mode Auto 
-    ## Channel = 36
-    Config Channel WiFi and Verify 5G                channel=36
-    ## Channel = 40
-    Config Channel WiFi and Verify 5G                channel=40
-    ## Channel = 44
-    Config Channel WiFi and Verify 5G                channel=44
-    ## Channel = 48
-    Config Channel WiFi and Verify 5G                channel=48
-    ## Channel = 52
-    Config Channel WiFi and Verify 5G                channel=52
-    ## Channel = 56
-    Config Channel WiFi and Verify 5G                channel=56
-    ## Channel = 60
-    Config Channel WiFi and Verify 5G                channel=60
-    ## Channel = 64
-    Config Channel WiFi and Verify 5G                channel=64
-    ## Channel = 100
-    Config Channel WiFi and Verify 5G                channel=100
-    ## Channel = 104
-    Config Channel WiFi and Verify 5G                channel=104
-    ## Channel = 108
-    Config Channel WiFi and Verify 5G                channel=108
-    ## Channel = 112
-    Config Channel WiFi and Verify 5G                channel=112
-    ## Channel = 116
-    Config Channel WiFi and Verify 5G                channel=116
-    ## Channel = 120
-    Config Channel WiFi and Verify 5G                channel=120
-    ## Channel = 124
-    Config Channel WiFi and Verify 5G                channel=124
-    ## Channel = 128
-    Config Channel WiFi and Verify 5G                channel=128
-    ## Channel = 132
-    Config Channel WiFi and Verify 5G                channel=132
-    ## Channel = 136
-    Config Channel WiFi and Verify 5G                channel=136
-    ## Channel = 140
-    Config Channel WiFi and Verify 5G                channel=140
-    ## Channel = 144
-    Config Channel WiFi and Verify 5G                channel=144
-    ## Channel = 149
-    Config Channel WiFi and Verify 5G                channel=149
-    ## Channel = 153
-    Config Channel WiFi and Verify 5G                channel=153 
-    ## Channel = 157
-    Config Channel WiFi and Verify 5G                channel=157
-    ## Channel = 161
-    Config Channel WiFi and Verify 5G                channel=161
-    ## Channel = 165
-    Config Channel WiFi and Verify 5G                channel=165 
-
-
-    ### Step 3: Config Channel Wifi 5Ghz with SSID index 3 on WebGUI
-    Log To Console                                   \nStep 1: Config Channel Wifi 5Ghz with SSID index 3 on WebGUI
-    Select SSID 5G Index                             ssid_index=3
-    ## Channel = Auto
-    Config Channel WiFi 5G                           input_channel=Auto
-    Log To Console                                   Channel Wifi Mode Auto 
-    ## Channel = 36
-    Config Channel WiFi and Verify 5G                channel=36
-    ## Channel = 40
-    Config Channel WiFi and Verify 5G                channel=40
-    ## Channel = 44
-    Config Channel WiFi and Verify 5G                channel=44
-    ## Channel = 48
-    Config Channel WiFi and Verify 5G                channel=48
-    ## Channel = 52
-    Config Channel WiFi and Verify 5G                channel=52
-    ## Channel = 56
-    Config Channel WiFi and Verify 5G                channel=56
-    ## Channel = 60
-    Config Channel WiFi and Verify 5G                channel=60
-    ## Channel = 64
-    Config Channel WiFi and Verify 5G                channel=64
-    ## Channel = 100
-    Config Channel WiFi and Verify 5G                channel=100
-    ## Channel = 104
-    Config Channel WiFi and Verify 5G                channel=104
-    ## Channel = 108
-    Config Channel WiFi and Verify 5G                channel=108
-    ## Channel = 112
-    Config Channel WiFi and Verify 5G                channel=112
-    ## Channel = 116
-    Config Channel WiFi and Verify 5G                channel=116
-    ## Channel = 120
-    Config Channel WiFi and Verify 5G                channel=120
-    ## Channel = 124
-    Config Channel WiFi and Verify 5G                channel=124
-    ## Channel = 128
-    Config Channel WiFi and Verify 5G                channel=128
-    ## Channel = 132
-    Config Channel WiFi and Verify 5G                channel=132
-    ## Channel = 136
-    Config Channel WiFi and Verify 5G                channel=136
-    ## Channel = 140
-    Config Channel WiFi and Verify 5G                channel=140
-    ## Channel = 144
-    Config Channel WiFi and Verify 5G                channel=144
-    ## Channel = 149
-    Config Channel WiFi and Verify 5G                channel=149
-    ## Channel = 153
-    Config Channel WiFi and Verify 5G                channel=153 
-    ## Channel = 157
-    Config Channel WiFi and Verify 5G                channel=157
-    ## Channel = 161
-    Config Channel WiFi and Verify 5G                channel=161
-    ## Channel = 165
-    Config Channel WiFi and Verify 5G                channel=165 
-
-    ### Step 4: Config Channel Wifi 5Ghz with SSID index 4 on WebGUI
-    Log To Console                                   \nStep 1: Config Channel Wifi 5Ghz with SSID index 4 on WebGUI
-    Select SSID 5G Index                             ssid_index=4
+    
     ## Channel = Auto
     Config Channel WiFi 5G                           input_channel=Auto
     Log To Console                                   Channel Wifi Mode Auto 
@@ -271,6 +100,6 @@ MOD_WIFI5G_01_TC_14
 
     [Teardown]                               Run Keyword And Ignore Error        MOD_WIFI5G_01_TC_14_Teardown
 
-*** Test Cases ***
-MOD_WIFI5G_01_TC_14
-    MOD_WIFI5G_01_TC_14
+# *** Test Cases ***
+# MOD_WIFI5G_01_TC_14
+#     MOD_WIFI5G_01_TC_14

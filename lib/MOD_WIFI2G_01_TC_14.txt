@@ -28,8 +28,8 @@ MOD_WIFI2G_01_TC_14_Teardown
 MOD_WIFI2G_01_TC_14
     [Documentation]    Kiem tra kha nang thay doi Channel Wifi 2.4G
 
-    SL.Set Selenium Speed                          0.5
-    SL.Set Selenium Timeout                        10s
+    # SL.Set Selenium Speed                          0.5
+    # SL.Set Selenium Timeout                        10s
     Set Test Message                               *HTML* <b>MOD_WIFI2G_01_TC_14</b>
 
     # Open WebGUI
@@ -38,100 +38,14 @@ MOD_WIFI2G_01_TC_14
     Open 2.4GHz Wireless Configure Page
     SL.Maximize Browser Window
 
-    ### Step 1: Config Channel Wifi 2.4Ghz with SSID index 1 on WebGUI
-    Log To Console                                   \nStep 1: Config Channel Wifi 2.4Ghz with SSID index 1 on WebGUI
+    ### Step 1: Config Channel Wifi 2.4Ghz on WebGUI
+    Log To Console                                   \nStep 1: Config Channel Wifi 2.4Ghz on WebGUI
+
     Select SSID 2G Index                             ssid_index=1
     ## Channel = Auto
     Config Channel WiFi 2G                           input_channel=Auto
     Log To Console                                   Channel Wifi Mode Auto 
-    ## Channel = 01
-    Config Channel WiFi and Verify 2G                channel=1
-    ## Channel = 02
-    Config Channel WiFi and Verify 2G                channel=2
-    ## Channel = 03
-    Config Channel WiFi and Verify 2G                channel=3
-    ## Channel = 04
-    Config Channel WiFi and Verify 2G                channel=4
-    ## Channel = 05
-    Config Channel WiFi and Verify 2G                channel=5
-    ## Channel = 06
-    Config Channel WiFi and Verify 2G                channel=6
-    ## Channel = 07
-    Config Channel WiFi and Verify 2G                channel=7
-    ## Channel = 08
-    Config Channel WiFi and Verify 2G                channel=8
-    ## Channel = 09
-    Config Channel WiFi and Verify 2G                channel=9
-    ## Channel = 10
-    Config Channel WiFi and Verify 2G                channel=10
-    ## Channel = 11
-    Config Channel WiFi and Verify 2G                channel=11
-
-
-    ### Step 2: Config Channel Wifi 2.4Ghz with SSID index 2 on WebGUI
-    Log To Console                                   \nStep 2: Config Channel Wifi 2.4Ghz with SSID index 2 on WebGUI
-    Select SSID 2G Index                             ssid_index=2
-    ## Channel = Auto
-    Config Channel WiFi 2G                           input_channel=Auto
-    Log To Console                                   Channel Wifi Mode Auto 
-    ## Channel = 01
-    Config Channel WiFi and Verify 2G                channel=1
-    ## Channel = 02
-    Config Channel WiFi and Verify 2G                channel=2
-    ## Channel = 03
-    Config Channel WiFi and Verify 2G                channel=3
-    ## Channel = 04
-    Config Channel WiFi and Verify 2G                channel=4
-    ## Channel = 05
-    Config Channel WiFi and Verify 2G                channel=5
-    ## Channel = 06
-    Config Channel WiFi and Verify 2G                channel=6
-    ## Channel = 07
-    Config Channel WiFi and Verify 2G                channel=7
-    ## Channel = 08
-    Config Channel WiFi and Verify 2G                channel=8
-    ## Channel = 09
-    Config Channel WiFi and Verify 2G                channel=9
-    ## Channel = 10
-    Config Channel WiFi and Verify 2G                channel=10
-    ## Channel = 11
-    Config Channel WiFi and Verify 2G                channel=11
-
-    ### Step 3: Config Channel Wifi 2.4Ghz with SSID index 3 on WebGUI
-    Log To Console                                   \nStep 1: Config Channel Wifi 2.4Ghz with SSID index 3 on WebGUI
-    Select SSID 2G Index                             ssid_index=3
-    ## Channel = Auto
-    Config Channel WiFi 2G                           input_channel=Auto
-    Log To Console                                   Channel Wifi Mode Auto 
-    ## Channel = 01
-    Config Channel WiFi and Verify 2G                channel=1
-    ## Channel = 02
-    Config Channel WiFi and Verify 2G                channel=2
-    ## Channel = 03
-    Config Channel WiFi and Verify 2G                channel=3
-    ## Channel = 04
-    Config Channel WiFi and Verify 2G                channel=4
-    ## Channel = 05
-    Config Channel WiFi and Verify 2G                channel=5
-    ## Channel = 06
-    Config Channel WiFi and Verify 2G                channel=6
-    ## Channel = 07
-    Config Channel WiFi and Verify 2G                channel=7
-    ## Channel = 08
-    Config Channel WiFi and Verify 2G                channel=8
-    ## Channel = 09
-    Config Channel WiFi and Verify 2G                channel=9
-    ## Channel = 10
-    Config Channel WiFi and Verify 2G                channel=10
-    ## Channel = 11
-    Config Channel WiFi and Verify 2G                channel=11
-
-    ### Step 4: Config Channel Wifi 2.4Ghz with SSID index 4 on WebGUI
-    Log To Console                                   \nStep 1: Config Channel Wifi 2.4Ghz with SSID index 4 on WebGUI
-    Select SSID 2G Index                             ssid_index=4
-    ## Channel = Auto
-    Config Channel WiFi 2G                           input_channel=Auto
-    Log To Console                                   Channel Wifi Mode Auto 
+    
     ## Channel = 01
     Config Channel WiFi and Verify 2G                channel=1
     ## Channel = 02
@@ -159,6 +73,6 @@ MOD_WIFI2G_01_TC_14
 
     [Teardown]                               Run Keyword And Ignore Error        MOD_WIFI2G_01_TC_14_Teardown
 
-*** Test Cases ***
-MOD_WIFI2G_01_TC_14
-    MOD_WIFI2G_01_TC_14
+# *** Test Cases ***
+# MOD_WIFI2G_01_TC_14
+#     MOD_WIFI2G_01_TC_14

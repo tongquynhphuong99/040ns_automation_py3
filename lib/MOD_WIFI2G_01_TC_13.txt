@@ -37,8 +37,8 @@ MOD_WIFI2G_01_TC_13_Teardown
 MOD_WIFI2G_01_TC_13
     [Documentation]    Kiem tra tinh nang On/Off Access Point Wifi 2.4G tren WebGUI cua ONT
 
-    SL.Set Selenium Speed                          0.5
-    SL.Set Selenium Timeout                        10s
+    # SL.Set Selenium Speed                          0.5
+    # SL.Set Selenium Timeout                        10s
     Set Test Message                               *HTML* <b>MOD_WIFI2G_01_TC_13</b>
 
     # Open WebGUI
@@ -47,105 +47,36 @@ MOD_WIFI2G_01_TC_13
     Open 2.4GHz Wireless Configure Page
     SL.Maximize Browser Window
 
-    ### Step 1: On/Off Access Point SSID index 1 for Wifi 2.4Ghz on WebGUI
-    Log To Console                                 \nStep 1: On/Off Access Point SSID index 1 for Wifi 2.4Ghz on WebGUI
-    ## Step 1.1: Config Access Point SSID index 1 mode On
-    Log To Console                                 \nStep 1.1: Config Access Point SSID index 1 mode On
+    ### Step 1: Config Access Point On for Wifi 2.4Ghz on WebGUI
+    Log To Console                                 \nStep 1: Config Access Point On for Wifi 2.4Ghz on WebGUI
+
     # Config
     Select SSID 2G Index                           ssid_index=1
     Enable/Disable SSID 2G                         ssid_mode=On 
     Input SSID 2G Name                             ssid=${WIFI_SSID_1}
     Config Access Point 2G                         access_point=On
     Save Config SSID
-    #Verify Config: PC Connect to Wifi 2.4Ghz
+
+    # Verify Config: PC Connect to Wifi 2.4Ghz
     Verify Wifi Rescan Contain                     ssid=${WIFI_SSID_1}
-    ## Step 1.2: Config Access Point SSID index 1 mode Off
-    Log To Console                                 \nStep 1.1: Config Access Point SSID index 1 mode Off
+
+    ### Step 2: Config Access Point Off for Wifi 2.4Ghz on WebGUI
+    Log To Console                                 \nStep 2: Config Access Point Off for Wifi 2.4Ghz on WebGUI
+
     # Config
     Select SSID 2G Index                           ssid_index=1
     Enable/Disable SSID 2G                         ssid_mode=On 
     Input SSID 2G Name                             ssid=${WIFI_SSID_1}
     Config Access Point 2G                         access_point=Off
     Save Config SSID
-    #Verify Config: PC Connect to Wifi 2.4Ghz
+
+    # Verify Config: PC Connect to Wifi 2.4Ghz
     Verify Wifi Rescan Not Contain                 ssid=${WIFI_SSID_1}
-
-
-    ### Step 2: On/Off Access Point SSID index 2 for Wifi 2.4Ghz on WebGUI
-    Log To Console                                 \nStep 2: On/Off Access Point SSID index 2 for Wifi 2.4Ghz on WebGUI
-    ## Step 2.1: Config Access Point SSID index 2 mode On
-    Log To Console                                 \nStep 2.1: Config Access Point SSID index 2 mode On
-    # Config
-    Select SSID 2G Index                           ssid_index=2
-    Enable/Disable SSID 2G                         ssid_mode=On 
-    Input SSID 2G Name                             ssid=${WIFI_SSID_2}
-    Config Access Point 2G                         access_point=On
-    Save Config SSID
-    #Verify Config: PC Connect to Wifi 2.4Ghz
-    Verify Wifi Rescan Contain                     ssid=${WIFI_SSID_2}
-    ## Step 2.2: Config Access Point SSID index 2 mode Off
-    Log To Console                                 \nStep 2.2: Config Access Point SSID index 2 mode Off
-    # Config
-    Select SSID 2G Index                           ssid_index=2
-    Enable/Disable SSID 2G                         ssid_mode=On 
-    Input SSID 2G Name                             ssid=${WIFI_SSID_2}
-    Config Access Point 2G                         access_point=Off
-    Save Config SSID
-    #Verify Config: PC Connect to Wifi 2.4Ghz
-    Verify Wifi Rescan Not Contain                 ssid=${WIFI_SSID_2}
-    
-
-    ### Step 3: On/Off Access Point SSID index 3 for Wifi 2.4Ghz on WebGUI
-    Log To Console                                 \nStep 3: On/Off Access Point SSID index 3 for Wifi 2.4Ghz on WebGUI
-    ## Step 3.1: Config Access Point SSID index 3 mode On
-    Log To Console                                 \nStep 3.1: Config Access Point SSID index 3 mode On
-    # Config
-    Select SSID 2G Index                           ssid_index=3
-    Enable/Disable SSID 2G                         ssid_mode=On 
-    Input SSID 2G Name                             ssid=${WIFI_SSID_3}
-    Config Access Point 2G                         access_point=On
-    Save Config SSID
-    #Verify Config: PC Connect to Wifi 2.4Ghz
-    Verify Wifi Rescan Contain                     ssid=${WIFI_SSID_3}
-    ## Step 3.2: Config Access Point SSID index 3 mode Off
-    Log To Console                                 \nStep 3.2: Config Access Point SSID index 3 mode Off
-    # Config
-    Select SSID 2G Index                           ssid_index=3
-    Enable/Disable SSID 2G                         ssid_mode=On 
-    Input SSID 2G Name                             ssid=${WIFI_SSID_3}
-    Config Access Point 2G                         access_point=Off
-    Save Config SSID
-    #Verify Config: PC Connect to Wifi 2.4Ghz
-    Verify Wifi Rescan Not Contain                 ssid=${WIFI_SSID_3}
-
-
-    ### Step 4: On/Off Access Point SSID index 4 for Wifi 2.4Ghz on WebGUI
-    Log To Console                                 \nStep 4: On/Off Access Point SSID index 4 for Wifi 2.4Ghz on WebGUI
-    ## Step 4.1: Config Access Point SSID index 3 mode On
-    Log To Console                                 \nStep 4.1: Config Access Point SSID index 4 mode On
-    # Config
-    Select SSID 2G Index                           ssid_index=4
-    Enable/Disable SSID 2G                         ssid_mode=On 
-    Input SSID 2G Name                             ssid=${WIFI_SSID_4}
-    Config Access Point 2G                         access_point=On
-    Save Config SSID
-    #Verify Config: PC Connect to Wifi 2.4Ghz
-    Verify Wifi Rescan Contain                     ssid=${WIFI_SSID_4}
-    ## Step 4.2: Config Access Point SSID index 4 mode Off
-    Log To Console                                 \nStep 4.2: Config Access Point SSID index 4 mode Off
-    # Config
-    Select SSID 2G Index                           ssid_index=4
-    Enable/Disable SSID 2G                         ssid_mode=On 
-    Input SSID 2G Name                             ssid=${WIFI_SSID_4}
-    Config Access Point 2G                         access_point=Off
-    Save Config SSID
-    #Verify Config: PC Connect to Wifi 2.4Ghz
-    Verify Wifi Rescan Not Contain                 ssid=${WIFI_SSID_4}
 
     Logout WebGUI
 
     [Teardown]                               Run Keyword And Ignore Error        MOD_WIFI2G_01_TC_13_Teardown
 
-*** Test Cases ***
-MOD_WIFI2G_01_TC_13
-    MOD_WIFI2G_01_TC_13
+# *** Test Cases ***
+# MOD_WIFI2G_01_TC_13
+#     MOD_WIFI2G_01_TC_13

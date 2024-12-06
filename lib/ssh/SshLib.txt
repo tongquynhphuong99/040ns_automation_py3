@@ -484,16 +484,23 @@ Del Old File
 
 Wifi Rescan Contain
     [Arguments]                                    ${wifi_ssid}
-    Sleep                                          10s
+
+    Enable Wifi
+    Delete All Wireless    
+    Sleep                                          5s
     SSHL.Execute Command                           nmcli device wifi rescan
     ${wirelessList}=                               SSHL.Execute Command    nmcli device wifi list
+    Disable Wifi
     Should Contain                                 ${wirelessList}    ${wifi_ssid}
     Log To Console                                 \nSSID is Visiable!
     
     
 Wifi Rescan Not Contain
     [Arguments]                                  ${wifi_ssid}
-    # Sleep                                        10s
+
+    Enable Wifi
+    Delete All Wireless    
+    Sleep                                          5s
     SSHL.Execute Command                         nmcli device wifi rescan
     ${wirelessList}=                             SSHL.Execute Command    nmcli device wifi list
     Should Not Contain                           ${wirelessList}    ${wifi_ssid}

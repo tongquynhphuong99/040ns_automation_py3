@@ -40,8 +40,8 @@ MOD_WIFI2G_01_TC_04_Teardown
 MOD_WIFI2G_01_TC_04
     [Documentation]    Kiem tra kha nang cau hinh truong Cancel Broadcast SSID Wifi 2.4Ghz
 
-    SL.Set Selenium Speed                          0.5
-    SL.Set Selenium Timeout                        10s
+    # SL.Set Selenium Speed                          0.5
+    # SL.Set Selenium Timeout                        10s
     Set Test Message                               *HTML* <b>MOD_WIFI2G_01_TC_04</b>
 
     ### Step 1: On/Off Cancel Broadcast SSID 1 for Wifi 2.4Ghz on WebGui
@@ -194,6 +194,6 @@ MOD_WIFI2G_01_TC_04
 
     [Teardown]                                     Run Keyword And Ignore Error        MOD_WIFI2G_01_TC_04_Teardown
 
-*** Test Cases ***
-MOD_WIFI2G_01_TC_04
-    MOD_WIFI2G_01_TC_04
+# *** Test Cases ***
+# MOD_WIFI2G_01_TC_04
+#     MOD_WIFI2G_01_TC_04

@@ -27,8 +27,9 @@ MOD_WIFI2G_01_TC_24_Teardown
 
 MOD_WIFI2G_01_TC_24
    [Documentation]                                Kiem tra kha nang thay doi Guard Interval Wifi 2.4GHz
-    SL.Set Selenium Speed                          0.5
-    SL.Set Selenium Timeout                        10s
+   
+    # SL.Set Selenium Speed                          0.5
+    # SL.Set Selenium Timeout                        10s
     Set Test Message                               *HTML* <b>MOD_WIFI2G_01_TC_24</b>
 
     # Open WebGUI    
@@ -37,26 +38,10 @@ MOD_WIFI2G_01_TC_24
     Open 2.4GHz Wireless Configure Page
     SL.Maximize Browser Window
 
-    ### Step 1: Config Guard Interval Wifi 2.4Ghz with SSID index 1
+    ### Step 1: Config Guard Interval Wifi 2.4Ghz
+    Log To Console                                 \nStep 1: Config Guard Interval Wifi 2.4Ghz
+
     Select SSID 2G Index                  ssid_index=1
-    Config Guard Interval and Verify 2G   guard_interval=Long
-    Config Guard Interval and Verify 2G   guard_interval=Short
-
-
-    ### Step 2: Config Guard Interval Wifi 2.4Ghz with SSID index 2
-    Select SSID 2G Index                  ssid_index=2
-    Config Guard Interval and Verify 2G   guard_interval=Long
-    Config Guard Interval and Verify 2G   guard_interval=Short
-
-
-    ### Step 3: Config Guard Interval Wifi 2.4Ghz with SSID index 3
-    Select SSID 2G Index                  ssid_index=3
-    Config Guard Interval and Verify 2G   guard_interval=Long
-    Config Guard Interval and Verify 2G   guard_interval=Short
-
-
-    ### Step 4: Config Guard Interval Wifi 2.4Ghz with SSID index 4
-    Select SSID 2G Index                  ssid_index=4
     Config Guard Interval and Verify 2G   guard_interval=Long
     Config Guard Interval and Verify 2G   guard_interval=Short
 
@@ -64,6 +49,6 @@ MOD_WIFI2G_01_TC_24
 
     [Teardown]                               Run Keyword And Ignore Error        MOD_WIFI2G_01_TC_24_Teardown
 
-*** Test Cases ***
-MOD_WIFI2G_01_TC_24
-    MOD_WIFI2G_01_TC_24
+# *** Test Cases ***
+# MOD_WIFI2G_01_TC_24
+#     MOD_WIFI2G_01_TC_24

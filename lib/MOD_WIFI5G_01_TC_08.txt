@@ -33,8 +33,8 @@ MOD_WIFI5G_01_TC_08_Teardown
 MOD_WIFI5G_01_TC_08
     [Documentation]    Kiem tra kha nang cau hinh Security Configure Type WPA-PSK Wifi 5Ghz
 
-    SL.Set Selenium Speed                         0.5
-    SL.Set Selenium Timeout                       10s
+    # SL.Set Selenium Speed                         0.5
+    # SL.Set Selenium Timeout                       10s
     Set Test Message                              *HTML* <b>MOD_WIFI5G_01_TC_08</b>
     Login To Browser		                      password=${ONT}[ONT_WEB_PASS]
     SL.Maximize Browser Window
@@ -52,19 +52,6 @@ MOD_WIFI5G_01_TC_08
     Save Config SSID
     # Verify Config
     Popup PreSharedKey Length Error Should Be Visible
-
-    # ### Step 2: Config Security mode WPA-PSK Password All Space for Wifi 5GHz
-    # Log To Console                                \nStep 2: Config Security mode WPA-PSK Password All Space for Wifi 5GHz
-    
-    # Select SSID 5G Index                          ssid_index=1
-    # Select 5G Security Mode                       secu_mode=WPA-PSK
-    # Configure 5G Security Mode WPA-PSK            password=${SPACE*8}
-    # ...                                           encry_type=AES
-    # ...                                           key_renew=3600
-    # Save Config SSID
-    # # Verify Config
-    # Popup PreSharedKey Length Error Should Be Visible
-
 
     ### Step 3: Config Security mode WPA-PSK Password Special Characters &|;$><`\!'" for Wifi 5GHz
     Log To Console                                \nStep 3: Config Security mode WPA-PSK Password Special Characters &|;$><`\!'" for Wifi 5GHz
@@ -178,9 +165,13 @@ MOD_WIFI5G_01_TC_08
     Save Config SSID
     # Verify Config
     Message WPA Password Invalid Should Be Visible
+    Logout WebGUI
 
     ### Step 4: Config Security mode WPA-PSK Password Invalid Length for Wifi 5GHz
     Log To Console                                \nStep 4: Config Security mode WPA-PSK Password Invalid Length for Wifi 5GHz
+
+    Login To Browser		                      password=${ONT}[ONT_WEB_PASS]
+    SL.Select Frame                               xpath=//frame[@name="contentfrm"]
     Open 5GHz Wireless Configure Page
 
     Log To Console					              Step 4.1: WPA-PSK Password with Length < 8 characters/numbers
@@ -342,8 +333,22 @@ MOD_WIFI5G_01_TC_08
     ...                                           encry_type=AES
     ...                                           key_renew=4194303
 
+    # ### Step 2: Config Security mode WPA-PSK Password All Space for Wifi 5GHz
+    # Log To Console                                \nStep 2: Config Security mode WPA-PSK Password All Space for Wifi 5GHz
+    
+    # Select SSID 5G Index                          ssid_index=1
+    # Select 5G Security Mode                       secu_mode=WPA-PSK
+    # Configure 5G Security Mode WPA-PSK            password=${SPACE*8}
+    # ...                                           encry_type=AES
+    # ...                                           key_renew=3600
+    # Save Config SSID
+    # # Verify Config
+    # Popup PreSharedKey Length Error Should Be Visible
+
+    Logout WebGUI 
+
     [Teardown]                                     Run Keyword And Ignore Error        MOD_WIFI5G_01_TC_08_Teardown
 
-*** Test Cases ***
-MOD_WIFI5G_01_TC_08
-    MOD_WIFI5G_01_TC_08    
+# *** Test Cases ***
+# MOD_WIFI5G_01_TC_08
+#     MOD_WIFI5G_01_TC_08    

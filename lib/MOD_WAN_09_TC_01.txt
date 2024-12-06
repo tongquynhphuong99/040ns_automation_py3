@@ -1,0 +1,106 @@
+*** Settings ***
+Library                                            SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
+Resource                                           selenium/Login/SeleniumLoginLib.txt
+Resource                                           selenium/Network/SeleniumNetworkWANLib.txt
+Resource                                           selenium/Maintenance/SeleniumMaintenanceRebootResetLib.txt
+*** Variables ***
+
+*** Keywords ***
+MOD_WAN_09_TC_01_Teardown
+    ##Teardown
+    Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
+    
+    #####Factory Reset Via Web GUI
+    Login To Browser		                 password=${ONT}[ONT_WEB_PASS]
+    Factory Reset Via Web GUI
+  
+    SL.Go To                                 url=${LOGIN_URL}
+    SL.Wait Until Element Is Visible         ${LOGIN_BUTTON}
+    ...                                      timeout=25s
+    ...                                      error=\nLogin Page Does Not Found!
+    Run Keyword If                           '${SWITCH_VARIABLE}' == '3'      Log To Console	\nDon't need to change password after reset factory
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '2'      Change Password WebGui
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '1'      Change Password WebGui
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '0'      Change Password WebGui    
+    SL.Delete All Cookies
+    SL.Close All Browsers
+
+Popup Multicast VLAN ID In Range 0~4094 Should Be Visible
+    [Documentation]                          Handle popup Multicast VLAN ID Must Be In Range 0~4094
+    ${popup_message}=                        SL.Handle Alert    timeout=10s
+    Should Contain                           ${popup_message}   MulticastVLAN IDInvalid!
+
+Verify Multicast VLAN ID
+    [Arguments]                              ${input}
+    ${get_value}=                            SL.Get Value    xpath=//*[@id="MulticastVID"]
+    Should Be Equal                          ${input}    ${get_value}
+
+MOD_WAN_09_TC_01
+   [Documentation]                                   Kiem tra kha nang cau hinh truong Multicast VLAN ID
+
+    # SL.Set Selenium Speed                          0.5
+    # SL.Set Selenium Timeout                        10s
+    Set Test Message                               *HTML* <b>MOD_WAN_09_TC_01</b>
+
+    ### Step 1: Open Browser & Login to WebGUI    
+    Log To Console                                \nStep 1: Login to Browser
+    Login To Browser
+    SL.Select Frame                               xpath=//frame[@name="contentfrm"]
+
+    ### Step 2: Create new WAN With Multicast VLAN ID = -1 
+    Log To Console                                \nStep 2: Create new WAN With Multicast VLAN ID = -1 
+
+    ## Step 2.1: Open Config WAN Page
+    Log To Console                                \nStep 2.1: Open Config WAN Page
+    Open Network Settings Wan Page
+    SL.Maximize Browser Window
+
+    # Click button add new WAN
+    Add New Wan Service
+    Input VLAN ID                                 vlan_id=12
+    # SL.Scroll Element Into View                       xpath=//*[@id="MulticastVID"]
+    ## Step 2.2: Config Multicast VLAN ID = -1 
+    Log To Console                               \nStep 2.2: Config Multicast VLAN ID = -1
+    Input Multicast VLAN ID                      input=-1
+
+    # Save
+    Click Button Save WAN
+    Popup Multicast VLAN ID In Range 0~4094 Should Be Visible
+    Sleep                                          2s
+
+    ### Step 2.3: Config Multicast VLAN ID = 4096
+    Log To Console                               \nStep 2.3: Config Multicast VLAN ID = 4096
+    Input Multicast VLAN ID                      input=4096
+
+    # Save
+    Click Button Save WAN
+    Popup Multicast VLAN ID In Range 0~4094 Should Be Visible
+    Sleep                                          2s
+    
+    ### Step 2.4: Config Multicast VLAN ID with special character
+    Log To Console                               \nStep 2.4: Config Multicast VLAN ID with special character
+    Input Multicast VLAN ID                      input=@11
+
+    # Save
+    Click Button Save WAN
+    Popup Multicast VLAN ID In Range 0~4094 Should Be Visible
+    Sleep                                          2s
+
+    ### Step 2.5: Multicast VLAN ID range 0~4094
+    Log To Console                               \nStep 2.5: Config 802.1p range 0~4096
+    Input Multicast VLAN ID                      input=2
+
+    # Save
+    Click Button Save WAN
+    Sleep                                         2s
+
+    # Verify Multicast VLAN ID
+    Verify Multicast VLAN ID                      input=2
+
+    Logout WebGUI
+
+    [Teardown]                               Run Keyword And Ignore Error        MOD_WAN_09_TC_01_Teardown
+
+# *** Test Cases ***
+# MOD_WAN_09_TC_01
+#     MOD_WAN_09_TC_01

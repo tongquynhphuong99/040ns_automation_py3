@@ -27,8 +27,9 @@ MOD_WIFI2G_01_TC_25_Teardown
 
 MOD_WIFI2G_01_TC_25
    [Documentation]                                Kiem tra kha nang thay doi Mac Filter Wifi 2.4GHz
-    SL.Set Selenium Speed                          0.5
-    SL.Set Selenium Timeout                        10s
+
+    # SL.Set Selenium Speed                          0.5
+    # SL.Set Selenium Timeout                        10s
     Set Test Message                               *HTML* <b>MOD_WIFI2G_01_TC_25</b>
 
     # Open WebGUI    
@@ -39,43 +40,67 @@ MOD_WIFI2G_01_TC_25
 
 
     ### Step 1: Config Mac Filter Mode Open with SSID index 1
-    Select SSID 2G Index              ssid_index=1
+    Log To Console                            \nStep 1: Config Mac Filter Mode Open with SSID index 1
+    Select SSID 2G Index                      ssid_index=1
+
     ## Step 1.1: Config Mac Filter Action Allow
-    Config Mac Filter and Verify    mode=1    action=Allow    mac=AA:11:22:BB:CC:33
+    Config Mac Filter and Verify                mode=1    
+    ...                                         action=Allow    
+    ...                                         mac=AA:11:22:BB:CC:33
     ## Step 1.2: Config Mac Filter Action Deny
-    Config Mac Filter and Verify    mode=1    action=Deny    mac=AA:11:22:BB:CC:33
+    Config Mac Filter and Verify                mode=1    
+    ...                                         action=Deny    
+    ...                                         mac=AA:11:22:BB:CC:33
 
 
     ### Step 2: Config Mac Filter Mode Open with SSID index 2
-    Select SSID 2G Index              ssid_index=2
+    Log To Console                            \nStep 2: Config Mac Filter Mode Open with SSID index 2
+    Select SSID 2G Index                      ssid_index=2
+
     ## Step 2.1: Config Mac Filter Action Allow
-    Config Mac Filter and Verify    mode=1    action=Allow    mac=AA:11:22:BB:CC:33
+    Config Mac Filter and Verify                mode=1    
+    ...                                         action=Allow    
+    ...                                         mac=AA:11:22:BB:CC:33    
     ## Step 2.2: Config Mac Filter Action Deny
-    Config Mac Filter and Verify    mode=1    action=Deny    mac=AA:11:22:BB:CC:33
+    Config Mac Filter and Verify                mode=1    
+    ...                                         action=Deny    
+    ...                                         mac=AA:11:22:BB:CC:33
 
 
     ### Step 3: Config Mac Filter Mode Open with SSID index 3
-    Select SSID 2G Index              ssid_index=3
-    ## Step 3.1: Config Mac Filter Action Allow
-    Config Mac Filter and Verify   mode=1    action=Allow    mac=AA:11:22:BB:CC:33
-    ## Step 3.2: Config Mac Filter Action Deny
-    Config Mac Filter and Verify   mode=1    action=Deny    mac=AA:11:22:BB:CC:33
+    Log To Console                            \nStep 3: Config Mac Filter Mode Open with SSID index 3
+    Select SSID 2G Index                      ssid_index=3
 
+    ## Step 3.1: Config Mac Filter Action Allow
+    Config Mac Filter and Verify                mode=1    
+    ...                                         action=Allow    
+    ...                                         mac=AA:11:22:BB:CC:33        
+    ## Step 3.2: Config Mac Filter Action Deny
+    Config Mac Filter and Verify                mode=1    
+    ...                                         action=Deny    
+    ...                                         mac=AA:11:22:BB:CC:33
+    
     
     ### Step 4: Config Mac Filter Mode Open with SSID index 4
-    Select SSID 2G Index              ssid_index=1
+    Log To Console                            \nStep 4: Config Mac Filter Mode Open with SSID index 4
+    Select SSID 2G Index                      ssid_index=4
+
     ## Step 4.1: Config Mac Filter Action Allow
-    Config Mac Filter and Verify   mode=1    action=Allow    mac=AA:11:22:BB:CC:33
+    Config Mac Filter and Verify                mode=1    
+    ...                                         action=Allow    
+    ...                                         mac=AA:11:22:BB:CC:33        
     ## Step 4.2: Config Mac Filter Action Deny
-    Config Mac Filter and Verify   mode=1    action=Deny    mac=AA:11:22:BB:CC:33
+    Config Mac Filter and Verify                mode=1    
+    ...                                         action=Deny    
+    ...                                         mac=AA:11:22:BB:CC:33    
     
     Logout WebGUI
 
     [Teardown]                               Run Keyword And Ignore Error        MOD_WIFI2G_01_TC_25_Teardown
 
-*** Test Cases ***
-MOD_WIFI2G_01_TC_25
-    MOD_WIFI2G_01_TC_25
+# *** Test Cases ***
+# MOD_WIFI2G_01_TC_25
+#     MOD_WIFI2G_01_TC_25
 
 
 

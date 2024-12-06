@@ -40,8 +40,8 @@ MOD_WIFI5G_01_TC_03_Teardown
 MOD_WIFI5G_01_TC_03
     [Documentation]    Kiem tra kha nang cau hinh thay doi SSID Name Wifi 5Ghz
 
-    SL.Set Selenium Speed                         	0.5
-    SL.Set Selenium Timeout                       	10s
+    # SL.Set Selenium Speed                         	0.5
+    # SL.Set Selenium Timeout                       	10s
     Set Test Message                              	*HTML* <b>MOD_WIFI5G_01_TC_03</b>
     Login To Browser		                      	password=${ONT}[ONT_WEB_PASS]
     SL.Select Frame                                 xpath=//frame[@name="contentfrm"]
@@ -107,6 +107,6 @@ MOD_WIFI5G_01_TC_03
 
     [Teardown]                               Run Keyword And Ignore Error        MOD_WIFI5G_01_TC_03_Teardown
     
-*** Test Cases ***
-MOD_WIFI5G_01_TC_03
-    MOD_WIFI5G_01_TC_03  
+# *** Test Cases ***
+# MOD_WIFI5G_01_TC_03
+#     MOD_WIFI5G_01_TC_03  

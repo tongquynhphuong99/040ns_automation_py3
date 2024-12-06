@@ -5,6 +5,8 @@ Resource                                           selenium/Login/SeleniumLoginL
 Resource                                           selenium/Maintenance/SeleniumMaintenanceRebootResetLib.txt
 Resource                                           selenium/Network/SeleniumNetworkWLAN24GHzLib.txt
 Resource                                           selenium/Network/SeleniumNetworkWLAN5GHzLib.txt
+Resource                                           selenium/Network/SeleniumNetworkWLAN24GHzLib.txt
+Resource                                           selenium/Network/SeleniumNetworkWLAN5GHzLib.txt
 Resource                                           selenium/Status/SeleniumStatusDeviceInfoLib.txt
 Resource                                           ssh/SshLib.txt
 
@@ -16,6 +18,7 @@ MOD_WIFI5G_01_TC_02_Teardown
     Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
 
     #####Factory Reset Via Web GUI
+    Login To Browser		                 password=${ONT}[ONT_WEB_PASS]
     Login To Browser		                 password=${ONT}[ONT_WEB_PASS]
     Factory Reset Via Web GUI
   
@@ -39,114 +42,114 @@ MOD_WIFI5G_01_TC_02_Teardown
 MOD_WIFI5G_01_TC_02
     [Documentation]    Kiem tra kha nang On/Off truong Enable SSID Wifi 5Ghz
 
-    SL.Set Selenium Speed                         0.5
-    SL.Set Selenium Timeout                       10s
+    # SL.Set Selenium Speed                         0.5
+    # SL.Set Selenium Timeout                       10s
     Set Test Message                              *HTML* <b>MOD_WIFI5G_01_TC_02</b>
 
-    # ### Step 1: On/Off SSID 1 for Wifi 5Ghz on WebGui
-    # Log To Console                                 \nStep 1: On/Off SSID 1 for Wifi 5Ghz on WebGui
+    ### Step 1: On/Off SSID 1 for Wifi 5Ghz on WebGui
+    Log To Console                                 \nStep 1: On/Off SSID 1 for Wifi 5Ghz on WebGui
 
-    # ## Step 1.1: Off SSID 1
-    # Log To Console                                 \nStep 1.1: Off SSID 1
-    # Login To Browser		                       password=${ONT}[ONT_WEB_PASS]
-    # SL.Select Frame                                xpath=//frame[@name="contentfrm"]
-    # Open 5GHz Wireless Configure Page
+    ## Step 1.1: Off SSID 1
+    Log To Console                                 \nStep 1.1: Off SSID 1
+    Login To Browser		                       password=${ONT}[ONT_WEB_PASS]
+    SL.Select Frame                                xpath=//frame[@name="contentfrm"]
+    Open 5GHz Wireless Configure Page
 
-    # # Config
-    # Select SSID 5G Index                           ssid_index=1
-    # Input SSID 5G Name                             ssid=${WIFI_SSID_1}
-    # Enable/Disable SSID 5G                         ssid_mode=Off
-    # Save Config SSID
-    # Logout WebGUI
+    # Config
+    Select SSID 5G Index                           ssid_index=1
+    Input SSID 5G Name                             ssid=${WIFI_SSID_1}
+    Enable/Disable SSID 5G                         ssid_mode=Off
+    Save Config SSID
+    Logout WebGUI
 
-    # # Verify Config: PC Connect to Wifi 5Ghz
-    # Verify Wifi Rescan Not Contain                 ${WIFI_SSID_1}
+    # Verify Config: PC Connect to Wifi 5Ghz
+    Verify Wifi Rescan Not Contain                 ${WIFI_SSID_1}
 
-    # ## Step 1.2: On SSID 1
-    # Log To Console                                 \nStep 1.2: On SSID 1
-    # Login To Browser		                       password=${ONT}[ONT_WEB_PASS]
-    # SL.Select Frame                                xpath=//frame[@name="contentfrm"]
-    # Open 5GHz Wireless Configure Page
+    ## Step 1.2: On SSID 1
+    Log To Console                                 \nStep 1.2: On SSID 1
+    Login To Browser		                       password=${ONT}[ONT_WEB_PASS]
+    SL.Select Frame                                xpath=//frame[@name="contentfrm"]
+    Open 5GHz Wireless Configure Page
 
-    # # Config
-    # Select SSID 5G Index                           ssid_index=1
-    # Input SSID 5G Name                             ssid=${WIFI_SSID_1}
-    # Enable/Disable SSID 5G                         ssid_mode=On
-    # Save Config SSID
-    # Logout WebGUI
+    # Config
+    Select SSID 5G Index                           ssid_index=1
+    Input SSID 5G Name                             ssid=${WIFI_SSID_1}
+    Enable/Disable SSID 5G                         ssid_mode=On
+    Save Config SSID
+    Logout WebGUI
 
-    # # Verify Config: PC Connect to Wifi 5Ghz
-    # Verify Wifi Rescan Contain                     ${WIFI_SSID_1}
+    # Verify Config: PC Connect to Wifi 5Ghz
+    Verify Wifi Rescan Contain                     ${WIFI_SSID_1}
 
-    # ### Step 2: On/Off SSID 2 for Wifi 5Ghz on WebGui
-    # Log To Console                                 \nStep 2: On/Off SSID 2 for Wifi 5Ghz on WebGui
+    ### Step 2: On/Off SSID 2 for Wifi 5Ghz on WebGui
+    Log To Console                                 \nStep 2: On/Off SSID 2 for Wifi 5Ghz on WebGui
 
-    # ## Step 2.1: On SSID 2
-    # Log To Console                                 \nStep 2.1: On SSID 2
-    # Login To Browser		                       password=${ONT}[ONT_WEB_PASS]
-    # SL.Select Frame                                xpath=//frame[@name="contentfrm"]
-    # Open 5GHz Wireless Configure Page
+    ## Step 2.1: On SSID 2
+    Log To Console                                 \nStep 2.1: On SSID 2
+    Login To Browser		                       password=${ONT}[ONT_WEB_PASS]
+    SL.Select Frame                                xpath=//frame[@name="contentfrm"]
+    Open 5GHz Wireless Configure Page
 
-    # # Config
-    # Select SSID 5G Index                           ssid_index=2
-    # Input SSID 5G Name                             ssid=${WIFI_SSID_2}
-    # Enable/Disable SSID 5G                         ssid_mode=On
-    # Save Config SSID
-    # Logout WebGUI
+    # Config
+    Select SSID 5G Index                           ssid_index=2
+    Input SSID 5G Name                             ssid=${WIFI_SSID_2}
+    Enable/Disable SSID 5G                         ssid_mode=On
+    Save Config SSID
+    Logout WebGUI
 
-    # # Verify Config: PC Connect to Wifi 5Ghz
-    # Verify Wifi Rescan Contain                     ${WIFI_SSID_2}
+    # Verify Config: PC Connect to Wifi 5Ghz
+    Verify Wifi Rescan Contain                     ${WIFI_SSID_2}
 
-    # ## Step 2.2: Off SSID 2
-    # Log To Console                                 \nStep 2.2: Off SSID 2
-    # Login To Browser		                       password=${ONT}[ONT_WEB_PASS]
-    # SL.Select Frame                                xpath=//frame[@name="contentfrm"]
-    # Open 5GHz Wireless Configure Page
+    ## Step 2.2: Off SSID 2
+    Log To Console                                 \nStep 2.2: Off SSID 2
+    Login To Browser		                       password=${ONT}[ONT_WEB_PASS]
+    SL.Select Frame                                xpath=//frame[@name="contentfrm"]
+    Open 5GHz Wireless Configure Page
 
-    # # Config
-    # Select SSID 5G Index                           ssid_index=2
-    # Input SSID 5G Name                             ssid=${WIFI_SSID_2}
-    # Enable/Disable SSID 5G                         ssid_mode=Off
-    # Save Config SSID
-    # Logout WebGUI
+    # Config
+    Select SSID 5G Index                           ssid_index=2
+    Input SSID 5G Name                             ssid=${WIFI_SSID_2}
+    Enable/Disable SSID 5G                         ssid_mode=Off
+    Save Config SSID
+    Logout WebGUI
 
-    # # Verify Config: PC Connect to Wifi 5Ghz
-    # Verify Wifi Rescan Not Contain                 ${WIFI_SSID_2}
+    # Verify Config: PC Connect to Wifi 5Ghz
+    Verify Wifi Rescan Not Contain                 ${WIFI_SSID_2}
 
-    # ### Step 3: On/Off SSID 3 for Wifi 5Ghz on WebGui
-    # Log To Console                                 \nStep 3: On/Off SSID 3 for Wifi 5Ghz on WebGui
+    ### Step 3: On/Off SSID 3 for Wifi 5Ghz on WebGui
+    Log To Console                                 \nStep 3: On/Off SSID 3 for Wifi 5Ghz on WebGui
 
-    # ## Step 3.1: On SSID 3
-    # Log To Console                                 \nStep 3.1: On SSID 3
-    # Login To Browser		                       password=${ONT}[ONT_WEB_PASS]
-    # SL.Select Frame                                xpath=//frame[@name="contentfrm"]
-    # Open 5GHz Wireless Configure Page
+    ## Step 3.1: On SSID 3
+    Log To Console                                 \nStep 3.1: On SSID 3
+    Login To Browser		                       password=${ONT}[ONT_WEB_PASS]
+    SL.Select Frame                                xpath=//frame[@name="contentfrm"]
+    Open 5GHz Wireless Configure Page
 
-    # # Config
-    # Select SSID 5G Index                           ssid_index=3
-    # Input SSID 5G Name                             ssid=${WIFI_SSID_3}
-    # Enable/Disable SSID 5G                         ssid_mode=On
-    # Save Config SSID
-    # Logout WebGUI
+    # Config
+    Select SSID 5G Index                           ssid_index=3
+    Input SSID 5G Name                             ssid=${WIFI_SSID_3}
+    Enable/Disable SSID 5G                         ssid_mode=On
+    Save Config SSID
+    Logout WebGUI
 
-    # # Verify Config: PC Connect to Wifi 5Ghz
-    # Verify Wifi Rescan Contain                     ${WIFI_SSID_3}
+    # Verify Config: PC Connect to Wifi 5Ghz
+    Verify Wifi Rescan Contain                     ${WIFI_SSID_3}
 
-    # ## Step 3.2: Off SSID 3
-    # Log To Console                                 \nStep 3.2: Off SSID 3
-    # Login To Browser		                       password=${ONT}[ONT_WEB_PASS]
-    # SL.Select Frame                                xpath=//frame[@name="contentfrm"]
-    # Open 5GHz Wireless Configure Page
+    ## Step 3.2: Off SSID 3
+    Log To Console                                 \nStep 3.2: Off SSID 3
+    Login To Browser		                       password=${ONT}[ONT_WEB_PASS]
+    SL.Select Frame                                xpath=//frame[@name="contentfrm"]
+    Open 5GHz Wireless Configure Page
 
-    # # Config
-    # Select SSID 5G Index                           ssid_index=3
-    # Input SSID 5G Name                             ssid=${WIFI_SSID_3}
-    # Enable/Disable SSID 5G                         ssid_mode=Off
-    # Save Config SSID
-    # Logout WebGUI
+    # Config
+    Select SSID 5G Index                           ssid_index=3
+    Input SSID 5G Name                             ssid=${WIFI_SSID_3}
+    Enable/Disable SSID 5G                         ssid_mode=Off
+    Save Config SSID
+    Logout WebGUI
 
-    # # Verify Config: PC Connect to Wifi 5Ghz
-    # Verify Wifi Rescan Not Contain                 ${WIFI_SSID_3}
+    # Verify Config: PC Connect to Wifi 5Ghz
+    Verify Wifi Rescan Not Contain                 ${WIFI_SSID_3}
 
     ### Step 4: On/Off SSID 4 for Wifi 5Ghz on WebGui
     Log To Console                                 \nStep 4: On/Off SSID 4 for Wifi 5Ghz on WebGui
@@ -165,7 +168,6 @@ MOD_WIFI5G_01_TC_02
     Logout WebGUI
 
     # Verify Config: PC Connect to Wifi 5Ghz
-    Sleep                10s    
     Verify Wifi Rescan Contain                     ${WIFI_SSID_4}
 
     ## Step 4.2: Off SSID 4
@@ -186,6 +188,6 @@ MOD_WIFI5G_01_TC_02
 
     [Teardown]                               Run Keyword And Ignore Error        MOD_WIFI5G_01_TC_02_Teardown
     
-*** Test Cases ***
-MOD_WIFI5G_01_TC_02
-    MOD_WIFI5G_01_TC_02  
+# *** Test Cases ***
+# MOD_WIFI5G_01_TC_02
+#     MOD_WIFI5G_01_TC_02  

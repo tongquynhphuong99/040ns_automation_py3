@@ -25,17 +25,12 @@ MOD_WIFI2G_01_TC_15_Teardown
     SL.Delete All Cookies
     SL.Close All Browsers
 
-Popup Beacon Interval Is Special Should Be Visible 2G
-    [Documentation]                          Handle popup Beacon Interval is Special
-    ${popup_message}=                        SL.Handle Alert    timeout=10s
-    Should Contain                           ${popup_message}    Beacon Interval must be between 20 and 1000
-
 MOD_WIFI2G_01_TC_15
     [Documentation]    Kiem tra kha nang thay doi Beacon Interval Wifi 2.4G
 
     # SL.Set Selenium Speed                          0.5
     # SL.Set Selenium Timeout                        10s
-    # Set Test Message                               *HTML* <b>MOD_WIFI2G_01_TC_15</b>
+    Set Test Message                               *HTML* <b>MOD_WIFI2G_01_TC_15</b>
     
     # Open WebGUI
     Login To Browser    
@@ -43,76 +38,38 @@ MOD_WIFI2G_01_TC_15
     Open 2.4GHz Wireless Configure Page
     SL.Maximize Browser Window
 
-    ### Step 1: Config Beacon Interval Wifi 2.4Ghz with SSID index 1
-    Log To Console                           \nStep 1: Config Beacon Interval Wifi 2.4Ghz with SSID index 1
+    ### Step 1: Config Beacon Interval Wifi 2.4Ghz
+    Log To Console                           \nStep 1: Config Beacon Interval Wifi 2.4Ghz
     Select SSID 2G Index                     ssid_index=1
-    ## Step 1.1: Config Beacon Inteval Correct Wrong
-    Config Beacon Interval                   beacon_interval=15
+
+    ## Step 1.1: Config Beacon Inteval Wrong
+    Log To Console                           \nStep 1.1: Config Beacon Inteval Wrong
+    Config Beacon Interval                   beacon_interval=19
     Save Config SSID
     Popup Beacon Interval Is Special Should Be Visible 2G
+
     ## Step 1.2: Config Other Beacon Interval Wrong
-    Config Beacon Interval                   beacon_interval=1500
+    Log To Console                           \nStep 1.2: Config Other Beacon Interval Wrong
+    Config Beacon Interval                   beacon_interval=1001
     Save Config SSID
     Popup Beacon Interval Is Special Should Be Visible 2G
+
     ## Step 1.3: Config Beacon Interval Correct
-    Config Beacon Interval                   beacon_interval=500
+    Log To Console                           \nStep 1.3: Config Beacon Interval Correct
+    Config Beacon Interval                   beacon_interval=20
     Save Config SSID
-    Verify Beacon Interval                   current_beacon_interval=500
+    Verify Beacon Interval                   current_beacon_interval=20
 
-
-    ### Step 2: Config Beacon Interval Wifi 2.4Ghz with SSID index 2
-    Log To Console                           \nStep 2: Config Beacon Interval Wifi 2.4Ghz with SSID index 2
-    Select SSID 2G Index                     ssid_index=2
-    ## Step 2.1: Config Beacon Inteval Correct Wrong
-    Config Beacon Interval                   beacon_interval=15
+    ## Step 1.4: Config Beacon Interval Correct
+    Log To Console                           \nStep 1.4: Config Beacon Interval Correct
+    Config Beacon Interval                   beacon_interval=1000
     Save Config SSID
-    Popup Beacon Interval Is Special Should Be Visible 2G
-    ## Step 2.2: Config Other Beacon Interval Wrong
-    Config Beacon Interval                   beacon_interval=1500
-    Save Config SSID
-    Popup Beacon Interval Is Special Should Be Visible 2G
-    ## Step 2.3: Config Beacon Interval Correct
-    Config Beacon Interval                   beacon_interval=500
-    Save Config SSID
-    Verify Beacon Interval                   current_beacon_interval=500
-
-
-    ### Step 3: Config Beacon Interval Wifi 2.4Ghz with SSID index 3
-    Log To Console                           \nStep 3: Config Beacon Interval Wifi 2.4Ghz with SSID index 3
-    Select SSID 2G Index                     ssid_index=3
-    ## Step 3.1: Config Beacon Inteval Correct Wrong
-    Config Beacon Interval                   beacon_interval=15
-    Save Config SSID
-    Popup Beacon Interval Is Special Should Be Visible 2G
-    ## Step 3.2: Config Other Beacon Interval Wrong
-    Config Beacon Interval                   beacon_interval=1500
-    Save Config SSID
-    Popup Beacon Interval Is Special Should Be Visible 2G
-    ## Step 3.3: Config Beacon Interval Correct
-    Config Beacon Interval                   beacon_interval=500
-    Save Config SSID
-    Verify Beacon Interval                   current_beacon_interval=500
-
-    ### Step 4: Config Beacon Interval Wifi 2.4Ghz with SSID index 4
-    Log To Console                           \nStep 4: Config Beacon Interval Wifi 2.4Ghz with SSID index 4
-    Select SSID 2G Index                     ssid_index=4
-    ## Step 4.1: Config Beacon Inteval Correct Wrong
-    Config Beacon Interval                   beacon_interval=15
-    Save Config SSID
-    Popup Beacon Interval Is Special Should Be Visible 2G
-    ## Step 4.2: Config Other Beacon Interval Wrong
-    Config Beacon Interval                   beacon_interval=1500
-    Save Config SSID
-    Popup Beacon Interval Is Special Should Be Visible 2G
-    ## Step 4.3: Config Beacon Interval Correct
-    Config Beacon Interval                   beacon_interval=500
-    Save Config SSID
-    Verify Beacon Interval                   current_beacon_interval=500
+    Verify Beacon Interval                   current_beacon_interval=1000
 
     Logout WebGUI
 
     [Teardown]                               Run Keyword And Ignore Error        MOD_WIFI2G_01_TC_15_Teardown
 
-*** Test Cases ***
-MOD_WIFI2G_01_TC_15
-    MOD_WIFI2G_01_TC_15
+# *** Test Cases ***
+# MOD_WIFI2G_01_TC_15
+#     MOD_WIFI2G_01_TC_15

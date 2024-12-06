@@ -33,160 +33,153 @@ MOD_WIFI5G_01_TC_10_Teardown
 MOD_WIFI5G_01_TC_10
     [Documentation]    Kiem tra kha nang cau hinh Security Configure Type WPA-PSK/WPA2-PSK Wifi 5Ghz
 
-    SL.Set Selenium Speed                         0.5
-    SL.Set Selenium Timeout                       10s
+    # SL.Set Selenium Speed                         0.5
+    # SL.Set Selenium Timeout                       10s
     Set Test Message                              *HTML* <b>MOD_WIFI5G_01_TC_10</b>
     Login To Browser		                      password=${ONT}[ONT_WEB_PASS]
     SL.Select Frame                               xpath=//frame[@name="contentfrm"]
     Open 5GHz Wireless Configure Page
     SL.Maximize Browser Window
-    ### Step 1: Config Security mode WPA-PSK/WPA2-PSK Password Empty for Wifi 5GHz
-    # Log To Console                                \nStep 1: Config Security mode WPA-PSK/WPA2-PSK Password Empty for Wifi 5GHz
-    
-    # Select SSID 5G Index                          ssid_index=1
-    # Select 5G Security Mode                       secu_mode=WPA-PSK/WPA2-PSK
-    # Configure 5G Security Mode WPA-PSK/WPA2-PSK           password=${EMPTY}
-    # ...                                           encry_type=AES
-    # ...                                           key_renew=3600
-    # Save Config SSID
-    # # Verify Config
-    # Popup PreSharedKey Length Error Should Be Visible
 
-    # ### Step 2: Config Security mode WPA-PSK/WPA2-PSK Password All Space for Wifi 5GHz
-    # Log To Console                                \nStep 2: Config Security mode WPA-PSK/WPA2-PSK Password All Space for Wifi 5GHz
+    ## Step 1: Config Security mode WPA-PSK/WPA2-PSK Password Empty for Wifi 5GHz
+    Log To Console                                \nStep 1: Config Security mode WPA-PSK/WPA2-PSK Password Empty for Wifi 5GHz
     
-    # Select SSID 5G Index                          ssid_index=1
-    # Select 5G Security Mode                       secu_mode=WPA-PSK/WPA2-PSK
-    # Configure 5G Security Mode WPA-PSK/WPA2-PSK           password=${SPACE*8}
-    # ...                                           encry_type=AES
-    # ...                                           key_renew=3600
-    # Save Config SSID
-    # # Verify Config
-    # Popup PreSharedKey Length Error Should Be Visible
-
+    Select SSID 5G Index                          ssid_index=1
+    Select 5G Security Mode                       secu_mode=WPA-PSK/WPA2-PSK
+    Configure 5G Security Mode WPA-PSK/WPA2-PSK           password=${EMPTY}
+    ...                                           encry_type=AES
+    ...                                           key_renew=3600
+    Save Config SSID
+    # Verify Config
+    Popup PreSharedKey Length Error Should Be Visible
 
     ### Step 3: Config Security mode WPA-PSK/WPA2-PSK Password Special Characters &|;$><`\!'" for Wifi 5GHz
     # Log To Console                                \nStep 3: Config Security mode WPA-PSK/WPA2-PSK Password Special Characters &|;$><`\!'" for Wifi 5GHz
     
-    # Log To Console					              Step 3.1: WPA-PSK/WPA2-PSK Password with &
-    # Select SSID 5G Index                          ssid_index=1
-    # SL.Maximize Browser Window
-    # Select 5G Security Mode                       secu_mode=WPA-PSK/WPA2-PSK
-    # Configure 5G Security Mode WPA-PSK/WPA2-PSK           password=${WIFI_PASS}&
-    # ...                                           encry_type=AES
-    # ...                                           key_renew=3600
-    # Save Config SSID
-    # # Verify Config
-    # Popup WPA Password Invalid Should Be Visible
+    Log To Console					              Step 3.1: WPA-PSK/WPA2-PSK Password with &
+    Select SSID 5G Index                          ssid_index=1
+    SL.Maximize Browser Window
+    Select 5G Security Mode                       secu_mode=WPA-PSK/WPA2-PSK
+    Configure 5G Security Mode WPA-PSK/WPA2-PSK           password=${WIFI_PASS}&
+    ...                                           encry_type=AES
+    ...                                           key_renew=3600
+    Save Config SSID
+    # Verify Config
+    Popup WPA Password Invalid Should Be Visible
 
-    # Log To Console					              Step 3.2: WPA-PSK/WPA2-PSK Password with |
-    # Select SSID 5G Index                          ssid_index=1
-    # SL.Maximize Browser Window
-    # Select 5G Security Mode                       secu_mode=WPA-PSK/WPA2-PSK
-    # Configure 5G Security Mode WPA-PSK/WPA2-PSK           password=${WIFI_PASS}|
-    # ...                                           encry_type=AES
-    # ...                                           key_renew=3600
-    # Save Config SSID
-    # # Verify Config
-    # Popup WPA Password Invalid Should Be Visible
+    Log To Console					              Step 3.2: WPA-PSK/WPA2-PSK Password with |
+    Select SSID 5G Index                          ssid_index=1
+    SL.Maximize Browser Window
+    Select 5G Security Mode                       secu_mode=WPA-PSK/WPA2-PSK
+    Configure 5G Security Mode WPA-PSK/WPA2-PSK           password=${WIFI_PASS}|
+    ...                                           encry_type=AES
+    ...                                           key_renew=3600
+    Save Config SSID
+    # Verify Config
+    Popup WPA Password Invalid Should Be Visible
 
-    # Log To Console					              Step 3.3: WPA-PSK/WPA2-PSK Password with ;
-    # Select SSID 5G Index                          ssid_index=1
-    # Select 5G Security Mode                       secu_mode=WPA-PSK/WPA2-PSK
-    # Configure 5G Security Mode WPA-PSK/WPA2-PSK           password=${WIFI_PASS};
-    # ...                                           encry_type=AES
-    # ...                                           key_renew=3600
-    # Save Config SSID
-    # # Verify Config
-    # Popup WPA Password Invalid Should Be Visible
+    Log To Console					              Step 3.3: WPA-PSK/WPA2-PSK Password with ;
+    Select SSID 5G Index                          ssid_index=1
+    Select 5G Security Mode                       secu_mode=WPA-PSK/WPA2-PSK
+    Configure 5G Security Mode WPA-PSK/WPA2-PSK           password=${WIFI_PASS};
+    ...                                           encry_type=AES
+    ...                                           key_renew=3600
+    Save Config SSID
+    # Verify Config
+    Popup WPA Password Invalid Should Be Visible
 
-    # Log To Console					              Step 3.4: WPA-PSK/WPA2-PSK Password with $
-    # Select SSID 5G Index                          ssid_index=1
-    # Select 5G Security Mode                       secu_mode=WPA-PSK/WPA2-PSK
-    # Configure 5G Security Mode WPA-PSK/WPA2-PSK           password=${WIFI_PASS}$
-    # ...                                           encry_type=AES
-    # ...                                           key_renew=3600
-    # Save Config SSID
-    # # Verify Config
-    # Popup WPA Password Invalid Should Be Visible
+    Log To Console					              Step 3.4: WPA-PSK/WPA2-PSK Password with $
+    Select SSID 5G Index                          ssid_index=1
+    Select 5G Security Mode                       secu_mode=WPA-PSK/WPA2-PSK
+    Configure 5G Security Mode WPA-PSK/WPA2-PSK           password=${WIFI_PASS}$
+    ...                                           encry_type=AES
+    ...                                           key_renew=3600
+    Save Config SSID
+    # Verify Config
+    Popup WPA Password Invalid Should Be Visible
 
-    # Log To Console					              Step 3.5: WPA-PSK/WPA2-PSK Password with >
-    # Select SSID 5G Index                          ssid_index=1
-    # Select 5G Security Mode                       secu_mode=WPA-PSK/WPA2-PSK
-    # Configure 5G Security Mode WPA-PSK/WPA2-PSK           password=${WIFI_PASS}>
-    # ...                                           encry_type=AES
-    # ...                                           key_renew=3600
-    # Save Config SSID
-    # # Verify Config
-    # Popup WPA Password Invalid Should Be Visible
+    Log To Console					              Step 3.5: WPA-PSK/WPA2-PSK Password with >
+    Select SSID 5G Index                          ssid_index=1
+    Select 5G Security Mode                       secu_mode=WPA-PSK/WPA2-PSK
+    Configure 5G Security Mode WPA-PSK/WPA2-PSK           password=${WIFI_PASS}>
+    ...                                           encry_type=AES
+    ...                                           key_renew=3600
+    Save Config SSID
+    # Verify Config
+    Popup WPA Password Invalid Should Be Visible
 
-    # Log To Console					              Step 3.6: WPA-PSK/WPA2-PSK Password with <
-    # Select SSID 5G Index                          ssid_index=1
-    # Select 5G Security Mode                       secu_mode=WPA-PSK/WPA2-PSK
-    # Configure 5G Security Mode WPA-PSK/WPA2-PSK           password=${WIFI_PASS}<
-    # ...                                           encry_type=AES
-    # ...                                           key_renew=3600
-    # Save Config SSID
-    # # Verify Config
-    # Popup WPA Password Invalid Should Be Visible
+    Log To Console					              Step 3.6: WPA-PSK/WPA2-PSK Password with <
+    Select SSID 5G Index                          ssid_index=1
+    Select 5G Security Mode                       secu_mode=WPA-PSK/WPA2-PSK
+    Configure 5G Security Mode WPA-PSK/WPA2-PSK           password=${WIFI_PASS}<
+    ...                                           encry_type=AES
+    ...                                           key_renew=3600
+    Save Config SSID
+    # Verify Config
+    Popup WPA Password Invalid Should Be Visible
 
-    # Log To Console					              Step 3.7: WPA-PSK/WPA2-PSK Password with `
-    # Select SSID 5G Index                          ssid_index=1
-    # Select 5G Security Mode                       secu_mode=WPA-PSK/WPA2-PSK
-    # Configure 5G Security Mode WPA-PSK/WPA2-PSK           password=${WIFI_PASS}`
-    # ...                                           encry_type=AES
-    # ...                                           key_renew=3600
-    # Save Config SSID
-    # # Verify Config
-    # Popup WPA Password Invalid Should Be Visible
+    Log To Console					              Step 3.7: WPA-PSK/WPA2-PSK Password with `
+    Select SSID 5G Index                          ssid_index=1
+    Select 5G Security Mode                       secu_mode=WPA-PSK/WPA2-PSK
+    Configure 5G Security Mode WPA-PSK/WPA2-PSK           password=${WIFI_PASS}`
+    ...                                           encry_type=AES
+    ...                                           key_renew=3600
+    Save Config SSID
+    # Verify Config
+    Popup WPA Password Invalid Should Be Visible
 
-    # Log To Console					              Step 3.8: WPA-PSK/WPA2-PSK Password with \\\
-    # Select SSID 5G Index                          ssid_index=1
-    # Select 5G Security Mode                       secu_mode=WPA-PSK/WPA2-PSK
-    # Configure 5G Security Mode WPA-PSK/WPA2-PSK           password=${WIFI_PASS}\\
-    # ...                                           encry_type=AES
-    # ...                                           key_renew=3600
-    # Save Config SSID
-    # # Verify Config
-    # Popup WPA Password Invalid Should Be Visible
+    Log To Console					              Step 3.8: WPA-PSK/WPA2-PSK Password with \\\
+    Select SSID 5G Index                          ssid_index=1
+    Select 5G Security Mode                       secu_mode=WPA-PSK/WPA2-PSK
+    Configure 5G Security Mode WPA-PSK/WPA2-PSK           password=${WIFI_PASS}\\
+    ...                                           encry_type=AES
+    ...                                           key_renew=3600
+    Save Config SSID
+    # Verify Config
+    Popup WPA Password Invalid Should Be Visible
 
-    # Log To Console					              Step 3.9: WPA-PSK/WPA2-PSK Password with !
-    # Select SSID 5G Index                          ssid_index=1
-    # Select 5G Security Mode                       secu_mode=WPA-PSK/WPA2-PSK
-    # Configure 5G Security Mode WPA-PSK/WPA2-PSK           password=${WIFI_PASS}!
-    # ...                                           encry_type=AES
-    # ...                                           key_renew=3600
-    # Save Config SSID
-    # # Verify Config
-    # Popup WPA Password Invalid Should Be Visible
+    Log To Console					              Step 3.9: WPA-PSK/WPA2-PSK Password with !
+    Select SSID 5G Index                          ssid_index=1
+    Select 5G Security Mode                       secu_mode=WPA-PSK/WPA2-PSK
+    Configure 5G Security Mode WPA-PSK/WPA2-PSK           password=${WIFI_PASS}!
+    ...                                           encry_type=AES
+    ...                                           key_renew=3600
+    Save Config SSID
+    # Verify Config
+    Popup WPA Password Invalid Should Be Visible
 
-    # Log To Console					              Step 3.10: WPA-PSK/WPA2-PSK Password with '
-    # Select SSID 5G Index                          ssid_index=1
-    # Select 5G Security Mode                       secu_mode=WPA-PSK/WPA2-PSK
-    # Configure 5G Security Mode WPA-PSK/WPA2-PSK           password=${WIFI_PASS}'
-    # ...                                           encry_type=AES
-    # ...                                           key_renew=3600
-    # Save Config SSID
-    # # Verify Config
-    # Popup WPA Password Invalid Should Be Visible
+    Log To Console					              Step 3.10: WPA-PSK/WPA2-PSK Password with '
+    Select SSID 5G Index                          ssid_index=1
+    Select 5G Security Mode                       secu_mode=WPA-PSK/WPA2-PSK
+    Configure 5G Security Mode WPA-PSK/WPA2-PSK           password=${WIFI_PASS}'
+    ...                                           encry_type=AES
+    ...                                           key_renew=3600
+    Save Config SSID
+    # Verify Config
+    Popup WPA Password Invalid Should Be Visible
 
-    # Log To Console					              Step 3.11: WPA-PSK/WPA2-PSK Password with "
-    # Select SSID 5G Index                          ssid_index=1
-    # SL.Maximize Browser Window
-    # Select 5G Security Mode                       secu_mode=WPA-PSK/WPA2-PSK
-    # Configure 5G Security Mode WPA-PSK/WPA2-PSK           password=${WIFI_PASS}"
-    # ...                                           encry_type=AES
-    # ...                                           key_renew=3600
-    # Save Config SSID
-    # # Verify Config
-    # Popup WPA Password Invalid Should Be Visible
+    Log To Console					              Step 3.11: WPA-PSK/WPA2-PSK Password with "
+    Select SSID 5G Index                          ssid_index=1
+    SL.Maximize Browser Window
+    Select 5G Security Mode                       secu_mode=WPA-PSK/WPA2-PSK
+    Configure 5G Security Mode WPA-PSK/WPA2-PSK           password=${WIFI_PASS}"
+    ...                                           encry_type=AES
+    ...                                           key_renew=3600
+    Save Config SSID
+    # Verify Config
+    Popup WPA Password Invalid Should Be Visible
+    Logout WebGUI
 
     ### Step 4: Config Security mode WPA-PSK/WPA2-PSK Password Invalid Length for Wifi 5GHz
     Log To Console                                \nStep 4: Config Security mode WPA-PSK/WPA2-PSK Password Invalid Length for Wifi 5GHz
+
+    Login To Browser		                      password=${ONT}[ONT_WEB_PASS]
+    SL.Select Frame                               xpath=//frame[@name="contentfrm"]
     Open 5GHz Wireless Configure Page
 
     Log To Console					              Step 4.1: WPA-PSK/WPA2-PSK Password with Length < 8 characters/numbers
     Select SSID 5G Index                          ssid_index=1
+    SL.Maximize Browser Window
     SL.Maximize Browser Window
     Select 5G Security Mode                       secu_mode=WPA-PSK/WPA2-PSK
     Configure 5G Security Mode WPA-PSK/WPA2-PSK           password=1234567
@@ -211,6 +204,7 @@ MOD_WIFI5G_01_TC_10
 
     Log To Console					              Step 5.1: WPA-PSK/WPA2-PSK Password with Length = 63 characters ASCII
     Select SSID 5G Index                          ssid_index=1
+    SL.Maximize Browser Window
     SL.Maximize Browser Window
     Select 5G Security Mode                       secu_mode=WPA-PSK/WPA2-PSK
     Configure 5G Security Mode WPA-PSK/WPA2-PSK           password=abcdefghabcdefghabcdefghabcdefghabcdefghabcdefghabcdefghabcdefg
@@ -252,6 +246,7 @@ MOD_WIFI5G_01_TC_10
     Log To Console					              Step 6.1: WPA-PSK/WPA2-PSK Encryption Type TKIP
     Select SSID 5G Index                          ssid_index=1
     SL.Maximize Browser Window
+    SL.Maximize Browser Window
     Select 5G Security Mode                       secu_mode=WPA-PSK/WPA2-PSK
     Configure 5G Security Mode WPA-PSK/WPA2-PSK           password=12345678
     ...                                           encry_type=TKIP
@@ -291,6 +286,7 @@ MOD_WIFI5G_01_TC_10
 
     Log To Console					              Step 7.1: WPA-PSK/WPA2-PSK Key Renewal Interval Non-integer
     Select SSID 5G Index                          ssid_index=1
+    SL.Maximize Browser Window
     SL.Maximize Browser Window
     Select 5G Security Mode                       secu_mode=WPA-PSK/WPA2-PSK
     Configure 5G Security Mode WPA-PSK/WPA2-PSK           password=12345678
@@ -344,8 +340,22 @@ MOD_WIFI5G_01_TC_10
     ...                                           encry_type=AES
     ...                                           key_renew=4194303
 
+    # ### Step 2: Config Security mode WPA-PSK/WPA2-PSK Password All Space for Wifi 5GHz
+    # Log To Console                                \nStep 2: Config Security mode WPA-PSK/WPA2-PSK Password All Space for Wifi 5GHz
+    
+    # Select SSID 5G Index                          ssid_index=1
+    # Select 5G Security Mode                       secu_mode=WPA-PSK/WPA2-PSK
+    # Configure 5G Security Mode WPA-PSK/WPA2-PSK           password=${SPACE*8}
+    # ...                                           encry_type=AES
+    # ...                                           key_renew=3600
+    # Save Config SSID
+    # # Verify Config
+    # Popup PreSharedKey Length Error Should Be Visible
+
+    Logout WebGUI 
+
     [Teardown]                                     Run Keyword And Ignore Error        MOD_WIFI5G_01_TC_10_Teardown
 
-*** Test Cases ***
-MOD_WIFI5G_01_TC_10
-    MOD_WIFI5G_01_TC_10   
+# *** Test Cases ***
+# MOD_WIFI5G_01_TC_10
+#     MOD_WIFI5G_01_TC_10   

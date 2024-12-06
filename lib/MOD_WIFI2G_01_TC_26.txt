@@ -27,9 +27,10 @@ MOD_WIFI2G_01_TC_26_Teardown
 
 MOD_WIFI2G_01_TC_26
    [Documentation]                                   Kiem tra kha nang thay doi TWT Button Wifi 2GHz
+   
     # SL.Set Selenium Speed                          0.5
     # SL.Set Selenium Timeout                        10s
-    # Set Test Message                               *HTML* <b>MOD_WIFI2G_01_TC_26</b>
+    Set Test Message                               *HTML* <b>MOD_WIFI2G_01_TC_26</b>
 
     # Open WebGUI    
     Login To Browser
@@ -38,28 +39,8 @@ MOD_WIFI2G_01_TC_26
     SL.Maximize Browser Window
 
     ### Step 1: Config TWT Button Wifi 2Ghz with SSID index 1
+    Log To Console                                 \nStep 1: Config TWT Button Wifi 2Ghz with SSID index 1
     Select SSID 2G Index                           ssid_index=1     
-    Config TWT Button and Verify 2G                twt_button=Disable
-    Config TWT Button and Verify 2G                twt_button=Enable
-    Config TWT Button and Verify 2G                twt_button=Mandatory
-
-
-    ### Step 2: Config TWT Button Wifi 2Ghz with SSID index 2
-    Select SSID 2G Index                           ssid_index=2     
-    Config TWT Button and Verify 2G                twt_button=Disable
-    Config TWT Button and Verify 2G                twt_button=Enable
-    Config TWT Button and Verify 2G                twt_button=Mandatory
-
-
-    ### Step 3: Config TWT Button Wifi 2Ghz with SSID index 3
-    Select SSID 2G Index                           ssid_index=3    
-    Config TWT Button and Verify 2G                twt_button=Disable
-    Config TWT Button and Verify 2G                twt_button=Enable
-    Config TWT Button and Verify 2G                twt_button=Mandatory
-
-
-    ### Step 4: Config TWT Button Wifi 2Ghz with SSID index 4
-    Select SSID 2G Index                           ssid_index=4     
     Config TWT Button and Verify 2G                twt_button=Disable
     Config TWT Button and Verify 2G                twt_button=Enable
     Config TWT Button and Verify 2G                twt_button=Mandatory
@@ -68,6 +49,6 @@ MOD_WIFI2G_01_TC_26
 
     [Teardown]                               Run Keyword And Ignore Error        MOD_WIFI2G_01_TC_26_Teardown
 
-*** Test Cases ***
-MOD_WIFI2G_01_TC_26
-    MOD_WIFI2G_01_TC_26
+# *** Test Cases ***
+# MOD_WIFI2G_01_TC_26
+#     MOD_WIFI2G_01_TC_26

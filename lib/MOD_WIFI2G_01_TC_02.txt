@@ -40,8 +40,8 @@ MOD_WIFI2G_01_TC_02_Teardown
 MOD_WIFI2G_01_TC_02
     [Documentation]    Kiem tra kha nang On/Off truong Enable SSID Wifi 2.4Ghz
 
-    SL.Set Selenium Speed                          0.5
-    SL.Set Selenium Timeout                        10s
+    # SL.Set Selenium Speed                          0.5
+    # SL.Set Selenium Timeout                        10s
     Set Test Message                               *HTML* <b>MOD_WIFI2G_01_TC_02</b>
 
     ### Step 1: On/Off SSID 1 for Wifi 2.4Ghz on WebGui
@@ -186,6 +186,6 @@ MOD_WIFI2G_01_TC_02
 
     [Teardown]                               Run Keyword And Ignore Error        MOD_WIFI2G_01_TC_02_Teardown
     
-*** Test Cases ***
-MOD_WIFI2G_01_TC_02
-    MOD_WIFI2G_01_TC_02  
+# *** Test Cases ***
+# MOD_WIFI2G_01_TC_02
+#     MOD_WIFI2G_01_TC_02  

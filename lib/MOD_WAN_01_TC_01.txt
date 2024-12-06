@@ -1,0 +1,117 @@
+*** Settings ***
+Library                                            SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
+Resource                                           selenium/Login/SeleniumLoginLib.txt
+Resource                                           selenium/Network/SeleniumNetworkWANLib.txt
+Resource                                           selenium/Maintenance/SeleniumMaintenanceRebootResetLib.txt
+*** Variables ***
+
+*** Keywords ***
+MOD_WAN_01_TC_01_Teardown
+    ##Teardown
+    Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
+    
+    #####Factory Reset Via Web GUI
+    Login To Browser		                 password=${ONT}[ONT_WEB_PASS]
+    Factory Reset Via Web GUI
+  
+    SL.Go To                                 url=${LOGIN_URL}
+    SL.Wait Until Element Is Visible         ${LOGIN_BUTTON}
+    ...                                      timeout=25s
+    ...                                      error=\nLogin Page Does Not Found!
+    Run Keyword If                           '${SWITCH_VARIABLE}' == '3'      Log To Console	\nDon't need to change password after reset factory
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '2'      Change Password WebGui
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '1'      Change Password WebGui
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '0'      Change Password WebGui    
+    SL.Delete All Cookies
+    SL.Close All Browsers
+
+Verify Status WAN
+    [Arguments]                             ${vlan_id}
+    ...                                     ${print}
+
+    ${row_index_tmp}=                       Get Row Index       VLAN/Priority     ${vlan_id}
+    SL.Click Element                        xpath=//*[@id="WanInfoTable"]/tbody/tr[${row_index_tmp}]
+
+    ${status}=                              SL.Execute Javascript    return document.querySelector("#cb_enblService").checked
+    Should Be Equal                         '${status}'    '${print}'
+
+Popup Delete WAN
+    [Documentation]                          Handle popup BDelete WAN 
+    ${popup_message}=                        SL.Handle Alert    timeout=10s
+    Should Contain                           ${popup_message}    Are you sure to delete the WAN connection?
+
+MOD_WAN_01_TC_01
+   [Documentation]                                   Kiem tra kha nang cau hinh truong Enable 
+
+    # SL.Set Selenium Speed                          0.5
+    # SL.Set Selenium Timeout                        10s
+    Set Test Message                               *HTML* <b>MOD_WAN_01_TC_01</b>
+
+    ### Step 1: Open Browser & Login to WebGUI    
+    Log To Console                                \nStep 1: Login to Browser
+    Login To Browser
+    SL.Select Frame                               xpath=//frame[@name="contentfrm"]
+
+    ### Step 2: Config Enable WAN
+    Log To Console                                \nStep 2: Config Activated WAN
+
+    ## Step 2.1: Open Config WAN Page
+    Log To Console                                \nStep 2.1: Open Config WAN Page
+    Open Network Settings Wan Page
+    SL.Maximize Browser Window
+
+    # Click button add new WAN
+    Add New Wan Service
+
+    ## Step 2.2: Choose WAN Enable & config another para of wan interface
+    Log To Console                               \nStep 2.2: Choose WAN Enable & config another para of wan interface
+    
+    # Choose WAN Enable
+    Select Enable/Disable Button                          enable=On
+
+    # Config VLAN ID = 11
+    Input VLAN ID                                 vlan_id=11
+
+    # Save
+    Click Button Save WAN
+    Sleep                                          5s
+    ## Step 2.3: Verify Enable status WAN
+    Log To Console                                 \nStep 2.3: Verify Enable status WAN
+    Verify Status WAN                              vlan_id=11    print=True
+
+    ### Step 3: Delete WAN was created
+    Log To Console                                 \nStep 3: Delete WAN was created
+    Delete WAN                                     vlan_id=11
+    Popup Delete WAN
+    Sleep                                          5s
+    
+    ### Step 4: Config Disable WAN
+    Log To Console                                 \nStep 4: Config Deactivated WAN
+
+    # Click button add new WAN 
+    Add New Wan Service
+
+    ## Step 4.1: Choose WAN Disable & config another para of wan interface
+    Log To Console                               \nStep 4.1: Choose WAN Enable & config another para of wan interface
+    
+    # Choose WAN Disable
+    Select Enable/Disable Button                          enable=Off
+
+    # Config VLAN ID = 11
+    Input VLAN ID                                 vlan_id=11
+
+    # Save
+    Click Button Save WAN
+    Sleep                                          5s
+    
+    ## Step 4.2: Verify Disable Status WAN
+    Log To Console                                 \nStep 4.2: Verify Disable Status WAN
+    Verify Status WAN                              vlan_id=11    print=False
+    
+    Logout WebGUI
+
+    [Teardown]                               Run Keyword And Ignore Error        MOD_WAN_01_TC_01_Teardown
+
+# *** Test Cases ***
+# MOD_WAN_01_TC_01
+#     MOD_WAN_01_TC_01

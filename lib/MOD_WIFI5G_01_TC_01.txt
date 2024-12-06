@@ -5,6 +5,8 @@ Resource                                           selenium/Login/SeleniumLoginL
 Resource                                           selenium/Maintenance/SeleniumMaintenanceRebootResetLib.txt
 Resource                                           selenium/Network/SeleniumNetworkWLAN24GHzLib.txt
 Resource                                           selenium/Network/SeleniumNetworkWLAN5GHzLib.txt
+Resource                                           selenium/Network/SeleniumNetworkWLAN24GHzLib.txt
+Resource                                           selenium/Network/SeleniumNetworkWLAN5GHzLib.txt
 Resource                                           selenium/Status/SeleniumStatusDeviceInfoLib.txt
 
 *** Variables ***
@@ -32,8 +34,8 @@ MOD_WIFI5G_01_TC_01_Teardown
 MOD_WIFI5G_01_TC_01
     [Documentation]    Kiem tra kha nang cau hinh SSID Index Wifi 5Ghz
 
-    SL.Set Selenium Speed                    				    0.5
-    SL.Set Selenium Timeout                  				    10s
+    # SL.Set Selenium Speed                    				    0.5
+    # SL.Set Selenium Timeout                  				    10s
     Set Test Message                         				    *HTML* <b>MOD_WIFI5G_01_TC_01</b>
     Login To Browser		             				        password=${ONT}[ONT_WEB_PASS]
 
@@ -66,8 +68,10 @@ MOD_WIFI5G_01_TC_01
     Save Config SSID
     Compare Get SSID 5GHz With SSID Expected Index 2,3,4		ssid_expect=${ONT}[SSID_EXPECT_5G_4]
 
+    Logout WebGUI 
+
     [Teardown]                               Run Keyword And Ignore Error        MOD_WIFI5G_01_TC_01_Teardown
 
-*** Test Cases ***
-MOD_WIFI5G_01_TC_01
-    MOD_WIFI5G_01_TC_01      
+# *** Test Cases ***
+# MOD_WIFI5G_01_TC_01
+#     MOD_WIFI5G_01_TC_01      

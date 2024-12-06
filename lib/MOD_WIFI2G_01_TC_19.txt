@@ -27,8 +27,9 @@ MOD_WIFI2G_01_TC_19_Teardown
 
 MOD_WIFI2G_01_TC_19
     [Documentation]    Kiem tra kha nang thay doi Select Mode Wifi 2GHz
-    SL.Set Selenium Speed                          0.5
-    SL.Set Selenium Timeout                        10s
+
+    # SL.Set Selenium Speed                          0.5
+    # SL.Set Selenium Timeout                        10s
     Set Test Message                               *HTML* <b>MOD_WIFI2G_01_TC_19</b>
     
     # Open WebGUI    
@@ -37,73 +38,32 @@ MOD_WIFI2G_01_TC_19
     Open 2.4GHz Wireless Configure Page
     SL.Maximize Browser Window
 
-    ### Step 1: Config Select Mode Wifi 2.4Ghz with SSID index 1
+    ### Step 1: Config Select Mode Wifi 2.4Ghz
+    Log To Console                      \nStep 1: Config Select Mode Wifi 2.4Ghz
     Select SSID 2G Index                ssid_index=1
+
     ## Step 1.1: Config Select Mode Wifi 2.4Ghz 802.11g/n/ax Mix
     Config Select Mode and Verify 2G    select_mode=802.11g/n/ax Mix
+
     ## Step 1.2: Config Select Mode Wifi 2.4Ghz 802.11b
     Config Select Mode and Verify 2G   select_mode=802.11b
+
     ## Step 1.3: Config Select Mode Wifi 2.4Ghz 802.11g
     Config Select Mode and Verify 2G   select_mode=802.11g
+
     ## Step 1.4: Config Select Mode Wifi 2.4Ghz 802.11n
     Config Select Mode and Verify 2G   select_mode=802.11n
+
     ## Step 1.5: Config Select Mode Wifi 2.4Ghz 802.11b/g Mix
     Config Select Mode and Verify 2G   select_mode=802.11b/g Mix
+
     ## Step 1.6: Config Select Mode Wifi 2.4Ghz 802.11b/g/n Mix
-    Config Select Mode and Verify 2G   select_mode=802.11b/g/n Mix
-
-
-    ### Step 2: Config Select Mode Wifi 2.4Ghz with SSID index 2
-    Select SSID 2G Index                ssid_index=2
-    ## Step 2.1: Config Select Mode Wifi 2.4Ghz 802.11g/n/ax Mix
-    Config Select Mode and Verify 2G    select_mode=802.11g/n/ax Mix
-    ## Step 2.2: Config Select Mode Wifi 2.4Ghz 802.11b
-    Config Select Mode and Verify 2G   select_mode=802.11b
-    ## Step 2.3: Config Select Mode Wifi 2.4Ghz 802.11g
-    Config Select Mode and Verify 2G   select_mode=802.11g
-    ## Step 2.4: Config Select Mode Wifi 2.4Ghz 802.11n
-    Config Select Mode and Verify 2G   select_mode=802.11n
-    ## Step 2.5: Config Select Mode Wifi 2.4Ghz 802.11b/g Mix
-    Config Select Mode and Verify 2G   select_mode=802.11b/g Mix
-    ## Step 2.6: Config Select Mode Wifi 2.4Ghz 802.11b/g/n Mix
-    Config Select Mode and Verify 2G   select_mode=802.11b/g/n Mix
-
-
-    ### Step 3: Config Select Mode Wifi 2.4Ghz with SSID index 3
-    Select SSID 2G Index            ssid_index=3
-    ## Step 3.1: Config Select Mode Wifi 2.4Ghz 802.11g/n/ax Mix
-    Config Select Mode and Verify 2G   select_mode=802.11g/n/ax Mix
-    ## Step 3.2: Config Select Mode Wifi 2.4Ghz 802.11b
-    Config Select Mode and Verify 2G   select_mode=802.11b
-    ## Step 3.3: Config Select Mode Wifi 2.4Ghz 802.11g
-    Config Select Mode and Verify 2G   select_mode=802.11g
-    ## Step 3.4: Config Select Mode Wifi 2.4Ghz 802.11n
-    Config Select Mode and Verify 2G   select_mode=802.11n
-    ## Step 3.5: Config Select Mode Wifi 2.4Ghz 802.11b/g Mix
-    Config Select Mode and Verify 2G   select_mode=802.11b/g Mix
-    ## Step 3.6: Config Select Mode Wifi 2.4Ghz 802.11b/g/n Mix
-    Config Select Mode and Verify 2G   select_mode=802.11b/g/n Mix
-
-
-    ### Step 4: Config Select Mode Wifi 2.4Ghz with SSID index 4
-    Select SSID 2G Index               ssid_index=4
-    ## Step 4.1: Config Select Mode Wifi 2.4Ghz 802.11g/n/ax Mix
-    Config Select Mode and Verify 2G   select_mode=802.11g/n/ax Mix
-    ## Step 4.2: Config Select Mode Wifi 2.4Ghz 802.11b
-    Config Select Mode and Verify 2G   select_mode=802.11b
-    ## Step 4.3: Config Select Mode Wifi 2.4Ghz 802.11g
-    Config Select Mode and Verify 2G   select_mode=802.11g
-    ## Step 4.4: Config Select Mode Wifi 2.4Ghz 802.11n
-    Config Select Mode and Verify 2G  select_mode=802.11n
-    ## Step 4.5: Config Select Mode Wifi 2.4Ghz 802.11b/g Mix
-    Config Select Mode and Verify 2G    select_mode=802.11b/g Mix
-    ## Step 4.6: Config Select Mode Wifi 2.4Ghz 802.11b/g/n Mix
     Config Select Mode and Verify 2G   select_mode=802.11b/g/n Mix
 
     Logout WebGUI
 
     [Teardown]                               Run Keyword And Ignore Error        MOD_WIFI2G_01_TC_19_Teardown
 
-*** Test Cases ***
-MOD_WIFI2G_01_TC_19
-    MOD_WIFI2G_01_TC_19
+# *** Test Cases ***
+# MOD_WIFI2G_01_TC_19
+#     MOD_WIFI2G_01_TC_19

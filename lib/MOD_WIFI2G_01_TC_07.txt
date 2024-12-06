@@ -33,8 +33,8 @@ MOD_WIFI2G_01_TC_07_Teardown
 MOD_WIFI2G_01_TC_07
     [Documentation]    Kiem tra kha nang cau hinh Security Configure Type WEP-128Bits Wifi 2.4Ghz
 
-    SL.Set Selenium Speed                         0.5
-    SL.Set Selenium Timeout                       10s
+    # SL.Set Selenium Speed                         0.5
+    # SL.Set Selenium Timeout                       10s
     Set Test Message                              *HTML* <b>MOD_WIFI2G_01_TC_07</b>
     Login To Browser		                      password=${ONT}[ONT_WEB_PASS]
     SL.Select Frame                               xpath=//frame[@name="contentfrm"]
@@ -195,6 +195,6 @@ MOD_WIFI2G_01_TC_07
     
     [Teardown]                                     Run Keyword And Ignore Error        MOD_WIFI2G_01_TC_07_Teardown
     
-*** Test Cases ***
-MOD_WIFI2G_01_TC_07
-    MOD_WIFI2G_01_TC_07    
+# *** Test Cases ***
+# MOD_WIFI2G_01_TC_07
+#     MOD_WIFI2G_01_TC_07    

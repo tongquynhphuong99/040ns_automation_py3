@@ -40,14 +40,13 @@ MOD_WIFI2G_01_TC_03_Teardown
 MOD_WIFI2G_01_TC_03
     [Documentation]    Kiem tra kha nang cau hinh thay doi SSID Name Wifi 2.4Ghz
 
-    SL.Set Selenium Speed                         	0.5
-    SL.Set Selenium Timeout                       	10s
+    # SL.Set Selenium Speed                         	0.5
+    # SL.Set Selenium Timeout                       	10s
     Set Test Message                              	*HTML* <b>MOD_WIFI2G_01_TC_03</b>
     Login To Browser		                      	password=${ONT}[ONT_WEB_PASS]
     SL.Select Frame                                 xpath=//frame[@name="contentfrm"]
     Open 2.4GHz Wireless Configure Page
 
-# ###### WIFI 2.4GHZ
     Log To Console                               	\nStep 1: Config Name SSID Empty For Wifi 2.4Ghz On WebGui
     Config Name SSID 2G Incorrect On WebGui		    ssid_index=1
     ...							                    ssid_change=${EMPTY}
@@ -89,8 +88,7 @@ MOD_WIFI2G_01_TC_03
     Config Name SSID 2G Incorrect On WebGui		    ssid_index=1
     ...							                    ssid_change=${WIFI_SSID_MAIN}\\
 
-    Log To Console					                Step 3.9: SSID 
-WPA Encryption Dropdown Does Not Show Upwith !
+    Log To Console					                Step 3.9: SSID with !
     Config Name SSID 2G Incorrect On WebGui		    ssid_index=1
     ...							                    ssid_change=${WIFI_SSID_MAIN}!
 
@@ -108,6 +106,6 @@ WPA Encryption Dropdown Does Not Show Upwith !
 
     [Teardown]                               Run Keyword And Ignore Error        MOD_WIFI2G_01_TC_03_Teardown
     
-*** Test Cases ***
-MOD_WIFI2G_01_TC_03
-    MOD_WIFI2G_01_TC_03  
+# *** Test Cases ***
+# MOD_WIFI2G_01_TC_03
+#     MOD_WIFI2G_01_TC_03  

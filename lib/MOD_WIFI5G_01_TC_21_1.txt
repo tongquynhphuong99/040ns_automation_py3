@@ -1,0 +1,52 @@
+*** Settings ***
+Library                                            SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
+Resource                                           selenium/Login/SeleniumLoginLib.txt
+Resource                                           selenium/Network/SeleniumNetworkWLAN5GHzLib.txt
+Resource                                           selenium/Maintenance/SeleniumMaintenanceRebootResetLib.txt
+*** Variables ***
+
+*** Keywords ***
+MOD_WIFI5G_01_TC_21_1_Teardown
+    ##Teardown
+    Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
+    
+    #####Factory Reset Via Web GUI
+    Login To Browser		                 password=${ONT}[ONT_WEB_PASS]
+    Factory Reset Via Web GUI
+  
+    SL.Go To                                 url=${LOGIN_URL}
+    SL.Wait Until Element Is Visible         ${LOGIN_BUTTON}
+    ...                                      timeout=25s
+    ...                                      error=\nLogin Page Does Not Found!
+    Run Keyword If                           '${SWITCH_VARIABLE}' == '3'      Log To Console	\nDon't need to change password after reset factory
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '2'      Change Password WebGui
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '1'      Change Password WebGui
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '0'      Change Password WebGui    
+    SL.Delete All Cookies
+    SL.Close All Browsers
+
+MOD_WIFI5G_01_TC_21_1
+   [Documentation]                                   Kiem tra kha nang thay doi HT BandWidth Wifi 5GHz
+
+    # SL.Set Selenium Speed                          0.5
+    # SL.Set Selenium Timeout                        10s
+    Set Test Message                               *HTML* <b>MOD_WIFI5G_01_TC_21_1</b>
+
+    # Open WebGUI    
+    Login To Browser
+    SL.Select Frame                                xpath=//frame[@name="contentfrm"]
+    Open 5GHz Wireless Configure Page
+    SL.Maximize Browser Window
+
+    ### Step 1: Config HT BandWidth Wifi 5Ghz
+    Select SSID 5G Index                ssid_index=1
+    Config HT Bandwidth and Verify 5G   bandwidth=20 MHz
+    Config HT Bandwidth and Verify 5G   bandwidth=20/40 MHz
+
+    Logout WebGUI
+
+    [Teardown]                               Run Keyword And Ignore Error        MOD_WIFI5G_01_TC_21_1_Teardown
+
+# *** Test Cases ***
+# MOD_WIFI5G_01_TC_21_1
+#     MOD_WIFI5G_01_TC_21_1
