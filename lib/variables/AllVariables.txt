@@ -157,3 +157,7 @@ ${GW020BRC_REPO}							   http://rdrepo.vnpt-technology.vn/repository/GW020BRC_R
 ### GNMS Parameters
 ${GNMS_CONFIGURATION_URL}						${GNMS_URL}/configuration/initial
 ${GNMS_BACKUP_FILE_NAME}                        gnms_backup
+
+# WAN
+${USERNAME}                                  ttcnvnpt
+${PASSWORD}                                  ansvvnpt

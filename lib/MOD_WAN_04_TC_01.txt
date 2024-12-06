@@ -6,7 +6,7 @@ Resource                                           selenium/Maintenance/Selenium
 *** Variables ***
 
 *** Keywords ***
-MOD_WAN_01_TC_01_Teardown
+MOD_WAN_04_TC_01_Teardown
     ##Teardown
     Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
     
@@ -25,17 +25,18 @@ MOD_WAN_01_TC_01_Teardown
     SL.Delete All Cookies
     SL.Close All Browsers
 
-Verify Status WAN
-    [Arguments]                             ${print}
+Verify Link Mode 
+    [Arguments]                              ${mode}
+    SL.Wait Until Element Is Visible         xpath=//*[@id="linkMode"]     timeout=10s
+    ...                                      error=\nLink Mode Textbox Does Not Show Up
+    ${value}=                                SL.Get Value    xpath=//*[@id="linkMode" and @checked] 
+    Should Be Equal                          ${mode}    ${value}
 
-    ${status}=                               SL.Execute Javascript    return document.querySelector("#cb_enblService").checked
-    Run Keyword If                           '${status}' != '${print}'        Fail    "Enable/Disable WAN Wrong" 
-
-MOD_WAN_01_TC_01
-   [Documentation]                                 Kiem tra kha nang cau hinh truong Enable 
+MOD_WAN_04_TC_01
+   [Documentation]                                 Kiem tra kha nang cau hinh truong Link mode
     # SL.Set Selenium Speed                          0.5
     # SL.Set Selenium Timeout                        10s
-    # Set Test Message                               *HTML* <b>MOD_WAN_01_TC_01</b>
+    # Set Test Message                               *HTML* <b>MOD_WAN_04_TC_01</b>
 
     ### Step 1: Open Browser & Login to WebGUI    
     Log To Console                                \nStep 1: Login to Browser
@@ -47,50 +48,54 @@ MOD_WAN_01_TC_01
     Open Network Settings Wan Page
     SL.Maximize Browser Window
 
-    ### Step 3: Config Enable WAN
-    Log To Console                                \nStep 3: Config Enable WAN
+    ### Step 3: Config Link mode Connect via IP
+    Log To Console                                \nStep 3: Config Link mode Connect via IP
     ## Step 3.1: Add WAN & para of wan interface
     Log To Console                                \nStep 3.1: Add WAN & para of wan interface
     # Click button add new WAN
     Add New Wan Service
-    Sleep                                        2s
-    # Config Enable WAN
-    Select Enable/Disable Button                  enable=On
+    Sleep                                         2s
+    # Config Link mode Connect via IP
+    Config Link Mode                              link_mode=linkIP
     # Config VLAN ID = 11
     Input VLAN ID                                 vlan_id=11
     # Save
     Click Button Save WAN
-    ## Step 3.2: Verify Enable status WAN
-    Log To Console                                 \nStep 3.2: Verify Enable status WAN
-    Verify Status WAN                              print=True
-
+    ## Step 3.2 Verify Link mode Connect via IP
+    Log To Console                                \nStep 3.2 Verify Link mode Connect via IP
+    Click WAN                                     column_name=VLAN/Priority    column_value=11
+    SL.Scroll Element Into View                   xpath=//*[@id="linkMode"]
+    Verify Link Mode                              mode=linkIP
+   
     ### Step 4: Delete WAN was created
     Log To Console                                 \nStep 4: Delete WAN was created
     Delete WAN                                     column_name=VLAN/Priority    row_name=11
     Popup Delete WAN
     Sleep                                          5s
-    
-    ### Step 5: Config Disable WAN
-    Log To Console                                 \nStep 5: Config Disable WAN
+
+    ### Step 5: Config Link mode Connect via PPP
+    Log To Console                               \nStep 5: Config Link mode Connect via PPP
     ## Step 5.1: Add WAN & para of wan interface
     Log To Console                                \nStep 5.1: Add WAN & para of wan interface
-    # Click button add new WAN 
+    # Click button add new WAN
     Add New Wan Service
     Sleep                                        2s
-    # Config Disable WAN
-    Select Enable/Disable Button                  enable=Off
+    # Config Link Mode Connect via PPP
+    Config Link Mode                             link_mode=linkPPP
     # Config VLAN ID = 11
-    Input VLAN ID                                 vlan_id=11
+    Input VLAN ID                                vlan_id=11
     # Save
     Click Button Save WAN
-    ## Step 5.2: Verify Disable status WAN
-    Log To Console                                 \nStep 5.2: Verify Disable status WAN
-    Verify Status WAN                              print=False
+    ## Step 5.2 Verify Link Mode Connect via PPP
+    Log To Console                                \nStep 5.2 Verify Link Mode Connect via PPP
+    Click WAN                                     column_name=VLAN/Priority    column_value=11
+    SL.Scroll Element Into View                   xpath=//*[@id="linkMode"]
+    Verify Link Mode                              mode=linkPPP
 
     Logout WebGUI
 
-    # [Teardown]                               Run Keyword And Ignore Error        MOD_WAN_01_TC_01_Teardown
+    # [Teardown]                               Run Keyword And Ignore Error        MOD_WAN_04_TC_01_Teardown
 
 *** Test Cases ***
-MOD_WAN_01_TC_01
-    MOD_WAN_01_TC_01
+MOD_WAN_04_TC_01
+    MOD_WAN_04_TC_01

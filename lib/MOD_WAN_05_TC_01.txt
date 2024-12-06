@@ -1,0 +1,128 @@
+*** Settings ***
+Library                                            SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
+Resource                                           selenium/Login/SeleniumLoginLib.txt
+Resource                                           selenium/Network/SeleniumNetworkWANLib.txt
+Resource                                           selenium/Maintenance/SeleniumMaintenanceRebootResetLib.txt
+*** Variables ***
+
+*** Keywords ***
+MOD_WAN_05_TC_01_Teardown
+    ##Teardown
+    Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
+    
+    #####Factory Reset Via Web GUI
+    Login To Browser		                 password=${ONT}[ONT_WEB_PASS]
+    Factory Reset Via Web GUI
+  
+    SL.Go To                                 url=${LOGIN_URL}
+    SL.Wait Until Element Is Visible         ${LOGIN_BUTTON}
+    ...                                      timeout=25s
+    ...                                      error=\nLogin Page Does Not Found!
+    Run Keyword If                           '${SWITCH_VARIABLE}' == '3'      Log To Console	\nDon't need to change password after reset factory
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '2'      Change Password WebGui
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '1'      Change Password WebGui
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '0'      Change Password WebGui    
+    SL.Delete All Cookies
+    SL.Close All Browsers
+
+Verify Protocol Version
+    [Arguments]                              ${input_ver}
+    SL.Wait Until Element Is Visible         xpath=//*[@id="IpVersion"]    timeout=10s
+    ...                                      error=\nProtocol Version Textbox Does Not Show Up
+    
+    ${value}=                               SL.Execute Javascript    return document.querySelector('input[id="IpVersion"][value="${input_ver}"]').checked
+    Run Keyword If          '${value}' == 'True'     Log To Console    Verify Protocol Version successfully
+    ...       ELSE           Fail     Verify Protocol Version Failed
+
+MOD_WAN_05_TC_01
+   [Documentation]                                 Kiem tra kha nang cau hinh truong Protocol Version
+    # SL.Set Selenium Speed                          0.5
+    # SL.Set Selenium Timeout                        10s
+    # Set Test Message                               *HTML* <b>MOD_WAN_05_TC_01</b>
+
+    ### Step 1: Open Browser & Login to WebGUI    
+    Log To Console                                \nStep 1: Login to Browser
+    Login To Browser
+    SL.Select Frame                               xpath=//frame[@name="contentfrm"]
+
+    ### Step 2: Open Config WAN Page
+    Log To Console                                \nStep 2: Open Config WAN Page
+    Open Network Settings Wan Page
+    SL.Maximize Browser Window
+
+    ### Step 3: Config Protocol Version IPv4
+    Log To Console                                \nStep 3: Config Protocol Version IPv4
+    ## Step 3.1: Add WAN & para of wan interface
+    Log To Console                                \nStep 3.1: Add WAN & para of wan interface
+    # Click button add new WAN
+    Add New Wan Service
+    Sleep                                         2s
+    # Config Protocol Version IPv4
+    Config Protocol Version                       ver=IPv4
+    # Config VLAN ID = 11
+    Input VLAN ID                                 vlan_id=11
+    # Save
+    Click Button Save WAN
+    ## Step 3.2 Verify Protocol Version IPv4
+    Log To Console                                \nStep 3.2 Verify Protocol Version IPv4
+    Click WAN                                     column_name=VLAN/Priority    column_value=11
+    SL.Scroll Element Into View                   xpath=//*[@id="IpVersion"] 
+    Verify Protocol Version                       input_ver=IPv4
+
+    ### Step 4: Delete WAN was created
+    Log To Console                                 \nStep 4: Delete WAN was created
+    Delete WAN                                     column_name=VLAN/Priority    row_name=11
+    Popup Delete WAN
+    Sleep                                          5s
+
+    ### Step 5: Config Protocol Version IPv6
+    Log To Console                               \nStep 5: Config Protocol Version IPv6
+    ## Step 5.1: Add WAN & para of wan interface
+    Log To Console                                \nStep 5.1: Add WAN & para of wan interface
+    # Click button add new WAN
+    Add New Wan Service
+    Sleep                                        2s
+    # Config Protocol Version IPv6
+    Config Protocol Version                      ver=IPv6
+    # Config VLAN ID = 11
+    Input VLAN ID                                vlan_id=11
+    # Save
+    Click Button Save WAN
+    ## Step 5.2 Verify Protocol Version IPv6
+    Log To Console                                \nStep 5.2 Verify Protocol Version IPv6
+    Click WAN                                     column_name=VLAN/Priority    column_value=11
+    SL.Scroll Element Into View                   xpath=//*[@id="IpVersion"] 
+    Verify Protocol Version                       input_ver=IPv6
+
+    ### Step 6: Delete WAN was created
+    Log To Console                                 \nStep 6: Delete WAN was created
+    Delete WAN                                     column_name=VLAN/Priority    row_name=11
+    Popup Delete WAN
+    Sleep                                          5s
+
+    ### Step 7: Config Protocol Version Ipv4/IPv6
+    Log To Console                               \nStep 7: Config Protocol Version Ipv4/IPv6
+    ## Step 7.1: Add WAN & para of wan interface
+    Log To Console                                \nStep 7.1: Add WAN & para of wan interface
+    # Click button add new WAN
+    Add New Wan Service
+    Sleep                                        2s
+    # Config Protocol Version Ipv4/IPv6
+    Config Protocol Version                      ver=IPv4/IPv6
+    # Config VLAN ID = 11
+    Input VLAN ID                                vlan_id=11
+    # Save
+    Click Button Save WAN
+    ## Step 7.2 Verify Protocol Version Ipv4/IPv6
+    Log To Console                                \nStep 7.2 Verify Protocol Version Ipv4/IPv6
+    Click WAN                                     column_name=VLAN/Priority    column_value=11
+    SL.Scroll Element Into View                   xpath=//*[@id="IpVersion"]
+    Verify Protocol Version                       input_ver=IPv4/IPv6
+
+    Logout WebGUI
+
+    # [Teardown]                               Run Keyword And Ignore Error        MOD_WAN_05_TC_01_Teardown
+
+*** Test Cases ***
+MOD_WAN_05_TC_01
+    MOD_WAN_05_TC_01

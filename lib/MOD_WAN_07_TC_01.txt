@@ -37,9 +37,8 @@ Verify VLAN ID
 
 MOD_WAN_07_TC_01
    [Documentation]                                   Kiem tra kha nang cau hinh truong VLAN ID
-
-    # SL.Set Selenium Speed                          0.5
-    # SL.Set Selenium Timeout                        10s
+    SL.Set Selenium Speed                          0.5
+    SL.Set Selenium Timeout                        10s
     Set Test Message                               *HTML* <b>MOD_WAN_07_TC_01</b>
 
     ### Step 1: Open Browser & Login to WebGUI    
@@ -100,6 +99,6 @@ MOD_WAN_07_TC_01
 
     [Teardown]                               Run Keyword And Ignore Error        MOD_WAN_07_TC_01_Teardown
 
-# *** Test Cases ***
-# MOD_WAN_07_TC_01
-#     MOD_WAN_07_TC_01
+*** Test Cases ***
+MOD_WAN_07_TC_01
+    MOD_WAN_07_TC_01

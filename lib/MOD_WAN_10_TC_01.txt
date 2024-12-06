@@ -29,6 +29,7 @@ Popup MTU In Range 1280~1492 Should Be Visible
     [Documentation]                          Handle popup MTU Must Be In Range 1280~1492
     ${popup_message}=                        SL.Handle Alert    timeout=10s
     Should Contain                           ${popup_message}   Invalid MTU please input a integer between 1280 and 1492, or use the default value by inputting 0!
+
 Popup MTU with special character Should Be Visible
     [Documentation]                          Handle popup MTU Must Be In Range 1280~1492
     ${popup_message}=                        SL.Handle Alert    timeout=10s
@@ -41,9 +42,8 @@ Verify MTU
 
 MOD_WAN_10_TC_01
    [Documentation]                                 Kiem tra kha nang cau hinh truong MTU
-
-    # SL.Set Selenium Speed                          0.5
-    # SL.Set Selenium Timeout                        10s
+    SL.Set Selenium Speed                          0.5
+    SL.Set Selenium Timeout                        10s
     Set Test Message                               *HTML* <b>MOD_WAN_10_TC_01</b>
 
     ### Step 1: Open Browser & Login to WebGUI    
@@ -104,6 +104,6 @@ MOD_WAN_10_TC_01
 
     [Teardown]                               Run Keyword And Ignore Error        MOD_WAN_10_TC_01_Teardown
 
-# *** Test Cases ***
-# MOD_WAN_10_TC_01
-#     MOD_WAN_10_TC_01
+*** Test Cases ***
+MOD_WAN_10_TC_01
+    MOD_WAN_10_TC_01

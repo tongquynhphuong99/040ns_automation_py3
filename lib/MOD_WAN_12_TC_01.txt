@@ -1,0 +1,186 @@
+*** Settings ***
+Library                                            SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
+Resource                                           selenium/Login/SeleniumLoginLib.txt
+Resource                                           selenium/Network/SeleniumNetworkWANLib.txt
+Resource                                           selenium/Maintenance/SeleniumMaintenanceRebootResetLib.txt
+*** Variables ***
+
+*** Keywords ***
+MOD_WAN_12_TC_01_Teardown
+    ##Teardown
+    Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
+    
+    #####Factory Reset Via Web GUI
+    Login To Browser		                 password=${ONT}[ONT_WEB_PASS]
+    Factory Reset Via Web GUI
+  
+    SL.Go To                                 url=${LOGIN_URL}
+    SL.Wait Until Element Is Visible         ${LOGIN_BUTTON}
+    ...                                      timeout=25s
+    ...                                      error=\nLogin Page Does Not Found!
+    Run Keyword If                           '${SWITCH_VARIABLE}' == '3'      Log To Console	\nDon't need to change password after reset factory
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '2'      Change Password WebGui
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '1'      Change Password WebGui
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '0'      Change Password WebGui    
+    SL.Delete All Cookies
+    SL.Close All Browsers
+
+Verify Username                 
+    [Arguments]                               ${user}   
+    ${user_value}=    SL.Get Text    xpath=//*[@id="pppUserName"]
+    Should Be Equal    ${user}    ${user_value}
+
+Verify Password                      
+    [Arguments]                               ${password}
+    ${pass_value}=    SL.Get Text    xpath=//*[@id="pppPassword"]
+    Should Be Equal    ${password}    ${pass_value}
+
+Popup Password Should Be Visible
+   ${popup_message}=                        SL.Handle Alert    timeout=10s
+    Should Contain                          ${popup_message}   Invalid Password
+
+Popup Username Should Be Visible
+   ${popup_message}=                        SL.Handle Alert    timeout=10s
+    Should Contain                          ${popup_message}   Invalid Username
+    
+MOD_WAN_12_TC_01
+   [Documentation]                                 Kiem tra kha nang cau hinh truong Username/Password PPPoE
+    # SL.Set Selenium Speed                          0.5
+    # SL.Set Selenium Timeout                        10s
+    # Set Test Message                               *HTML* <b>MOD_WAN_12_TC_01</b>
+
+    ### Step 1: Open Browser & Login to WebGUI    
+    Log To Console                                \nStep 1: Login to Browser
+    Login To Browser
+    SL.Select Frame                               xpath=//frame[@name="contentfrm"]
+
+    ### Step 2: Open Config WAN Page
+    Log To Console                                \nStep 2: Open Config WAN Page
+    Open Network Settings Wan Page
+    SL.Maximize Browser Window
+
+# ###### Username
+    Log To Console                               	\nStep 1: Config UserName Empty
+    Config Username		                            name=${EMPTY}
+    Popup Username Should Be Visible
+
+    Log To Console                               	\nStep 2: Config UserName All Space 
+    Config Username		                            name=${SPACE*4}
+    Popup Username Should Be Visible
+
+    Log To Console                               	\nStep 3: Config Name SSID With Special Characters &|;$><`\!'" For Wifi 2.4Ghz On WebGui
+    Log To Console					                Step 3.1: SSID with &
+    Config Username	                                name=${USERNAME}&
+    Popup Username Should Be Visible
+
+    Log To Console					                Step 3.2: SSID with |
+    Config Username			                        name=${USERNAME}|
+    Popup Username Should Be Visible
+
+    Log To Console					                Step 3.3: SSID with ;
+    Config Username			                        name=${USERNAME};
+    Popup Username Should Be Visible
+
+    Log To Console					                Step 3.4: SSID with $
+    Config Username			                        name=${USERNAME}$
+    Popup Username Should Be Visible
+
+    Log To Console					                Step 3.5: SSID with >
+    Config Username			                        name=${USERNAME}>
+    Popup Username Should Be Visible
+
+    Log To Console					                Step 3.6: SSID with <
+    Config Username			                        name=${USERNAME}<
+    Popup Username Should Be Visible
+
+    Log To Console					                Step 3.7: SSID with `
+    Config Username			                        name=${USERNAME}`
+    Popup Username Should Be Visible
+
+    Log To Console					                Step 3.8: SSID with \\
+    Config Username			                        name=${USERNAME}\\
+    Popup Username Should Be Visible
+
+    Log To Console					                Step 3.9: SSID with !
+    Config Username			                        name=${USERNAME}!
+    Popup Username Should Be Visible
+
+    Log To Console					                Step 3.10: SSID with '
+    Config Username			                        name=${USERNAME}'
+    Popup Username Should Be Visible
+
+    Log To Console					                Step 3.11: SSID with "
+    Config Username			                        name=${USERNAME}"
+    Popup Username Should Be Visible
+
+    Log To Console                               	\nStep 4: Config Username Correct 
+    Config Username			                        name=${USERNAME}@#%^*()
+
+    Verify Username                                 user=${USERNAME}@#%^*()
+    
+# ###### Password
+    Log To Console                               	\nStep 1: Config UserName Empty
+    Config Password		                            pass=${EMPTY}
+    Popup Password Should Be Visible
+
+    Log To Console                               	\nStep 2: Config UserName All Space 
+    Config Password		                            pass=${SPACE*4}
+    Popup Password Should Be Visible
+
+    Log To Console                               	\nStep 3: Config Name SSID With Special Characters &|;$><`\!'" For Wifi 2.4Ghz On WebGui
+    Log To Console					                Step 3.1: SSID with &
+    Config Password	                                pass=${PASSWORD}&
+    Popup Password Should Be Visible
+
+    Log To Console					                Step 3.2: SSID with |
+    Config Password			                        pass=${PASSWORD}|
+    Popup Password Should Be Visible
+
+    Log To Console					                Step 3.3: SSID with ;
+    Config Password			                        pass=${PASSWORD};
+    Popup Password Should Be Visible
+
+    Log To Console					                Step 3.4: SSID with $
+    Config Password			                        pass=${PASSWORD}$
+    Popup Password Should Be Visible
+
+    Log To Console					                Step 3.5: SSID with >
+    Config Password			                        pass=${PASSWORD}>
+    Popup Password Should Be Visible
+
+    Log To Console					                Step 3.6: SSID with <
+    Config Password			                        pass=${PASSWORD}<
+    Popup Password Should Be Visible
+
+    Log To Console					                Step 3.7: SSID with `
+    Config Password			                        pass=${PASSWORD}`
+    Popup Password Should Be Visible
+
+    Log To Console					                Step 3.8: SSID with \\
+    Config Password			                        pass=${PASSWORD}\\
+    Popup Password Should Be Visible
+
+    Log To Console					                Step 3.9: SSID with !
+    Config Password			                        pass=${PASSWORD}!
+    Popup Password Should Be Visible
+
+    Log To Console					                Step 3.10: SSID with '
+    Config Password			                        pass=${PASSWORD}'
+    Popup Password Should Be Visible
+
+    Log To Console					                Step 3.11: SSID with "
+    Config Password			                        pass=${PASSWORD}"
+    Popup Password Should Be Visible
+
+    Log To Console                               	\nStep 4: Config Username Correct 
+    Config Password			                        pass=${PASSWORD}@#%^*()
+
+    Verify Password                                 password=${PASSWORD}@#%^*()
+
+    Logout WebGUI
+
+    # [Teardown]                               Run Keyword And Ignore Error        MOD_WAN_12_TC_01_Teardown
+
+*** Test Cases ***
+MOD_WAN_12_TC_01
+    MOD_WAN_12_TC_01

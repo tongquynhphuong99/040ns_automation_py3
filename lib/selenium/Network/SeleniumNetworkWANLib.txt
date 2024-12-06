@@ -16,7 +16,6 @@ Open Network Settings Wan Page
     # SL.Page Should Contain                     WAN
     
     SL.Click Element                                   xpath=//*[@id="net-wanset"]
-
     SL.Wait Until Page Contains                     WAN
     ...                                             timeout=20s
     ...                                             error=\nNetwork Settings WAN Configure Page Not Found
@@ -91,8 +90,10 @@ Select Internet Service Protocol
 ###
 Input VLAN ID
     [Arguments]                               ${vlan_id}
+     SL.Wait Until Element Is Visible    	xpath=//*[@id="vlan"]
+    ...                                 	timeout=10s
+    ...                                 	error=\nVLan Box Not Found
 
-    SL.Wait Until Element Is Visible          xpath=//*[@id="vlan"]
     SL.Input Text                             xpath=//*[@id="vlan"]     ${vlan_id}
 
 ###
@@ -363,7 +364,7 @@ Click Button Save WAN
     # Save Config WAN
     SL.Wait Until Element Is Visible          xpath=//*[@id="btnOK"]
     SL.Click Button                           xpath=//*[@id="btnOK"]
-    Sleep                                     20s
+    Sleep                                     25s
     
 Config IPv4 Dynamic WAN IPoE
 	[Documentation]                     Select and configure IPoE WAN Service IPv4
@@ -958,57 +959,54 @@ Create New Wan PPPoE
 
     Save Wan Settings
 
-# Get Column Indexx
-#     [Documentation]             Get column index base on column name.
-#     ...                         Input:
-#     ...                         1. column_name
-#     ...                         Return:
-#     ...                         1. Column index if found, else return 'None'
+Get Column Index Wan Info
+    [Documentation]             Get column index base on column name.
+    ...                         Input:
+    ...                         1. column_name
+    ...                         Return:
+    ...                         1. Column index if found, else return 'None'
 
-#     [Arguments]                 ${column_name}=NAT
+    [Arguments]                 ${column_name}=Connection Name
     
-#     # SL.Click Element                          xpath=//*[@id="status_deviceinfo"]
-#     # SL.Click Element                          xpath=//*[@id="sta-network"]
+    SL.Click Element                          xpath=//*[@id="status_deviceinfo"]
+    SL.Click Element                          xpath=//*[@id="sta-network"]
     
-#     ${index}=                   Set Variable     None
-#     SL.Set Selenium Speed       0.1
-#     FOR    ${i}    IN RANGE    2    7                                                                      
-#         ${element_is_visible}=    Run Keyword And Return Status       SL.Element Should Be Visible    xpath=//*[@id="network_info"]/tbody/tr[1]/td[${i}]
-#         ${column_name_tmp}=       SL.Get Text    xpath=/*[@id="network_info"]/tbody/tr[1]/td[${i}]
-#         ${index}=          Set Variable If    '${column_name_tmp}' == '${column_name}'     ${i}
-#         Exit For Loop If   '${column_name_tmp}' == '${column_name}'
-#     END
-#     SL.Set Selenium Speed       0.3
-#     RETURN                    ${index}
+    ${index}=                   Set Variable     None
+    SL.Set Selenium Speed       0.1
+    FOR    ${i}    IN RANGE    1    8                                                                      
+        ${element_is_visible}=    Run Keyword And Return Status       SL.Element Should Be Visible    xpath=//*[@id="network_info"]/tbody/tr[1]/td[${i}]
+        ${column_name_tmp}=       SL.Get Text    xpath=//*[@id="network_info"]/tbody/tr[1]/td[${i}]
+        ${index}=          Set Variable If    '${column_name_tmp}' == '${column_name}'     ${i}
+        Exit For Loop If   '${column_name_tmp}' == '${column_name}'
+    END
+    SL.Set Selenium Speed       0.3
+    RETURN                    ${index}
 
-# Get Row Indexx
-#     [Documentation]             Get row index base on column name and column value.
-#     ...                         Input:
-#     ...                         1. column_name
-#     ...                         2. column_value
-#     ...                         Return:
-#     ...                         1. Row index if found, else return 'None'
+Get Row Index Wan Info
+    [Documentation]             Get row index base on column name and column value.
+    ...                         Input:
+    ...                         1. column_name
+    ...                         2. column_value
+    ...                         Return:
+    ...                         1. Row index if found, else return 'None'
 
-#     [Arguments]                 ${column_name}   ${column_value}
-    
-#     SL.Click Element                          xpath=//*[@id="status_deviceinfo"]
-#     SL.Click Element                          xpath=//*[@id="sta-network"]
-    
-#     ${index}=                   Set Variable     None 
-#     SL.Set Selenium Speed       0.1
-#     ${column_index_tmp}=        SeleniumNetworkWANLib.Get Column Index            ${column_name}
-#     FOR    ${row_i}    IN RANGE    2    20
-#         ${element_is_visible}=    Run Keyword And Return Status       SL.Element Should Be Visible    xpath=//*[@id="network_info"]/tbody/tr[${row_i}]/td[4]
-#         Exit For Loop If    '${element_is_visible}' == 'False'
-#         ${column_value_tmp}=     SL.Get Text     xpath=//*[@id="network_info"]/tbody/tr[${row_i}]/td[${column_index_tmp}]
-#         ${index}=           Set Variable If     '${column_value}' in '${column_value_tmp}'    ${row_i}
-#         Exit For Loop If    '${column_value}' in '${column_value_tmp}'
-#     END
-#     SL.Set Selenium Speed       0.3
-#     RETURN                    ${index}
-# ###
+    [Arguments]                 ${column_name}   ${column_value}
 
+    ${index}=                   Set Variable     None 
+    SL.Set Selenium Speed       0.1
+    ${column_index_tmp}=        SeleniumNetworkWANLib.Get Column Index Wan Info           ${column_name}
+    FOR    ${row_i}    IN RANGE    1    4
+        ${element_is_visible}=    Run Keyword And Return Status       SL.Element Should Be Visible    xpath=//*[@id="network_info"]/tbody/tr[${row_i}]/td[4]
+        Exit For Loop If    '${element_is_visible}' == 'False'
+        ${column_value_tmp}=     SL.Get Text     xpath=//*[@id="network_info"]/tbody/tr[${row_i}]/td[${column_index_tmp}]
+        ${index}=           Set Variable If         '${column_value}' in '${column_value_tmp}'    ${row_i}
+        Exit For Loop If    '${column_value}' in '${column_value_tmp}'
+    END
+    SL.Set Selenium Speed       0.3
+    RETURN                    ${index}
 ###
+
+##
 Get Column Index
     [Documentation]             Get column index base on column name.
     ...                         Input:
@@ -1019,7 +1017,7 @@ Get Column Index
     [Arguments]                 ${column_name}
 
     ${index}=                   Set Variable     None
-    SL.Set Selenium Speed       0.1
+    SL.Set Selenium Speed       0.1 
     FOR    ${i}    IN RANGE    2    7                                                                      
         ${element_is_visible}=    Run Keyword And Return Status       SL.Element Should Be Visible    xpath=//*[@id="WanInfoTable"]/tbody/tr[1]/td[${i}]
         Exit For Loop If    '${element_is_visible}' == 'False'   
@@ -1041,8 +1039,8 @@ Get Row Index
     [Arguments]                 ${column_name}   ${column_value}
 
     ${index}=                   Set Variable     None
-    SL.Set Selenium Speed       0.1
-    ${column_index_tmp}=        SeleniumNetworkWANLib.Get Column Index            ${column_name}
+    SL.Set Selenium Speed       0.1  
+    ${column_index_tmp}=        SeleniumNetworkWANLib.Get Column Index          ${column_name}
     FOR    ${row_i}    IN RANGE    2    20
         ${element_is_visible}=    Run Keyword And Return Status       SL.Element Should Be Visible    xpath=//*[@id="WanInfoTable"]/tbody/tr[${row_i}]/td[4]
         Exit For Loop If    '${element_is_visible}' == 'False'
@@ -1052,6 +1050,117 @@ Get Row Index
     END
     SL.Set Selenium Speed       0.3
     RETURN                    ${index}
+
+Config Gateway Type
+    [Arguments]                                  ${mode}
+
+    SL.Wait Until Element Is Visible             xpath=//*[@id="select2"]
+    ...                                          timeout=10s
+    ...                                          error=\nSelect Gateway Type Does Not Show Up
+    
+    ${mode_value}=      SL.Get Value       xpath=//*[@id="select2"]/option[contains(text(), "${mode}")]
+    SL.Select From List By Value           xpath=//*[@id="select2"]     ${mode_value}
+
+Config Bearer Service
+    [Arguments]                                  ${bearer_ser}
+    SL.Wait Until Element Is Visible             xpath=//*[@id="serviceList"]
+    ...                                          timeout=10s
+    ...                                          error=\nBearer Service Type Does Not Show Up
+    ${value}=    SL.Get Value    xpath=//*[@id="serviceList"]/option[contains(text(), "${bearer_ser}")]
+    SL.Select From List By Value    xpath=//*[@id="serviceList"]    ${value}
+
+Config Link Mode 
+    [Arguments]                                   ${link_mode}
+    SL.Wait Until Element Is Visible              xpath=//*[@id="linkMode"]
+    ...                                           timeout=10s 
+    ...                                           error=\nSelect Link mode Does Not Show Up 
+    SL.Click Element                              xpath=//*[@id="linkMode" and @value="${link_mode}"] 
+
+Config Protocol Version
+    [Arguments]                                   ${ver}
+    SL.Wait Until Element Is Visible              xpath=//*[@id="IpVersion"]
+    ...                                           timeout=10s 
+    ...                                           error=\nSelect Protocol Version Does Not Show Up 
+    SL.Click Element                              xpath=//*[@id="IpVersion" and @value="${ver}"] 
+
+Config VLAN Type
+    [Arguments]                                  ${type}
+
+    SL.Wait Until Element Is Visible             xpath=//*[@id="VLANMode"]
+    ...                                          timeout=10s
+    ...                                          error=\nSelect VLAN Type Does Not Show Up
+    
+    ${type_value}=      SL.Get Value       xpath=//*[@id="VLANMode"]/option[contains(text(), "${type}")]
+    SL.Select From List By Value           xpath=//*[@id="VLANMode"]     ${type_value}
+
+Config Username
+    [Arguments]                                  ${name}
+    SL.Wait Until Element Is Visible             xpath=//*[@id="pppUserName"]
+    ...                                          timeout=10s
+    ...                                          error=\nSelect Username Does Not Show Up
+    SL.Input Text                                xpath=//*[@id="pppUserName"]   ${name}
+
+Config Password
+    [Arguments]                                  ${pass}
+    SL.Wait Until Element Is Visible             xpath=//*[@id="pppPassword"]
+    ...                                          timeout=10s
+    ...                                          error=\nSelect Password Does Not Show Up
+    SL.Input Text                                xpath=//*[@id="pppPassword"]   ${pass}
+
+Config Style of Acquiring IPv6 WAN Information
+    [Arguments]                                  ${input_value}
+
+    SL.Wait Until Element Is Visible             xpath=//*[@id="IdIpv6AddrType"]
+    ...                                          timeout=10s
+    ...                                          error=\nSelect VLAN Type Does Not Show Up
+    
+    ${type_value}=      SL.Get Value       xpath=//*[@id="IdIpv6AddrType"]/option[contains(text(), "${input_value}")]
+    SL.Select From List By Value           xpath=//*[@id="IdIpv6AddrType"]     ${type_value}
+
+Config Enable PD
+	[Arguments]                                   ${enable}
+
+    SL.Wait Until Element Is Visible    	xpath=//*[@id="cb_enabledpd"]
+    ...                                 	timeout=10s
+    ...                                 	error=\nChoose Enable PD Box Not Found
+    ${status}=        SL.Execute Javascript        return document.querySelector("#cb_enabledpd").checked
+    
+    Run Keyword If        '${enable}' == 'On' and '${status}' == 'False'        SL.Execute Javascript        document.querySelector("#cb_enabledpd").click();
+    ...   ELSE IF         '${enable}' == 'Off' and '${status}' == 'True'        SL.Execute Javascript        document.querySelector("#cb_enabledpd").click();
+
+Config Prefix Mode 
+    [Arguments]                                   ${mode}
+    SL.Wait Until Element Is Visible              xpath=//*[@id="pdmode"]
+    ...                                           timeout=10s 
+    ...                                           error=\nSelect Prefix Mode Does Not Show Up 
+    SL.Click Element                              xpath=//*[@id="pdmode" and @value="${mode}"] 
+
+Config Prefix Address
+    [Arguments]                                   ${addr}
+    SL.Wait Until Element Is Visible              xpath=//*[@id="pdprefix"]
+    ...                                           timeout=10s 
+    ...                                           error=\nSelect Prefix Address Does Not Show Up 
+    SL.Input Text                                 xpath=//*[@id="pdprefix"]    ${addr}
+
+Config Primary Time
+   [Arguments]                                    ${pri_time}
+    SL.Wait Until Element Is Visible              xpath=//*[@id="pdprefixptime"]
+    ...                                           timeout=10s 
+    ...                                           error=\nSelect Primary Time Does Not Show Up 
+    SL.Input Text                                 xpath=//*[@id="pdprefixptime"]    ${pri_time}
+
+Config Lease Time
+   [Arguments]                                    ${lease_time}
+    SL.Wait Until Element Is Visible              xpath=//*[@id="pdprefixvtime"]
+    ...                                           timeout=10s 
+    ...                                           error=\nSelect Lease Time Does Not Show Up 
+    SL.Input Text                                 xpath=//*[@id="pdprefixvtime"]    ${lease_time}
+
+Click WAN 
+    [Arguments]                                     ${column_name}    ${column_value}
+    ${row_index_tmp}=                          		Get Row Index    ${column_name}    ${column_value}
+    SL.Click Element                          		xpath=//*[@id="WanInfoTable"]/tbody/tr[${row_index_tmp}]
+
 ###
 Click Delete Button
     [Arguments]           ${row_index}       ${remove_column_index}
@@ -1097,12 +1206,18 @@ Edit Wan Service
 
 ###
 Delete WAN
-    [Arguments]  					${vlan_id}       
-                       		
-    ${row_index_tmp}=                          		SeleniumNetworkWANLib.Get Row Index    VLAN/Priority    ${vlan_id}
+    [Arguments]  					                ${column_name}    ${row_name}
+   		
+    ${row_index_tmp}=                          		SeleniumNetworkWANLib.Get Row Index    ${column_name}    ${row_name}
     SL.Click Element                          		xpath=//*[@id="WanInfoTable"]/tbody/tr[${row_index_tmp}]/td[6]
     
 ###
+
+Popup Delete WAN
+    [Documentation]                          Handle popup Delete WAN 
+    ${popup_message}=                        SL.Handle Alert    timeout=10s
+    Should Contain                           ${popup_message}    Are you sure to delete the WAN connection?
+
 Input MTU Size For Bridge Mode
     [Arguments]                                ${bridge_mtu_size}
     Log To Console                              \nInput MTU size
@@ -1277,6 +1392,6 @@ Popup Vlan Id Out Of Range Should Be Visible
 Verify WAN Was Created
     [Arguments]                                		${vlan_id}
     
-    ${row_index_tmp}=                          		SeleniumNetworkWANLib.Get Row Index    VlanMuxId    ${vlan_id}
+    ${row_index_tmp}=                          		SeleniumNetworkWANLib.Get Row Index    VLAN/Priority    ${vlan_id}
     Should Not Be Equal                        		'${row_index_tmp}'    'None'
     Log To Console					\nWAN With VLAN ID = ${vlan_id} was created    

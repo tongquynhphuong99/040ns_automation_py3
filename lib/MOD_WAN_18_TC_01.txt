@@ -1,0 +1,92 @@
+*** Settings ***
+Library                                            SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
+Resource                                           selenium/Login/SeleniumLoginLib.txt
+Resource                                           selenium/Network/SeleniumNetworkWANLib.txt
+Resource                                           selenium/Maintenance/SeleniumMaintenanceRebootResetLib.txt
+*** Variables ***
+
+*** Keywords ***
+MOD_WAN_18_TC_01_Teardown
+    ##Teardown
+    Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
+    
+    #####Factory Reset Via Web GUI
+    Login To Browser		                 password=${ONT}[ONT_WEB_PASS]
+    Factory Reset Via Web GUI
+  
+    SL.Go To                                 url=${LOGIN_URL}
+    SL.Wait Until Element Is Visible         ${LOGIN_BUTTON}
+    ...                                      timeout=25s
+    ...                                      error=\nLogin Page Does Not Found!
+    Run Keyword If                           '${SWITCH_VARIABLE}' == '3'      Log To Console	\nDon't need to change password after reset factory
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '2'      Change Password WebGui
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '1'      Change Password WebGui
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '0'      Change Password WebGui    
+    SL.Delete All Cookies
+    SL.Close All Browsers
+
+MOD_WAN_18_TC_01
+   [Documentation]                                 Kiem tra kha nang Edit WAN
+    # SL.Set Selenium Speed                          0.5
+    # SL.Set Selenium Timeout                        10s
+    # Set Test Message                               *HTML* <b>MOD_WAN_18_TC_01</b>
+
+    ### Step 1: Open Browser & Login to WebGUI    
+    Log To Console                                \nStep 1: Login to Browser
+    Login To Browser
+    SL.Select Frame                               xpath=//frame[@name="contentfrm"]
+
+    ### Step 2: Open Config WAN Page
+    Log To Console                                \nStep 2: Open Config WAN Page
+    Open Network Settings Wan Page
+    SL.Maximize Browser Window
+
+    ## Step 3: Add new WAN & para of wan interface
+    Log To Console                                \nStep 3: Add new WAN & para of wan interface
+    # Click button add new WAN
+    Add New Wan Service
+    Sleep                                         2s
+    # Config Protocol Version Ipv4/IPv6
+    Config Protocol Version                      ver=IPv4/IPv6
+    # Config VLAN Type TAG
+    Config VLAN Type                              type=TAG
+    # Config VLAN ID = 11
+    Input VLAN ID                                 vlan_id=11
+    # Config MTU = 1281
+    Input MTU                                    input=1281
+    # Save
+    Click Button Save WAN
+    ## Step 3.1: Verify WAN was created
+    Log To Console                            \nStep 3.1: Verify WAN With tag VLAN = 11 was created
+    ${row_index_tmp}=                         Get Row Index    VLAN/Priority    11
+    Should Not Be Equal                       '${row_index_tmp}'    'None'
+    Log To Console                            \nWAN Was Created!
+
+    ### Step 4: Edit WAN, change VLAN from 11 to 12
+    Log To Console                            \nStep 4: Edit WAN VLAN 11 -> 12
+    Click WAN                                 column_name=VLAN/Priority    column_value=11
+    Input VLAN ID                             vlan_id=12
+    Click Button Save WAN
+    ## Step 4.1: Verify WAN was changed
+    Log To Console                            \nStep 4.1: Verify WAN was changed
+    ${row_index_tmp}=                         Get Row Index    VLAN/Priority    12
+    Should Not Be Equal                       '${row_index_tmp}'    'None'
+    Click WAN                                 column_name=VLAN/Priority    column_value=12
+    # Verify Protocol Version Ipv4/IPv6
+    ${ip_mode_status}=            SL.Execute Javascript    return document.querySelector('input[id="IpVersion"][value="IPv4/IPv6"]').checked
+    Should Be Equal              '${ip_mode_status}'        'True'
+    # Verify VLAN Type
+    ${value}=                                SL.Get Text    xpath=//*[@id="VLANMode"]/option[contains(text(), "TAG")]
+    Should Be Equal                          '${value}'    'TAG'
+    # Verify MTU = 1281
+    ${get_value}=                            SL.Get Value    xpath=//*[@id="MTU"]
+    Should Be Equal                          '1281'    '${get_value}'
+
+    Logout WebGUI
+
+    # [Teardown]                               Run Keyword And Ignore Error        MOD_WAN_18_TC_01_Teardown
+
+*** Test Cases ***
+MOD_WAN_18_TC_01
+    MOD_WAN_18_TC_01
+
