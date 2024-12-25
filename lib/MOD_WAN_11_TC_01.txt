@@ -1,8 +1,10 @@
 *** Settings ***
 Library                                            SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
 Resource                                           selenium/Login/SeleniumLoginLib.txt
-Resource                                           selenium/Network/SeleniumNetworkWANLib.txt
 Resource                                           selenium/Maintenance/SeleniumMaintenanceRebootResetLib.txt
+Resource                                           selenium/Network/SeleniumNetworkWANLib.txt
+Resource                                           selenium/Status/SeleniumStatusWANInfoLib.txt
+
 *** Variables ***
 
 *** Keywords ***
@@ -24,25 +26,17 @@ MOD_WAN_11_TC_01_Teardown
     ...    ELSE IF                           '${SWITCH_VARIABLE}' == '0'      Change Password WebGui    
     SL.Delete All Cookies
     SL.Close All Browsers
-Verify Enable/Disable NAT
-    [Arguments]                              ${vlan_id}
-    ...                                      ${print}
-
-    ${status}=                               SL.Execute Javascript    return document.querySelector("#cb_nat").checked
-    Run Keyword If                           '${status}' != '${print}'        Fail    "NAT Wrong" 
-
-    # ${row_index_tmp1}=                       Get Row Index Wan Info      NAT     ${vlan_id}
-    # Run Keyword If                           '${row_index_tmp1}' == 'None'        Fail    "NAT Wrong" 
 
 MOD_WAN_11_TC_01
    [Documentation]                                   Kiem tra kha nang cau hinh truong NAT
+
     # SL.Set Selenium Speed                          0.5
     # SL.Set Selenium Timeout                        10s
-    # Set Test Message                               *HTML* <b>MOD_WAN_11_TC_01</b>
+    Set Test Message                               *HTML* <b>MOD_WAN_11_TC_01</b>
 
     ### Step 1: Open Browser & Login to WebGUI    
     Log To Console                                \nStep 1: Login to Browser
-    Login To Browser
+    Login To Browser		             		  password=${ONT}[ONT_WEB_PASS]
     SL.Select Frame                               xpath=//frame[@name="contentfrm"]
 
     ### Step 2: Open Config WAN Page
@@ -53,46 +47,33 @@ MOD_WAN_11_TC_01
     ### Step 3: Add WAN & para of wan interface
     Log To Console                               \nStep 3: Add WAN & para of wan interface
     
-    # Click button add new WAN
     Add New Wan Service
-
-    # Config VLAN ID = 11
     Input VLAN ID                                 vlan_id=11
     
     ## Step 3.1: Config Enable NAT
     Log To Console                                \nStep 3.1: Config Enable NAT
-
-    # Choose WAN Enable
     Select Enable/Disable NAT                     enable=On
-
-    # Save
     Click Button Save WAN
-    Sleep                                          5s
     
-    # Step 3.1.1 Verify Enable NAT
-    Log To Console                                \nStep 3.1.1 Verify Enable NAT
+    # Verify Enable NAT
     Click WAN                                     column_name=VLAN/Priority    column_value=11
-    Verify Enable/Disable NAT                     vlan_id=11    print=True
+    Verify Enable/Disable NAT                     vlan_id=11
+    ...                                           enable=On
    
-   ## Step 3.2: Config Disable NAT
+    ## Step 3.2: Config Disable NAT
     Log To Console                                \nStep 3.2: Config Disable NAT
-
-    # Choose WAN Disable
     Click WAN                                     column_name=VLAN/Priority    column_value=11
     Select Enable/Disable NAT                     enable=Off
-
-    # Save
     Click Button Save WAN
-    Sleep                                          5s
     
-    # Step 3.2.1 Verify Enable NAT
-    Log To Console                                 \nStep 3.2.1 Verify Enable NAT
-    Verify Enable/Disable NAT                      vlan_id=11    print=False
+    # Verify Enable NAT
+    Verify Enable/Disable NAT                     vlan_id=11
+    ...                                           enable=Off
 
     Logout WebGUI
 
-    # [Teardown]                               Run Keyword And Ignore Error        MOD_WAN_11_TC_01_Teardown
+    [Teardown]                               Run Keyword And Ignore Error        MOD_WAN_11_TC_01_Teardown
 
-*** Test Cases ***
-MOD_WAN_11_TC_01
-    MOD_WAN_11_TC_01
+# *** Test Cases ***
+# MOD_WAN_11_TC_01
+#     MOD_WAN_11_TC_01

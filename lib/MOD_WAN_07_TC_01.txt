@@ -1,8 +1,10 @@
 *** Settings ***
 Library                                            SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
 Resource                                           selenium/Login/SeleniumLoginLib.txt
-Resource                                           selenium/Network/SeleniumNetworkWANLib.txt
 Resource                                           selenium/Maintenance/SeleniumMaintenanceRebootResetLib.txt
+Resource                                           selenium/Network/SeleniumNetworkWANLib.txt
+Resource                                           selenium/Status/SeleniumStatusWANInfoLib.txt
+
 *** Variables ***
 
 *** Keywords ***
@@ -25,80 +27,84 @@ MOD_WAN_07_TC_01_Teardown
     SL.Delete All Cookies
     SL.Close All Browsers
 
-Popup VLAN ID In Range 1~4094 Should Be Visible
-    [Documentation]                          Handle popup VLAN ID Must Be In Range 1~4094
-    ${popup_message}=                        SL.Handle Alert    timeout=10s
-    Should Contain                           ${popup_message}    VLAN ID Invalid!
-
-Verify VLAN ID 
-    [Arguments]                              ${input}
-    ${get_value}=                            SL.Get Value    xpath=//*[@id="vlan"]
-    Should Be Equal                          ${input}    ${get_value}
-
 MOD_WAN_07_TC_01
    [Documentation]                                   Kiem tra kha nang cau hinh truong VLAN ID
-    SL.Set Selenium Speed                          0.5
-    SL.Set Selenium Timeout                        10s
+
+    # SL.Set Selenium Speed                          0.5
+    # SL.Set Selenium Timeout                        10s
     Set Test Message                               *HTML* <b>MOD_WAN_07_TC_01</b>
 
     ### Step 1: Open Browser & Login to WebGUI    
     Log To Console                                \nStep 1: Login to Browser
-    Login To Browser
+    Login To Browser		             		  password=${ONT}[ONT_WEB_PASS]
     SL.Select Frame                               xpath=//frame[@name="contentfrm"]
 
-    ### Step 2: Create new WAN With VLAN ID = -1 
-    Log To Console                                \nStep 2: Create new WAN With VLAN ID = -1 
-
-    ## Step 2.1: Open Config WAN Page
-    Log To Console                                \nStep 2.1: Open Config WAN Page
+    ### Step 2: Create new WAN With VLAN ID Invalid 
+    Log To Console                                \nStep 2: Create new WAN With VLAN ID Invalid 
     Open Network Settings Wan Page
     SL.Maximize Browser Window
-
-    # Click button add new WAN
     Add New Wan Service
 
-    ## Step 2.2: Config VLAN ID = -1 
-    Log To Console                               \nStep 2.2: Config VLAN ID = -1
-    Input VLAN ID                                 vlan_id=-1
-
-    # Save
+    ## Step 2.1: Config VLAN ID EMPTY
+    Log To Console                                \nStep 2.1: Config VLAN ID EMPTY
+    Input VLAN ID                                 vlan_id=${EMPTY}
     Click Button Save WAN
-    Popup VLAN ID In Range 1~4094 Should Be Visible
-    Sleep                                          2s
+    Check Popup And Continue On Failure           popup=Popup VLAN ID In Range 1~4094 Should Be Visible
 
-    ### Step 2.3: Config VLAN ID = 4096 
-    Log To Console                               \nStep 2.3: Config VLAN ID = 4096 
-    Input VLAN ID                                 vlan_id=4096
-
-    # Save
+    ## Step 2.2: Config VLAN ID All Space
+    Log To Console                                \nStep 2.2: Config VLAN ID All Space
+    Input VLAN ID                                 vlan_id=${SPACE*4}
     Click Button Save WAN
-    Popup VLAN ID In Range 1~4094 Should Be Visible
-    Sleep                                          2s
+    Check Popup And Continue On Failure           popup=Popup VLAN ID In Range 1~4094 Should Be Visible
+
+    ## Step 2.3: Config VLAN ID = 0 
+    Log To Console                                \nStep 2.3: Config VLAN ID = 0
+    Input VLAN ID                                 vlan_id=0
+    Click Button Save WAN
+    Check Popup And Continue On Failure           popup=Popup VLAN ID In Range 1~4094 Should Be Visible
+
+    ### Step 2.4: Config VLAN ID = 4095 
+    Log To Console                                \nStep 2.4: Config VLAN ID = 4095 
+    Input VLAN ID                                 vlan_id=4095
+    Click Button Save WAN
+    Check Popup And Continue On Failure           popup=Popup VLAN ID In Range 1~4094 Should Be Visible
     
-    ### Step 2.4: Config VLAN ID with special character
-    Log To Console                               \nStep 2.4: Config VLAN ID with special character
+    ## Step 2.5: Config VLAN ID with special character
+    Log To Console                                \nStep 2.5: Config VLAN ID with special character
     Input VLAN ID                                 vlan_id=@11
-
-    # Save
     Click Button Save WAN
-    Popup VLAN ID In Range 1~4094 Should Be Visible
-    Sleep                                          2s
+    Check Popup And Continue On Failure           popup=Popup VLAN ID In Range 1~4094 Should Be Visible
 
-    ### Step 2.5: Config VLAN ID range 1~4094
-    Log To Console                               \nStep 2.5: Config VLAN ID range 1~4094
-    Input VLAN ID                                 vlan_id=13
+    ### Step 3: Create new WAN With VLAN ID Valid (range 1~4094)
+    Log To Console                                \nStep 3: Create new WAN With VLAN ID Valid (range 1~4094)
 
-    # Save
+    ## Step 3.1: Config VLAN ID = 1
+    Log To Console                                \nStep 3.1: Config VLAN ID = 1
+    Input VLAN ID                                 vlan_id=1
     Click Button Save WAN
-    Sleep                                         2s
 
     # Verify VLAN ID
-    Verify VLAN ID                                input=13
+    Verify VLAN ID                                vlan_id=1
+
+    ## Step 3.2: Delete WAN was created
+    Log To Console                                 \nStep 3.2: Delete WAN was created
+    Delete WAN                                     column_name=VLAN/Priority    row_name=1
+    Popup Delete WAN
+    Sleep                                          5s
+
+    ## Step 3.3: Config VLAN ID = 4094
+    Log To Console                                \nStep 3.3: Config VLAN ID = 4094
+    Add New Wan Service
+    Input VLAN ID                                 vlan_id=4094
+    Click Button Save WAN
+
+    # Verify VLAN ID
+    Verify VLAN ID                                vlan_id=4094
 
     Logout WebGUI
 
     [Teardown]                               Run Keyword And Ignore Error        MOD_WAN_07_TC_01_Teardown
 
-*** Test Cases ***
-MOD_WAN_07_TC_01
-    MOD_WAN_07_TC_01
+# *** Test Cases ***
+# MOD_WAN_07_TC_01
+#     MOD_WAN_07_TC_01

@@ -1,8 +1,10 @@
 *** Settings ***
 Library                                            SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
 Resource                                           selenium/Login/SeleniumLoginLib.txt
-Resource                                           selenium/Network/SeleniumNetworkWANLib.txt
 Resource                                           selenium/Maintenance/SeleniumMaintenanceRebootResetLib.txt
+Resource                                           selenium/Network/SeleniumNetworkWANLib.txt
+Resource                                           selenium/Status/SeleniumStatusWANInfoLib.txt
+
 *** Variables ***
 
 *** Keywords ***
@@ -25,88 +27,81 @@ MOD_WAN_16_TC_01_Teardown
     SL.Delete All Cookies
     SL.Close All Browsers
 
-Verify Primary Time
-    [Arguments]                              ${input}
-    SL.Wait Until Element Is Visible         xpath=//*[@id="pdprefixptime"]    timeout=10s
-    ...                                      error=\nPrimary Time Textbox Does Not Show Up
-    ${value}=                                SL.Get Value    xpath=//*[@id="pdprefixptime"] 
-    Should Be Equal                          ${input}    ${value}
-
-Popup Primary Time In Range 600~4294967295 Should Be Visible
-    [Documentation]                          Handle popup Primary Time Must Be In Range 600~4294967295
-    [Arguments]                              ${input_time}
-    ${popup_message}=                        SL.Handle Alert    timeout=10s
-    Should Contain                           ${popup_message}   Prefix primary time"${input_time}" is invalid
-
 MOD_WAN_16_TC_01
-   [Documentation]                                 Kiem tra kha nang cau hinh truong Primary Time
+   [Documentation]                                 Kiem tra kha nang cau hinh truong Prefix Address
+
     # SL.Set Selenium Speed                          0.5
     # SL.Set Selenium Timeout                        10s
-    # Set Test Message                               *HTML* <b>MOD_WAN_16_TC_01</b>
+    Set Test Message                               *HTML* <b>MOD_WAN_16_TC_01</b>
 
     ### Step 1: Open Browser & Login to WebGUI    
     Log To Console                                \nStep 1: Login to Browser
-    Login To Browser
+    Login To Browser		             		  password=${ONT}[ONT_WEB_PASS]
     SL.Select Frame                               xpath=//frame[@name="contentfrm"]
 
-    ### Step 2: Open Config WAN Page
-    Log To Console                                \nStep 2: Open Config WAN Page
+    ### Step 2: Add WAN & para of wan interface
+    Log To Console                                \nStep 2: Add WAN & para of wan interface
     Open Network Settings Wan Page
     SL.Maximize Browser Window
-
-    ### Step 3: Config Primary Time = 599
-    Log To Console                                \nStep 3: Config Primary Time = 599
-    ## Step 3.1: Add WAN & para of wan interface
-    Log To Console                                \nStep 3.1: Add WAN & para of wan interface
-    # Click button add new WAN
     Add New Wan Service
-    Sleep                                         2s
-    # Config Protocol Version Ipv4/IPv6 or IPv6
-    Config Protocol Version                       ver=IPv4/IPv6
-    # Config VLAN ID = 11
     Input VLAN ID                                 vlan_id=11
-    # Config Enable PD
+
+    ### Step 3: Config Prefix Address Invalid
+    Log To Console                                \nStep 3: Config Prefix Address Invalid
     Config Enable PD                              enable=On
-    Config Prefix Mode                            mode=No
-    Config Prefix Address                         addr=2001:0db8:85a3::/64
-    Config Primary Time                           pri_time=599
+    Config Prefix Mode                            mode=Manual
+    Config Primary Time                           pri_time=1111
     Config Lease Time                             lease_time=2222
-    # Save 
-    Click Button Save WAN
-    Popup Primary Time In Range 600~4294967295 Should Be Visible    input_time=599
-    Sleep                                         2s
 
-    ### Step 4: Config Primary Time = 4294967296
-    Log To Console                                \nStep 4: Config Primary Time = 4294967296
-    Config Primary Time                           pri_time=4294967296
-    # Save 
+    ## Step 3.1: Config Prefix Address = '${EMPTY}'
+    Log To Console                                \nStep 3.1: Config Prefix Address = '${EMPTY}'
+    Config Prefix Address                         addr=${EMPTY}
     Click Button Save WAN
-    Popup Primary Time In Range 600~4294967295 Should Be Visible    input_time=4294967296
-    Sleep                                         2s
+    Check Popup And Continue On Failure           popup=Popup Prefix Address Invalid Should Be Visible
+    ...                                           vlan_id=11
 
-    ### Step 5: Config Primary Time with special character
-    Log To Console                                \nStep 5: Config Primary Time with special character
-    Config Primary Time                           pri_time=@
-    # Save 
+    ## Step 3.2: Config Prefix Address is All Space
+    Log To Console                                \nStep 3.1: Config Prefix Address is All Space
+    Config Prefix Address                         addr=${SPACE*4}
     Click Button Save WAN
-    Popup Primary Time In Range 600~4294967295 Should Be Visible    input_time=@
-    Sleep                                         2s
+    Check Popup And Continue On Failure           popup=Popup Prefix Address Invalid Should Be Visible
+    ...                                           vlan_id=11
 
-    ### Step 6: Config Primary Time range 600~4294967295
-    Log To Console                                \nStep 6: Config Primary Time range 600~4294967295
-    Config Primary Time                           pri_time=603
-    # Save 
+    ## Step 3.3: Config Prefix Address = abcde::/64
+    Log To Console                                \nStep 3.3: Config Prefix Address = abcde::/64
+    Config Prefix Address                         addr=abcde::/64
     Click Button Save WAN
-    ## Step 6.1 Verify Primary Time range 600~4294967295
-    Log To Console                                \nStep 3.2 Verify Primary Time range 600~4294967295
-    Click WAN                                     column_name=VLAN/Priority    column_value=11
-    SL.Scroll Element Into View                   xpath=//*[@id="pdprefixptime"]
-    Verify Primary Time                           input=603
-    
+    Check Popup And Continue On Failure           popup=Popup Prefix IP Invalid Should Be Visible
+    ...                                           vlan_id=11
+
+    ## Step 3.3: Config Prefix Address = 3ffe:501:ffff:100::ccccc
+    Log To Console                                \nStep 3.4: Config Prefix Address = 3ffe:501:ffff:100::ccccc
+    Config Prefix Address                         addr=3ffe:501:ffff:100::ccccc
+    Click Button Save WAN
+    Check Popup And Continue On Failure           popup=Popup Prefix Address Invalid Should Be Visible
+    ...                                           vlan_id=11
+
+    ## Step 3.5: Config Prefix Address = 3ffe:501:ffff:@@@::
+    Log To Console                                \nStep 3.5: Config Prefix Address = 3ffe:501:ffff:@@@::
+    Config Prefix Address                         addr=3ffe:501:ffff:@@@::
+    Click Button Save WAN
+    Check Popup And Continue On Failure           popup=Popup Prefix Address Invalid Should Be Visible
+    ...                                           vlan_id=11
+
+    ### Step 4: Config Prefix Address Valid
+    Log To Console                                \nStep 4: Config Prefix Address Valid
+
+    Config Prefix Address                         addr=2001:0db8:85a3::/64
+    Click Button Save WAN
+
+
+    Verify Prefix Address                         vlan_id=11
+    ...                                           addr=2001:0db8:85a3::/64
+
     Logout WebGUI
 
-    # [Teardown]                               Run Keyword And Ignore Error        MOD_WAN_16_TC_01_Teardown
+    [Teardown]                               Run Keyword And Ignore Error        MOD_WAN_16_TC_01_Teardown
 
-*** Test Cases ***
-MOD_WAN_16_TC_01
-    MOD_WAN_16_TC_01
+# *** Test Cases ***
+# MOD_WAN_16_TC_01
+#     MOD_WAN_16_TC_01

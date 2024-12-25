@@ -159,5 +159,5 @@ ${GNMS_CONFIGURATION_URL}						${GNMS_URL}/configuration/initial
 ${GNMS_BACKUP_FILE_NAME}                        gnms_backup
 
 # WAN
-${USERNAME}                                  ttcnvnpt
-${PASSWORD}                                  ansvvnpt
+${PPP_USERNAME}                                  ttcngpon
+${PPP_PASSWORD}                                  ansv

@@ -1,8 +1,10 @@
 *** Settings ***
 Library                                            SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
 Resource                                           selenium/Login/SeleniumLoginLib.txt
-Resource                                           selenium/Network/SeleniumNetworkWANLib.txt
 Resource                                           selenium/Maintenance/SeleniumMaintenanceRebootResetLib.txt
+Resource                                           selenium/Network/SeleniumNetworkWANLib.txt
+Resource                                           selenium/Status/SeleniumStatusWANInfoLib.txt
+
 *** Variables ***
 
 *** Keywords ***
@@ -25,22 +27,16 @@ MOD_WAN_02_TC_01_Teardown
     SL.Delete All Cookies
     SL.Close All Browsers
 
-Verify Gateway Type
-    [Arguments]                              ${mode_gw}
-    SL.Wait Until Element Is Visible         xpath=//*[@id="select2"]     timeout=10s
-    ...                                      error=\nGateway Type Textbox Does Not Show Up
-    ${value}=                                SL.Get Text    xpath=//*[@id="select2"]/option[contains(text(), "${mode_gw}")]
-    Should Be Equal                          ${value}    ${mode_gw}
-
 MOD_WAN_02_TC_01
    [Documentation]                                   Kiem tra kha nang cau hinh truong Gateway Type
+
     # SL.Set Selenium Speed                          0.5
     # SL.Set Selenium Timeout                        10s
-    # Set Test Message                               *HTML* <b>MOD_WAN_02_TC_01</b>
+    Set Test Message                               *HTML* <b>MOD_WAN_02_TC_01</b>
 
     ### Step 1: Open Browser & Login to WebGUI    
     Log To Console                                \nStep 1: Login to Browser
-    Login To Browser
+    Login To Browser		             		  password=${ONT}[ONT_WEB_PASS]
     SL.Select Frame                               xpath=//frame[@name="contentfrm"]
 
     ### Step 2: Open Config WAN Page
@@ -50,22 +46,18 @@ MOD_WAN_02_TC_01
 
     ### Step 3: Config Gateway Type Route
     Log To Console                                \nStep 3: Config Gateway Type Route
+
     ## Step 3.1: Add WAN & para of wan interface
     Log To Console                                \nStep 3.1: Add WAN & para of wan interface
-    # Click button add new WAN
     Add New Wan Service
-    Sleep                                        2s
-    # Config Gateway Type Route
-    Config Gateway Type                          mode=Route
-    # Config VLAN ID = 11
+    Config Gateway Type                           mode=Route
     Input VLAN ID                                 vlan_id=11
-    # Save
     Click Button Save WAN
+
     ## Step 3.2 Verify Gateway Type Route
     Log To Console                                \nStep 3.2 Verify Gateway Type Route
-    Click WAN                                     column_name=VLAN/Priority    column_value=11
-    SL.Scroll Element Into View                   xpath=//*[@id="select2"]
     Verify Gateway Type                           mode_gw=Route
+    ...                                           vlan_id=11
    
     ### Step 4: Delete WAN was created
     Log To Console                                 \nStep 4: Delete WAN was created
@@ -75,27 +67,23 @@ MOD_WAN_02_TC_01
 
     ### Step 5: Config Gateway Type Bridge
     Log To Console                               \nStep 5: Config Gateway Type Bridge
+
     ## Step 5.1: Add WAN & para of wan interface
     Log To Console                                \nStep 5.1: Add WAN & para of wan interface
-    # Click button add new WAN
     Add New Wan Service
-    Sleep                                        2s
-    # Config Gateway Type Bridge
     Config Gateway Type                          mode=Bridge
-    # Config VLAN ID = 11
     Input VLAN ID                                vlan_id=11
-    # Save
     Click Button Save WAN
+
     ## Step 5.2 Verify Gateway Type Route
     Log To Console                                \nStep 5.2 Gateway Type Bridge
-    Click WAN                                     column_name=VLAN/Priority    column_value=11
-    SL.Scroll Element Into View                   xpath=//*[@id="select2"]
     Verify Gateway Type                           mode_gw=Bridge
+    ...                                           vlan_id=11
 
     Logout WebGUI
 
-    # [Teardown]                               Run Keyword And Ignore Error        MOD_WAN_02_TC_01_Teardown
+    [Teardown]                               Run Keyword And Ignore Error        MOD_WAN_02_TC_01_Teardown
 
-*** Test Cases ***
-MOD_WAN_02_TC_01
-    MOD_WAN_02_TC_01
+# *** Test Cases ***
+# MOD_WAN_02_TC_01
+#     MOD_WAN_02_TC_01

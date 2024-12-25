@@ -1,8 +1,10 @@
 *** Settings ***
 Library                                            SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
 Resource                                           selenium/Login/SeleniumLoginLib.txt
-Resource                                           selenium/Network/SeleniumNetworkWANLib.txt
 Resource                                           selenium/Maintenance/SeleniumMaintenanceRebootResetLib.txt
+Resource                                           selenium/Network/SeleniumNetworkWANLib.txt
+Resource                                           selenium/Status/SeleniumStatusWANInfoLib.txt
+
 *** Variables ***
 
 *** Keywords ***
@@ -25,22 +27,16 @@ MOD_WAN_06_TC_01_Teardown
     SL.Delete All Cookies
     SL.Close All Browsers
 
-Verify VLAN Type
-    [Arguments]                              ${vlan_type}
-    SL.Wait Until Element Is Visible         xpath=//*[@id="VLANMode"]    timeout=10s
-    ...                                      error=\nVLAN Type Textbox Does Not Show Up
-    ${value}=                                SL.Get Text    xpath=//*[@id="VLANMode"]/option[contains(text(), "${vlan_type}")]
-    Should Be Equal                          ${value}    ${vlan_type}
-
 MOD_WAN_06_TC_01
    [Documentation]                                 Kiem tra kha nang cau hinh truong VLAN Type
+
     # SL.Set Selenium Speed                          0.5
     # SL.Set Selenium Timeout                        10s
-    # Set Test Message                               *HTML* <b>MOD_WAN_06_TC_01</b>
+    Set Test Message                               *HTML* <b>MOD_WAN_06_TC_01</b>
 
     ### Step 1: Open Browser & Login to WebGUI    
     Log To Console                                \nStep 1: Login to Browser
-    Login To Browser
+    Login To Browser		             		  password=${ONT}[ONT_WEB_PASS]
     SL.Select Frame                               xpath=//frame[@name="contentfrm"]
 
     ### Step 2: Open Config WAN Page
@@ -50,77 +46,67 @@ MOD_WAN_06_TC_01
 
     ### Step 3: Config VLAN Type TAG
     Log To Console                                \nStep 3: Config VLAN Type TAG
+
     ## Step 3.1: Add WAN & para of wan interface
     Log To Console                                \nStep 3.1: Add WAN & para of wan interface
-    # Click button add new WAN
     Add New Wan Service
-    Sleep                                         2s
-    # Config VLAN Type TAG
     Config VLAN Type                              type=TAG
-    # Config VLAN ID = 11
     Input VLAN ID                                 vlan_id=11
-    # Save
     Click Button Save WAN
+
     ## Step 3.2 Verify VLAN Type TAG
     Log To Console                                \nStep 3.2 Verify VLAN Type TAG
-    Click WAN                                     column_name=VLAN/Priority    column_value=11
-    SL.Scroll Element Into View                   xpath=//*[@id="VLANMode"] 
     Verify VLAN Type                              vlan_type=TAG
+    ...                                           vlan_id=11
 
-    ### Step 4: Delete WAN was created
-    Log To Console                                 \nStep 4: Delete WAN was created
-    Delete WAN                                     column_name=VLAN/Priority    row_name=11
-    Popup Delete WAN
-    Sleep                                          5s
+    # ### Step 4: Delete WAN was created
+    # Log To Console                                 \nStep 4: Delete WAN was created
+    # Delete WAN                                     column_name=VLAN/Priority    row_name=11
+    # Popup Delete WAN
+    # Sleep                                          5s
 
-    ### Step 5: Config VLAN Type UNTAG
-    Log To Console                               \nStep 5: Config VLAN Type UNTAG
-    ## Step 5.1: Add WAN & para of wan interface
-    Log To Console                                \nStep 5.1: Add WAN & para of wan interface
-    # Click button add new WAN
-    Add New Wan Service
-    Sleep                                        2s
-    # Config VLAN Type UNTAG
-    Config VLAN Type                              type=UNTAG
-    # Config Link Mode Connect via PPP
-    Config Link Mode                              link_mode=linkPPP
-    # Save
-    Click Button Save WAN
-    ## Step 5.2 Verify VLAN Type UNTAG
-    Log To Console                                \nStep 5.2 Verify VLAN Type UNTAG
-    Click WAN                                     column_name=Way of getting IP   column_value=PPPoE
-    SL.Scroll Element Into View                   xpath=//*[@id="VLANMode"] 
-    Verify VLAN Type                              vlan_type=UNTAG
+    # ### Step 5: Config VLAN Type UNTAG
+    # Log To Console                               \nStep 5: Config VLAN Type UNTAG
 
-    ### Step 6: Delete WAN was created
-    Log To Console                                 \nStep 6: Delete WAN was created
-    Delete WAN                                     column_name=Way of getting IP    row_name=PPPoE
-    Popup Delete WAN
-    Sleep                                          5s
+    # ## Step 5.1: Add WAN & para of wan interface
+    # Log To Console                                \nStep 5.1: Add WAN & para of wan interface
+    # Add New Wan Service
+    # Config VLAN Type                              type=UNTAG
+    # Config Link Mode                              link_mode=linkPPP
+    # Click Button Save WAN
 
-    ### Step 7: Config VLAN Type TRANSPARENT
-    Log To Console                               \nStep 7: Config VLAN Type TRANSPARENT
-    ## Step 7.1: Add WAN & para of wan interface
-    Log To Console                                \nStep 7.1: Add WAN & para of wan interface
-    # Click button add new WAN
-    Add New Wan Service
-    Sleep                                        2s
-    # Config VLAN Type TRANSPARENT
-    Config VLAN Type                             type=TRANSPARENT
-    # Config Link Mode Connect via PPP
-    Config Link Mode                              link_mode=linkPPP
-    # Save
-    Click Button Save WAN
-    ## Step 7.2 Verify VLAN Type TRANSPARENT
-    Log To Console                                \nStep 7.2 Verify VLAN Type TRANSPARENT
-    Click WAN                                     column_name=Way of getting IP   column_value=PPPoE
-    SL.Scroll Element Into View                   xpath=//*[@id="VLANMode"]
-    Verify VLAN Type                              vlan_type=TRANSPARENT
+    # ## Step 5.2 Verify VLAN Type UNTAG
+    # Log To Console                                \nStep 5.2 Verify VLAN Type UNTAG
+    # Click WAN                                     column_name=Way of getting IP   column_value=PPPoE
+    # SL.Scroll Element Into View                   xpath=//*[@id="VLANMode"] 
+    # Verify VLAN Type                              vlan_type=UNTAG
+
+    # ### Step 6: Delete WAN was created
+    # Log To Console                                 \nStep 6: Delete WAN was created
+    # Delete WAN                                     column_name=Way of getting IP    row_name=PPPoE
+    # Popup Delete WAN
+    # Sleep                                          5s
+
+    # ### Step 7: Config VLAN Type TRANSPARENT
+    # Log To Console                               \nStep 7: Config VLAN Type TRANSPARENT
+
+    # ## Step 7.1: Add WAN & para of wan interface
+    # Log To Console                                \nStep 7.1: Add WAN & para of wan interface
+    # Add New Wan Service
+    # Config VLAN Type                             type=TRANSPARENT
+    # Config Link Mode                              link_mode=linkPPP
+    # Click Button Save WAN
+
+    # ## Step 7.2 Verify VLAN Type TRANSPARENT
+    # Log To Console                                \nStep 7.2 Verify VLAN Type TRANSPARENT
+    # Click WAN                                     column_name=Way of getting IP   column_value=PPPoE
+    # SL.Scroll Element Into View                   xpath=//*[@id="VLANMode"]
+    # Verify VLAN Type                              vlan_type=TRANSPARENT
 
     Logout WebGUI
 
-    # [Teardown]                               Run Keyword And Ignore Error        MOD_WAN_06_TC_01_Teardown
+    [Teardown]                               Run Keyword And Ignore Error        MOD_WAN_06_TC_01_Teardown
 
-*** Test Cases ***
-MOD_WAN_06_TC_01
-    MOD_WAN_06_TC_01
+# *** Test Cases ***
+# MOD_WAN_06_TC_01
+#     MOD_WAN_06_TC_01

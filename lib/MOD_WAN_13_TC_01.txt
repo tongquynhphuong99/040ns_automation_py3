@@ -1,8 +1,10 @@
 *** Settings ***
 Library                                            SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
 Resource                                           selenium/Login/SeleniumLoginLib.txt
-Resource                                           selenium/Network/SeleniumNetworkWANLib.txt
 Resource                                           selenium/Maintenance/SeleniumMaintenanceRebootResetLib.txt
+Resource                                           selenium/Network/SeleniumNetworkWANLib.txt
+Resource                                           selenium/Status/SeleniumStatusWANInfoLib.txt
+
 *** Variables ***
 
 *** Keywords ***
@@ -25,61 +27,47 @@ MOD_WAN_13_TC_01_Teardown
     SL.Delete All Cookies
     SL.Close All Browsers
 
-Verify Style of Acquiring IPv6 WAN Information 
-    [Arguments]                              ${input}
-    ${value}=                                SL.Get Text    xpath=//*[@id="IdIpv6AddrType"]/option[contains(text(), "${input}")]
-    Should Be Equal                          ${value}    ${input}
-
 MOD_WAN_13_TC_01
    [Documentation]                                 Kiem tra kha nang cau hinh truong Style of Acquiring IPv6 WAN Information
+
     # SL.Set Selenium Speed                          0.5
     # SL.Set Selenium Timeout                        10s
-    # Set Test Message                               *HTML* <b>MOD_WAN_13_TC_01</b>
+    Set Test Message                               *HTML* <b>MOD_WAN_13_TC_01</b>
 
     ### Step 1: Open Browser & Login to WebGUI    
     Log To Console                                \nStep 1: Login to Browser
-    Login To Browser
+    Login To Browser		             		  password=${ONT}[ONT_WEB_PASS]
     SL.Select Frame                               xpath=//frame[@name="contentfrm"]
 
-    ### Step 2: Open Config WAN Page
-    Log To Console                                \nStep 2: Open Config WAN Page
+    ### Step 2: Add WAN & para of wan interface
+    Log To Console                                \nStep 2: Add WAN & para of wan interface
     Open Network Settings Wan Page
     SL.Maximize Browser Window
+    Add New Wan Service
+    Input VLAN ID                                 vlan_id=11
 
     ### Step 3: Config Style of Acquiring IPv6 WAN Information SLAAC
     Log To Console                                \nStep 3: Config Style of Acquiring IPv6 WAN Information SLAAC
-    ## Step 3.1: Add WAN & para of wan interface
-    Log To Console                                \nStep 3.1: Add WAN & para of wan interface
-    # Click button add new WAN
-    Add New Wan Service
-    Sleep                                         2s
-    # Config VLAN ID = 11
-    Input VLAN ID                                 vlan_id=11
-    # Config Style of Acquiring IPv6 WAN Information
-    Config Style of Acquiring IPv6 WAN Information   input_value=SLAAC
-    # Save
+    Config Style of Acquiring IPv6 WAN Information       input_value=SLAAC
     Click Button Save WAN
-    ## Step 3.2 Verify Style of Acquiring IPv6 WAN Information SLAAC
-    Log To Console                                \nStep 3.2 Verify Style of Acquiring IPv6 WAN Information SLAAC
-    Click WAN                                     column_name=VLAN/Priority    column_value=11
-    SL.Scroll Element Into View                   xpath=//*[@id="IdIpv6AddrType"] 
-    Verify Style of Acquiring IPv6 WAN Information   input=SLAAC
 
-  ### Step 4: Config Style of Acquiring IPv6 WAN Information DHCP
+    # Verify Style of Acquiring IPv6 WAN Information SLAAC
+    Verify Style of Acquiring IPv6 WAN Information       vlan_id=11
+    ...                                                  input=SLAAC
+
+    ### Step 4: Config Style of Acquiring IPv6 WAN Information DHCP
     Log To Console                                \nStep 4: Config Style of Acquiring IPv6 WAN Information DHCP
     Config Style of Acquiring IPv6 WAN Information   input_value=DHCP
-    # Save
     Click Button Save WAN
-    ## Step 4.1 Verify Style of Acquiring IPv6 WAN Information DHCP
-    Log To Console                                \nStep 4.1 Verify Style of Acquiring IPv6 WAN Information DHCP
-    Click WAN                                     column_name=VLAN/Priority    column_value=11
-    SL.Scroll Element Into View                   xpath=//*[@id="cb_enabledpd"] 
-    Verify Style of Acquiring IPv6 WAN Information   input=DHCP
+
+    # Verify Style of Acquiring IPv6 WAN Information DHCP
+    Verify Style of Acquiring IPv6 WAN Information       vlan_id=11
+    ...                                                  input=DHCP
 
     Logout WebGUI
 
-    # [Teardown]                               Run Keyword And Ignore Error        MOD_WAN_13_TC_01_Teardown
+    [Teardown]                               Run Keyword And Ignore Error        MOD_WAN_13_TC_01_Teardown
 
-*** Test Cases ***
-MOD_WAN_13_TC_01
-    MOD_WAN_13_TC_01
+# *** Test Cases ***
+# MOD_WAN_13_TC_01
+#     MOD_WAN_13_TC_01

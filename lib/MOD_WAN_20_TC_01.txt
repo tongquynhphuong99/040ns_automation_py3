@@ -1,8 +1,10 @@
 *** Settings ***
 Library                                            SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
 Resource                                           selenium/Login/SeleniumLoginLib.txt
-Resource                                           selenium/Network/SeleniumNetworkWANLib.txt
 Resource                                           selenium/Maintenance/SeleniumMaintenanceRebootResetLib.txt
+Resource                                           selenium/Network/SeleniumNetworkWANLib.txt
+Resource                                           selenium/Status/SeleniumStatusWANInfoLib.txt
+
 *** Variables ***
 
 *** Keywords ***
@@ -25,33 +27,16 @@ MOD_WAN_20_TC_01_Teardown
     SL.Delete All Cookies
     SL.Close All Browsers
 
-Create Dynamic IP Address WAN
-    [Arguments]                                	 ${input}
-    # Click button add new WAN
-    Add New Wan Service
-    Sleep                                         2s
-    # Config Bearer Service
-    Config Bearer Service                        bearer_ser=OTHER
-    # Config Protocol Version Ipv4/IPv6
-    Config Protocol Version                      ver=IPv4
-    # Config VLAN Type TAG
-    Config VLAN Type                              type=TAG
-    # Config VLAN ID = 11
-    Input VLAN ID                                 vlan_id=${input}
-    # Config MTU = 1281
-    Input MTU                                    input=1281
-    # Save
-    Click Button Save WAN
-
 MOD_WAN_20_TC_01
-   [Documentation]                                 Kiem tra kha nang Xoa WAN
+    [Documentation]                                 Kiem tra kha nang Xoa WAN
+
     # SL.Set Selenium Speed                          0.5
     # SL.Set Selenium Timeout                        10s
-    # Set Test Message                               *HTML* <b>MOD_WAN_20_TC_01</b>
+    Set Test Message                               *HTML* <b>MOD_WAN_20_TC_01</b>
 
     ### Step 1: Open Browser & Login to WebGUI    
     Log To Console                                \nStep 1: Login to Browser
-    Login To Browser
+    Login To Browser		             		  password=${ONT}[ONT_WEB_PASS]
     SL.Select Frame                               xpath=//frame[@name="contentfrm"]
 
     ### Step 2: Open Config WAN Page
@@ -59,80 +44,31 @@ MOD_WAN_20_TC_01
     Open Network Settings Wan Page
     SL.Maximize Browser Window
 
-    ### Step 3: Create 1st WAN
-    Log To Console                            \nStep 3: Create 1st WAN
-    ## Step 3.1: Create New WAN & Config Some Para
-    Log To Console                            \nStep 3.1: Create New WAN & Config Some Para
-    Create Dynamic IP Address WAN                11
-    ## Step 3.2: Verify WAN was created
-    Log To Console                            \nStep 3.2: Verify WAN With tag VLAN = 11 was created
-    Verify WAN Was Created                        11
-        
-    ### Step 4: Create 2nd WAN
-    Log To Console                            \nStep 4: Create 2nd WAN
-    ## Step 4.1: Create New WAN & Config Some Para
-    Log To Console                            \nStep 4.1: Create New WAN & Config Some Para
-    Create Dynamic IP Address WAN                12
-    ## Step 4.2: Verify WAN was created
-    Log To Console                            \nStep 4.2: Verify WAN With tag VLAN = 12 was created
-    Verify WAN Was Created                        12
-
-    ### Step 5: Create 3rd WAN
-    Log To Console                            \nStep 5: Create 3rd WAN
-    ## Step 5.1: Create New WAN & Config Some Para
-    Log To Console                            \nStep 5.1: Create New WAN & Config Some Para
-    Create Dynamic IP Address WAN                13
-    ## Step 5.2: Verify WAN was created
-    Log To Console                            \nStep 5.2: Verify WAN With tag VLAN = 13 was created
-    Verify WAN Was Created                        13
-
-    ### Step 6: Create 4th WAN
-    Log To Console                            \nStep 6: Create 4th WAN
-    ## Step 6.1: Create New WAN & Config Some Para
-    Log To Console                            \nStep 6.1: Create New WAN & Config Some Para
-    Create Dynamic IP Address WAN                14
-    ## Step 6.2: Verify WAN was created
-    Log To Console                            \nStep 6.2: Verify WAN With tag VLAN = 14 was created
-    Verify WAN Was Created                        14
-
-    ### Step 7: Create 5th WAN
-    Log To Console                            \nStep 7: Create 5th WAN
-    ## Step 7.1: Create New WAN & Config Some Para
-    Log To Console                            \nStep 7.1: Create New WAN & Config Some Para
-    Create Dynamic IP Address WAN                15
-    ## Step 7.2: Verify WAN was created
-    Log To Console                            \nStep 7.2: Verify WAN With tag VLAN = 15 was created
-    Verify WAN Was Created                        15
-
-    ### Step 8: Create 6th WAN
-    Log To Console                            \nStep 7: Create 6th WAN
-    ## Step 8.1: Create New WAN & Config Some Para
-    Log To Console                            \nStep 8.1: Create New WAN & Config Some Para
-    Create Dynamic IP Address WAN                16
-    ## Step 8.2: Verify WAN was created
-    Log To Console                            \nStep 8.2: Verify WAN With tag VLAN = 16 was created
-    Verify WAN Was Created                        16     
-
-    ### Step 9: Create 7th WAN
-    Log To Console                            \nStep 9: Create 7th WAN
-    ## Step 9.1: Create New WAN & Config Some Para
-    Log To Console                            \nStep 9.1: Create New WAN & Config Some Para
-    Create Dynamic IP Address WAN                17
-    ## Step 9.2: Verify WAN was created
-    Log To Console                            \nStep 9.2: Verify WAN With tag VLAN = 17 was created
-    Verify WAN Was Created                        17  
-        
-    ### Step 10: Verify Cannot Create New WAN 
-    Log To Console                            \nStep 10: Verify Cannot Create New WAN
-    # Click button add new WAN
+    ### Step 3: Add new WAN & para of wan interface
+    Log To Console                                \nStep 3: Add new WAN & para of wan interface
     Add New Wan Service
-    ${popup_message}=                        SL.Handle Alert    timeout=10s
-    Should Contain                           ${popup_message}    Only create 8 WAN connections!
+    Config Protocol Version                       ver=IPv4/IPv6
+    Config VLAN Type                              type=TAG
+    Input VLAN ID                                 vlan_id=11
+    Input MTU                                     input=1281
+    Click Button Save WAN
 
-    Logout WebGUI
+    # Verify WAN was created
+    Verify WAN Was Created                        vlan_id=11
+
+    ### Step 4: Delete WAN was created
+    Log To Console                                \nStep 4: Delete WAN was created
+    Delete WAN                                    column_name=VLAN/Priority    row_name=11
+    Popup Delete WAN
+    Sleep                                         5s
+
+    # Verify WAN was Delete
+    Verify WAN Was Delete                         vlan_id=11
     
-    # [Teardown]    Run Keyword And Ignore Error    MOD_WAN_01_TC_20_Teardown
+    Logout WebGUI
 
-** Test Cases **
-MOD_WAN_20_TC_01
-    MOD_WAN_20_TC_01
+    [Teardown]                               Run Keyword And Ignore Error        MOD_WAN_20_TC_01_Teardown
+
+# *** Test Cases ***
+# MOD_WAN_20_TC_01
+#     MOD_WAN_20_TC_01

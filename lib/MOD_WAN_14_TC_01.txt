@@ -1,8 +1,10 @@
 *** Settings ***
 Library                                            SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
 Resource                                           selenium/Login/SeleniumLoginLib.txt
-Resource                                           selenium/Network/SeleniumNetworkWANLib.txt
 Resource                                           selenium/Maintenance/SeleniumMaintenanceRebootResetLib.txt
+Resource                                           selenium/Network/SeleniumNetworkWANLib.txt
+Resource                                           selenium/Status/SeleniumStatusWANInfoLib.txt
+
 *** Variables ***
 
 *** Keywords ***
@@ -25,59 +27,46 @@ MOD_WAN_14_TC_01_Teardown
     SL.Delete All Cookies
     SL.Close All Browsers
 
-Verify Enable PD
-    [Arguments]                             ${status}
-
-    ${value}=                              SL.Execute Javascript    return document.querySelector("#cb_enabledpd").checked
-    Run Keyword If                         '${status}' != '${value}'        Fail    "Enable/Disable PD Wrong" 
-
 MOD_WAN_14_TC_01
    [Documentation]                                 Kiem tra kha nang cau hinh truong Enable PD
+
     # SL.Set Selenium Speed                          0.5
     # SL.Set Selenium Timeout                        10s
-    # Set Test Message                               *HTML* <b>MOD_WAN_14_TC_01</b>
+    Set Test Message                               *HTML* <b>MOD_WAN_14_TC_01</b>
 
     ### Step 1: Open Browser & Login to WebGUI    
     Log To Console                                \nStep 1: Login to Browser
-    Login To Browser
+    Login To Browser		             		  password=${ONT}[ONT_WEB_PASS]
     SL.Select Frame                               xpath=//frame[@name="contentfrm"]
 
-    ### Step 2: Open Config WAN Page
-    Log To Console                                \nStep 2: Open Config WAN Page
+    ### Step 2: Add WAN & para of wan interface
+    Log To Console                                \nStep 2: Add WAN & para of wan interface
     Open Network Settings Wan Page
     SL.Maximize Browser Window
-
-    ### Step 3: Config Enable PD
-    Log To Console                                \nStep 3: Config Enable PD
-    ## Step 3.1: Add WAN & para of wan interface
-    Log To Console                                \nStep 3.1: Add WAN & para of wan interface
-    # Click button add new WAN
     Add New Wan Service
-    Sleep                                         2s
-    # Config VLAN ID = 11
     Input VLAN ID                                 vlan_id=11
-    # Config Enable PD
-    Config Enable PD                              enable=On
-    # Save
-    Click Button Save WAN
-    ## Step 3.2: Verify Enable PD
-    Log To Console                                 \nStep 3.2: Verify Enable PD
-    Verify Enable PD                               status=True
 
-    ### Step 4: Config Disable PD
-    Log To Console                                \nStep 4: Config Disable PD
-    Click WAN                                     column_name=VLAN/Priority    column_value=11
-    SL.Scroll Element Into View                   xpath=//*[@id="IdIpv6AddrType"] 
+    ### Step 3: Config Enable PD mode Off
+    Log To Console                                \nStep 3: Config Enable PD mode Off
     Config Enable PD                              enable=Off
-    # Save
     Click Button Save WAN
-    ## Step 3.2: Verify Enable PD
-    Log To Console                                 \nStep 4.2: Verify Disable PD
-    Verify Enable PD                               status=False
+
+    # Verify Enable PD
+    Verify Enable PD                              vlan_id=11
+    ...                                           enable=Off
+
+    ### Step 4: Config Disable PD mode On
+    Log To Console                                \nStep 4: Config Disable PD mode On
+    Config Enable PD                              enable=On
+    Click Button Save WAN
+
+    # Verify Enable PD
+    Verify Enable PD                              vlan_id=11
+    ...                                           enable=On
     Logout WebGUI
 
-    # [Teardown]                               Run Keyword And Ignore Error        MOD_WAN_14_TC_01_Teardown
+    [Teardown]                               Run Keyword And Ignore Error        MOD_WAN_14_TC_01_Teardown
 
-*** Test Cases ***
-MOD_WAN_14_TC_01
-    MOD_WAN_14_TC_01
+# *** Test Cases ***
+# MOD_WAN_14_TC_01
+#     MOD_WAN_14_TC_01

@@ -176,9 +176,11 @@ MOD_WIFI5G_01_TC_12
     Save Config SSID
     # Verify Config
     Popup PreSharedKey Hex Error Should Be Visible
+    Sleep                5s
 
     ### Step 5: Config Security mode WPA2-PSK/WPA3-PSK Password Valid for Wifi 5GHz
     Log To Console                                \nStep 5: Config Security mode WPA2-PSK/WPA3-PSK Password Valid for Wifi 5GHz
+    # Open 5GHz Wireless Configure Page
 
     Log To Console					              Step 5.1: WPA2-PSK/WPA3-PSK Password with Length = 63 characters ASCII
     Run Keyword And Ignore Error                  Select SSID 5G Index                          ssid_index=1
@@ -207,10 +209,10 @@ MOD_WIFI5G_01_TC_12
     # Verify Config
     Verify Config 5G Security mode WPA2-PSK/WPA3-PSK       password=12345678
 
-
     ### Step 6: Check Status Encryption Type with Security mode WPA2-PSK/WPA3-PSK for Wifi 5GHz
     Log To Console                                \nStep 6: Check Status Encryption Type with Security mode WPA2-PSK/WPA3-PSK for Wifi 5GHz
     Log To Console    \nWith Security Mode WPA3-PSK and WPA2-PSK/WPA3-PSK Only Allow Select Option AES (Option TKIP and TKIP+AES is Disabled)
+    Open 5GHz Wireless Configure Page
 
     Log To Console					              Step 6.1: WPA2-PSK/WPA3-PSK Encryption Type TKIP
     Select SSID 5G Index                          ssid_index=1
@@ -229,6 +231,7 @@ MOD_WIFI5G_01_TC_12
     
     ### Step 7: Config Security mode WPA2-PSK/WPA3-PSK Key Renewal Interval for Wifi 5GHz
     Log To Console                                \nStep 7: Config Security mode WPA2-PSK/WPA3-PSK Key Renewal Interval for Wifi 5GHz
+    Open 5GHz Wireless Configure Page
 
     Log To Console					              Step 7.1: WPA2-PSK/WPA3-PSK Key Renewal Interval Non-integer
     Select SSID 5G Index                          ssid_index=1

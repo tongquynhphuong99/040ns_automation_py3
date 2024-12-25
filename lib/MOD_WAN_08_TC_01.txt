@@ -1,8 +1,10 @@
 *** Settings ***
 Library                                            SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
 Resource                                           selenium/Login/SeleniumLoginLib.txt
-Resource                                           selenium/Network/SeleniumNetworkWANLib.txt
 Resource                                           selenium/Maintenance/SeleniumMaintenanceRebootResetLib.txt
+Resource                                           selenium/Network/SeleniumNetworkWANLib.txt
+Resource                                           selenium/Status/SeleniumStatusWANInfoLib.txt
+
 *** Variables ***
 
 *** Keywords ***
@@ -25,80 +27,93 @@ MOD_WAN_08_TC_01_Teardown
     SL.Delete All Cookies
     SL.Close All Browsers
 
-Popup 802.1p In Range 0~7 Should Be Visible
-    [Documentation]                          Handle popup 802.1p Must Be In Range 0~7
-    ${popup_message}=                        SL.Handle Alert    timeout=10s
-    Should Contain                           ${popup_message}    802.1p Invalid!
-
-Verify 802.1p
-    [Arguments]                              ${input}
-    ${get_value}=                            SL.Get Value    xpath=//*[@id="v8021P"]
-    Should Be Equal                          ${input}    ${get_value}
-
 MOD_WAN_08_TC_01
    [Documentation]                                   Kiem tra kha nang cau hinh truong 802.1p
-    SL.Set Selenium Speed                          0.5
-    SL.Set Selenium Timeout                        10s
+
+    # SL.Set Selenium Speed                          0.5
+    # SL.Set Selenium Timeout                        10s
     Set Test Message                               *HTML* <b>MOD_WAN_08_TC_01</b>
 
     ### Step 1: Open Browser & Login to WebGUI    
     Log To Console                                \nStep 1: Login to Browser
-    Login To Browser
+    Login To Browser		             		  password=${ONT}[ONT_WEB_PASS]
     SL.Select Frame                               xpath=//frame[@name="contentfrm"]
 
-    ### Step 2: Create new WAN With 802.1p = -1 
-    Log To Console                                \nStep 2: Create new WAN With 802.1p = -1 
-
-    ## Step 2.1: Open Config WAN Page
-    Log To Console                                \nStep 2.1: Open Config WAN Page
+    ### Step 2: Create new WAN With 802.1p Invalid 
+    Log To Console                                \nStep 2: Create new WAN With 802.1p Invalid 
     Open Network Settings Wan Page
     SL.Maximize Browser Window
-
-    # Click button add new WAN
     Add New Wan Service
     Input VLAN ID                                 vlan_id=12
-    ## Step 2.2: Config 802.1p = -1 
-    Log To Console                               \nStep 2.2: Config 802.1p = -1
-    Input 802.1P                                 input=-1
 
-    # Save
+    ## Step 2.1: Config 802.1p EMPTY
+    Log To Console                                \nStep 2.1: Config 802.1p EMPTY
+    Input 802.1P                                  input=${EMPTY}
     Click Button Save WAN
-    Popup 802.1p In Range 0~7 Should Be Visible
-    Sleep                                          2s
+    Check Popup And Continue On Failure           popup=Popup 802.1p In Range 0~7 Should Be Visible
+    ...                                           vlan_id=12
 
-    ### Step 2.3: Config 802.1p = 8
-    Log To Console                               \nStep 2.3: Config 802.1p = 8
-    Input 802.1P                                 input=8
-
-    # Save
+    ## Step 2.2: Config 802.1p All Space
+    Log To Console                                \nStep 2.2: Config 802.1p All Space
+    Input 802.1P                                  input=${SPACE*4}
     Click Button Save WAN
-    Popup 802.1p In Range 0~7 Should Be Visible
-    Sleep                                          2s
-    
-    ### Step 2.4: Config 802.1p with special character
-    Log To Console                               \nStep 2.4: Config 802.1p with special character
-    Input 802.1P                                 input=@11
+    Check Popup And Continue On Failure           popup=Popup 802.1p In Range 0~7 Should Be Visible
+    ...                                           vlan_id=12
 
-    # Save
+    ## Step 2.3: Config 802.1p All Space = -1
+    Log To Console                                \nStep 2.3: Config 802.1p = -1
+    Input 802.1P                                  input=-1
     Click Button Save WAN
-    Popup 802.1p In Range 0~7 Should Be Visible
-    Sleep                                          2s
+    Check Popup And Continue On Failure           popup=Popup 802.1p In Range 0~7 Should Be Visible
+    ...                                           vlan_id=12
 
-    ### Step 2.5: Config 802.1p range 0~7
-    Log To Console                               \nStep 2.5: Config 802.1p range 0~7
-    Input 802.1P                                input=2
-
-    # Save
+    ## Step 2.4: Config 802.1p All Space = 8
+    Log To Console                                \nStep 2.4: Config 802.1p = 8
+    Input 802.1P                                  input=8
     Click Button Save WAN
-    Sleep                                         2s
+    Check Popup And Continue On Failure           popup=Popup 802.1p In Range 0~7 Should Be Visible
+    ...                                           vlan_id=12
 
-    # Verify VLAN ID
-    Verify 802.1P                                 input=2
+    ## Step 2.5: Config 802.1p with special character
+    Log To Console                               \nStep 2.5: Config 802.1p with special character
+    Input 802.1P                                  input=@2
+    Click Button Save WAN
+    Check Popup And Continue On Failure           popup=Popup 802.1p In Range 0~7 Should Be Visible
+    ...                                           vlan_id=12
+
+    ### Step 3: Create new WAN With 802.1p Valid (range 0~7)
+    Log To Console                                \nStep 3: Create new WAN With 802.1p Valid (range 0~7)
+
+    ## Step 3.1: Config 802.1p = 0
+    Log To Console                                \nStep 3.1: Config 802.1p = 0
+    Input 802.1P                                  input=0
+    Click Button Save WAN
+
+    # Verify 802.1P
+    Verify 802.1P                                  vlan_id=12
+    ...                                            input=0
+
+    ## Step 3.2: Delete WAN was created
+    Log To Console                                 \nStep 3.2: Delete WAN was created
+    Delete WAN                                     column_name=VLAN/Priority    row_name=12
+    Popup Delete WAN
+    Sleep                                          5s
+
+    ## Step 3.3: Config 802.1p = 7
+    Log To Console                                \nStep 3.3: Config 802.1p = 7
+    Add New Wan Service
+    Input VLAN ID                                 vlan_id=14
+    Input 802.1P                                  input=7
+    Click Button Save WAN
+
+    # Verify 802.1P
+    Verify 802.1P                                 vlan_id=14
+    ...                                           input=7
 
     Logout WebGUI
 
     [Teardown]                               Run Keyword And Ignore Error        MOD_WAN_08_TC_01_Teardown
 
-*** Test Cases ***
-MOD_WAN_08_TC_01
-    MOD_WAN_08_TC_01
+# *** Test Cases ***
+# MOD_WAN_08_TC_01
+#     MOD_WAN_08_TC_01

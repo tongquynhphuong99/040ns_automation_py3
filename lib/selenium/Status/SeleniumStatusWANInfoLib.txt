@@ -1,22 +1,23 @@
-
 *** Settings ***
 Library                          SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
 
 *** Variables ***
 ${device_info_wan_page}=         https://192.168.1.1/cgi-bin/status_wan_summary.asp
+
 *** Keywords ***
 
 ###
 Open WAN Summary Page
-    [Documentation]              Open WAN Summary Page, input another url for operator user, else use default.
+    [Documentation]              Open WAN Summary Page
 
-    [Arguments]                  ${url}=${device_info_wan_page}
+    SL.Click Element                                xpath=//*[@id="status_deviceinfo"]
+    SL.Click Element                                xpath=//*[@id="sta-network"]
+    SL.Wait Until Page Contains                     IPv4 Connection
+    ...                                             timeout=20s
+    ...                                             error=\nWAN Info Page Not Found
+    SL.Page Should Contain                          IPv4 Connection
 
-    SL.Go To                     ${url}
-    SL.Wait Until Page Contains  WAN Summary
-    ...                          timeout=10s
-    ...                          error=\nWAN Summary Page Not Found
-    SL.Page Should Contain       WAN Summary
+    SL.Select Frame                                 xpath=//frame[@name="contentfrm"]
 
 ###
 Get Column Index
@@ -31,16 +32,15 @@ Get Column Index
     ${index}=                   Set Variable     None
     SL.Set Selenium Speed       0.1
     FOR     ${i}     IN RANGE      1     13
-            ${element_is_visible}=    Run Keyword And Return Status       SL.Element Should Be Visible    xpath=//table[@class="tableShowData"]/tbody/tr[1]/td[1]/table[@class="tableShowData"]/tbody/tr[1]/td[${i}]
+            ${element_is_visible}=    Run Keyword And Return Status       SL.Element Should Be Visible    xpath=//*[@id="network_info"]/tbody/tr[1]/td[${i}]
             Exit For Loop If    '${element_is_visible}' == 'False'
-            ${column_name_tmp}=       SL.Get Text    xpath=//table[@class="tableShowData"]/tbody/tr[1]/td[1]/table[@class="tableShowData"]/tbody/tr[1]/td[${i}]
+            ${column_name_tmp}=       SL.Get Text    xpath=//*[@id="network_info"]/tbody/tr[1]/td[${i}]
             ${index}=          Set Variable If    '${column_name_tmp}' == '${column_name}'     ${i}
             Exit For Loop If   '${column_name_tmp}' == '${column_name}'
     END
     SL.Set Selenium Speed       0.3
-    [Return]                    ${index}
+    RETURN                      ${index}
 
-###
 Get Row Index
     [Documentation]             Get row index base on column name and column value.
     ...                         Input:
@@ -55,15 +55,15 @@ Get Row Index
     SL.Set Selenium Speed       0.1
     ${column_index_tmp}=        SeleniumStatusWANInfoLib.Get Column Index            ${column_name}
     FOR    ${row_i}     IN RANGE   2     20
-           ${element_is_visible}=    Run Keyword And Return Status       SL.Element Should Be Visible    xpath=//table[@class="tableShowData"]/tbody/tr[1]/td[1]/table[@class="tableShowData"]/tbody/tr[${row_i}]/td[2]
+           ${element_is_visible}=    Run Keyword And Return Status       SL.Element Should Be Visible    xpath=//*[@id="network_info"]/tbody/tr[${row_i}]/td[2]
+            Exit For Loop If    '${element_is_visible}' == 'False'
            Exit For Loop If    '${element_is_visible}' == 'False'
-           ${column_value_tmp}=     SL.Get Text     xpath=//table[@class="tableShowData"]/tbody/tr[1]/td[1]/table[@class="tableShowData"]/tbody/tr[${row_i}]/td[${column_index_tmp}]
-           ${index}=           Set Variable If     '${column_value_tmp}' == '${column_value}'    ${row_i}
-           Exit For Loop If    '${column_value_tmp}' == '${column_value}'
+           ${column_value_tmp}=     SL.Get Text     xpath=//*[@id="network_info"]/tbody/tr[${row_i}]/td[${column_index_tmp}]
+           ${index}=           Set Variable If     '${column_value}' in '${column_value_tmp}'    ${row_i}
+           Exit For Loop If    '${column_value}' in '${column_value_tmp}'
     END
     SL.Set Selenium Speed       0.3
-    [Return]                    ${index}
-
+    RETURN                      ${index}
 
 ###
 Get Cell Value
@@ -80,12 +80,12 @@ Get Cell Value
 
     ${column_index_tmp}=        SeleniumStatusWANInfoLib.Get Column Index    ${column_name}
     Return From Keyword If      '${row_index}' == 'None'     None
-    ${cell_value_tmp}=          SL.Get Text     xpath=//table[@class="tableShowData"]/tbody/tr[1]/td[1]/table[@class="tableShowData"]/tbody/tr[${row_index}]/td[${column_index_tmp}]
+    ${cell_value_tmp}=          SL.Get Text     xpath=//*[@id="network_info"]/tbody/tr[${row_index}]/td[${column_index_tmp}]
     ${cell_value}=              Set Variable    ${cell_value_tmp}
-    [Return]                    ${cell_value}
+    RETURN                      ${cell_value}
 
 ###
-Wan IPv4 Status Should Be Connected
+Wan Status Should Be Connected
     [Documentation]             Check WAN status whether it's connected, base on VLAN ID
     ...                         Input:
     ...                         1. vlan_id
@@ -97,15 +97,14 @@ Wan IPv4 Status Should Be Connected
     ### WAN Summary Page
     Open WAN Summary Page
     Sleep                       2s
-    SL.Click Element            xpath=//input[@name="stRefresh"]
 
-    ${row_index}=               SeleniumStatusWANInfoLib.Get Row Index    column_name=VlanMuxId    column_value=${vlan_id}
+    ${row_index}=               SeleniumStatusWANInfoLib.Get Row Index    column_name=Connection Name    column_value=${vlan_id}
     ${wan_status}=              SeleniumStatusWANInfoLib.Get Cell Value   column_name=Status       row_index=${row_index}
     Log To Console              Wan ${vlan_id} Status: ${wan_status}
-    Should Be Equal             '${wan_status}'    'Connected'
+    Should Contain              ${wan_status}    Connect
 
 ###
-Wan Status Should Be Disconnected
+Wan Status Should Be Unconnected
     [Documentation]             Check WAN status whether it's disconnected, base on VLAN ID
     ...                         Input:
     ...                         1. vlan_id
@@ -117,12 +116,21 @@ Wan Status Should Be Disconnected
     ### WAN Summary Page
     Open WAN Summary Page
     Sleep                       2s
-    SL.Click Element            xpath=//input[@name="stRefresh"]
 
-    ${row_index}=               SeleniumStatusWANInfoLib.Get Row Index    column_name=VlanMuxId    column_value=${vlan_id}
+    ${row_index}=               SeleniumStatusWANInfoLib.Get Row Index    column_name=Connection Name    column_value=${vlan_id}
     ${wan_status}=              SeleniumStatusWANInfoLib.Get Cell Value   column_name=Status       row_index=${row_index}
     Log To Console              Wan ${vlan_id} Status: ${wan_status}
-    Should Be Equal             '${wan_status}'    'Disconnected'
+    Should Contain              ${wan_status}    Unconnect
+
+
+
+
+
+
+
+
+
+
 
 ###
 Get Wan IPv4 Address
@@ -144,7 +152,7 @@ Get Wan IPv4 Address
     ${row_index}=               SeleniumStatusWANInfoLib.Get Row Index     column_name=VlanMuxId    column_value=${vlan_id}
     ${wan_ip_address}=          SeleniumStatusWANInfoLib.Get Cell Value   column_name=IPv4 Addr    row_index=${row_index}
     Log To Console              WAN ${vlan_id} IPv4 address: ${wan_ip_address}
-    [Return]                    ${wan_ip_address}
+    RETURN                      ${wan_ip_address}
     
 ###
 Get Wan IPv6 Address
@@ -166,7 +174,7 @@ Get Wan IPv6 Address
     ${row_index}=               SeleniumStatusWANInfoLib.Get Row Index    column_name=VlanMuxId    column_value=${vlan_id}
     ${wan_ip_address}=          SeleniumStatusWANInfoLib.Get Cell Value   column_name=IPv6 Addr    row_index=${row_index}
     Log To Console              WAN IPv6 address: ${wan_ip_address}
-    [Return]                    ${wan_ip_address}
+    RETURN                      ${wan_ip_address}
 
 ###
 Wan IPv4 Address Should Be Visible
@@ -175,7 +183,7 @@ Wan IPv4 Address Should Be Visible
 
     ${wan_IP_address}=          Get Wan IPv4 Address    ${vlan_id}
     Should Match Regexp         ${wan_IP_address}    [0-9]{1,3}\\.+[0-9]{1,3}\\.+[0-9]{1,3}\\.+[0-9]{1,3}
-    [Return]    ${wan_IP_address}
+    RETURN                      ${wan_IP_address}
 
 ###
 Wan IP Address Should Not Be Visible
@@ -195,9 +203,9 @@ Wan IPv4 Connection Should Be Success
     SL.Click Element            xpath=//input[@name="stRefresh"]
 
     ### Check WAN Status
-    Wan IPv4 Status Should Be Connected            vlan_id=${vlan_id}
+    Wan Status Should Be Connected            vlan_id=${vlan_id}
     ${wan_IP_address}=    Wan IPv4 Address Should Be Visible              vlan_id=${vlan_id}
-    [Return]    ${wan_IP_address}
+    RETURN                    ${wan_IP_address}
     
 ###
 Wan IPv4 Connection Should Be Failed
@@ -208,7 +216,7 @@ Wan IPv4 Connection Should Be Failed
     SL.Click Element            xpath=//input[@name="stRefresh"]
 
     ### Check WAN Status
-    Wan Status Should Be Disconnected              vlan_id=${vlan_id}
+    Wan Status Should Be Unconnected              vlan_id=${vlan_id}
     Wan IP Address Should Not Be Visible           vlan_id=${vlan_id}
 
 ###
@@ -221,7 +229,7 @@ Wan Bridge Connection Should Be Success
     SL.Click Element            xpath=//input[@name="stRefresh"]    
 
     ### Check WAN Status
-    Wan IPv4 Status Should Be Connected            vlan_id=${vlan_id}
+    Wan Status Should Be Connected            vlan_id=${vlan_id}
     Wan IP Address Should Not Be Visible           vlan_id=${vlan_id}
 
 ###
@@ -233,9 +241,9 @@ Save WAN IP Address
     Sleep                       2s
     SL.Click Element            xpath=//input[@name="stRefresh"]    
 
-    Wan IPv4 Status Should Be Connected            vlan_id=${vlan_id}
+    Wan Status Should Be Connected            vlan_id=${vlan_id}
     ${wan_ip_address}=                             Get Wan IPv4 Address    ${vlan_id}
-    [return]                                          ${wan_ip_address}
+    RETURN                                          ${wan_ip_address}
 
 ###
 Check Wan Status
@@ -340,7 +348,7 @@ Counting Number Exist WAN
         ${row_number}=                  Evaluate    ${row_number} + ${1}
     END
     ${row_number}=                       Evaluate    ${row_number} - ${1}
-    [Return]                             ${row_number}
+    RETURN                             ${row_number}
 
 ###
 NAT Status Should Be Enabled
@@ -396,5 +404,5 @@ Get Wan Interface
     ${wan_interface}=           Set Variable    None
     ${row_index}=               SeleniumStatusWANInfoLib.Get Row Index    column_name=VlanMuxId    column_value=${vlan_id}
     ${wan_interface}=           SeleniumStatusWANInfoLib.Get Cell Value   column_name=Interface    row_index=${row_index}
-    [Return]                    ${wan_interface}
+    RETURN                    ${wan_interface}
     SL.Unselect Frame

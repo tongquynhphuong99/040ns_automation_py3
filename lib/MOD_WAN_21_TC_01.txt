@@ -1,0 +1,98 @@
+*** Settings ***
+Library                                            SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
+Resource                                           selenium/Login/SeleniumLoginLib.txt
+Resource                                           selenium/Maintenance/SeleniumMaintenanceRebootResetLib.txt
+Resource                                           selenium/Network/SeleniumNetworkWANLib.txt
+Resource                                           selenium/Status/SeleniumStatusWANInfoLib.txt
+
+*** Variables ***
+
+*** Keywords ***
+MOD_WAN_21_TC_01_Teardown
+    ##Teardown
+    Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
+    
+    #####Factory Reset Via Web GUI
+    Login To Browser		                 password=${ONT}[ONT_WEB_PASS]
+    Factory Reset Via Web GUI
+  
+    SL.Go To                                 url=${LOGIN_URL}
+    SL.Wait Until Element Is Visible         ${LOGIN_BUTTON}
+    ...                                      timeout=25s
+    ...                                      error=\nLogin Page Does Not Found!
+    Run Keyword If                           '${SWITCH_VARIABLE}' == '3'      Log To Console	\nDon't need to change password after reset factory
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '2'      Change Password WebGui
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '1'      Change Password WebGui
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '0'      Change Password WebGui    
+    SL.Delete All Cookies
+    SL.Close All Browsers
+
+MOD_WAN_21_TC_01
+    [Documentation]                                 Kiem tra kha nang Xoa WAN
+
+    # SL.Set Selenium Speed                          0.5
+    # SL.Set Selenium Timeout                        10s
+    Set Test Message                               *HTML* <b>MOD_WAN_21_TC_01</b>
+
+    ### Step 1: Open Browser & Login to WebGUI    
+    Log To Console                                \nStep 1: Login to Browser
+    Login To Browser		             		  password=${ONT}[ONT_WEB_PASS]
+    SL.Select Frame                               xpath=//frame[@name="contentfrm"]
+
+    ### Step 2: Open Config WAN Page
+    Log To Console                                \nStep 2: Open Config WAN Page
+    Open Network Settings Wan Page
+    SL.Maximize Browser Window
+
+    ### Step 3: Create 1st WAN Internet
+    Log To Console                                \nStep 3: Create 1st WAN Internet
+    Create WAN PPPoE Internet                     11
+    Verify WAN Was Created                        11
+
+    ### Step 4: Can't Create 2nd WAN Internet 
+    Log To Console                                \nStep 4: Can't Create 2nd WAN Internet
+    Create WAN PPPoE Internet                     20
+    Popup Only Create One Internet WAN Should Be Visible
+
+    ### Step 5: Create 2nd WAN
+    Log To Console                                \nStep 5: Create 2nd WAN
+    Create WAN Dynamic IP Other                   12
+    Verify WAN Was Created                        12
+
+    ### Step 6: Create 3rd WAN
+    Log To Console                                \nStep 6: Create 3rd WAN
+    Create WAN Dynamic IP Other                   13
+    Verify WAN Was Created                        13
+
+    ### Step 7: Create 4th WAN
+    Log To Console                                \nStep 7: Create 4th WAN
+    Create WAN Dynamic IP Other                   14
+    Verify WAN Was Created                        14
+
+    ### Step 8: Create 5th WAN
+    Log To Console                                \nStep 8: Create 5th WAN
+    Create WAN Dynamic IP Other                   15
+    Verify WAN Was Created                        15
+
+    ### Step 9: Create 6th WAN
+    Log To Console                                \nStep 9: Create 6th WAN
+    Create WAN Dynamic IP Other                   16
+    Verify WAN Was Created                        16     
+
+    ### Step 9: Create 7th WAN
+    Log To Console                                \nStep 9: Create 7th WAN
+    Create WAN Dynamic IP Other                   17
+    Verify WAN Was Created                        17  
+        
+    ### Step 10: Verify Cannot Create New WAN 
+    Log To Console                                \nStep 10: Verify Cannot Create New WAN
+    Add New Wan Service
+    Popup Only Create 8 WAN Should Be Visible
+
+    Logout WebGUI
+    
+    [Teardown]        Run Keyword And Ignore Error        MOD_WAN_21_TC_01_Teardown
+
+# *** Test Cases ***
+# MOD_WAN_21_TC_01
+#     MOD_WAN_21_TC_01
