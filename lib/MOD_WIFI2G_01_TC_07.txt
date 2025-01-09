@@ -16,6 +16,7 @@ MOD_WIFI2G_01_TC_07_Teardown
     Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
 
     #####Factory Reset Via Web GUI
+    Logout WebGUI
     Login To Browser		                 password=${ONT}[ONT_WEB_PASS]
     Factory Reset Via Web GUI
   
@@ -76,7 +77,7 @@ MOD_WIFI2G_01_TC_07
     Save Config SSID
 
     # Verify Config
-    Popup WEP Key Invalid Should Be Visible
+    Run Keyword And Continue On Failure           Popup WEP Key Invalid Should Be Visible
 
     ### Step 2: Config Security SSID 2 mode WEP 128-bit for Wifi 2.4GHz On WebGui
     Log To Console                                \nStep 2: Config Security SSID 2 mode WEP 128-bit for Wifi 2.4GHz On WebGui
@@ -114,7 +115,7 @@ MOD_WIFI2G_01_TC_07
     Save Config SSID
 
     # Verify Config
-    Popup WEP Key Invalid Should Be Visible
+    Run Keyword And Continue On Failure           Popup WEP Key Invalid Should Be Visible
 
     ### Step 3: Config Security SSID 3 mode WEP 128-bit for Wifi 2.4GHz On WebGui
     Log To Console                                \nStep 3: Config Security SSID 3 mode WEP 128-bit for Wifi 2.4GHz On WebGui
@@ -152,7 +153,7 @@ MOD_WIFI2G_01_TC_07
     Save Config SSID
 
     # Verify Config
-    Popup WEP Key Invalid Should Be Visible
+    Run Keyword And Continue On Failure           Popup WEP Key Invalid Should Be Visible
 
     ### Step 4: Config Security SSID 4 mode WEP 128-bit for Wifi 2.4GHz On WebGui
     Log To Console                                \nStep 4: Config Security SSID 4 mode WEP 128-bit for Wifi 2.4GHz On WebGui
@@ -190,10 +191,9 @@ MOD_WIFI2G_01_TC_07
     Save Config SSID
 
     # Verify Config
-    Popup WEP Key Invalid Should Be Visible
-    Logout WebGUI 
+    Run Keyword And Continue On Failure           Popup WEP Key Invalid Should Be Visible
     
-    [Teardown]                                     Run Keyword And Ignore Error        MOD_WIFI2G_01_TC_07_Teardown
+    [Teardown]                                    Run Keyword And Ignore Error        MOD_WIFI2G_01_TC_07_Teardown
     
 # *** Test Cases ***
 # MOD_WIFI2G_01_TC_07

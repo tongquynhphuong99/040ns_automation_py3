@@ -13,6 +13,7 @@ MOD_WAN_10_TC_01_Teardown
     Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
     
     #####Factory Reset Via Web GUI
+    Logout WebGUI
     Login To Browser		                 password=${ONT}[ONT_WEB_PASS]
     Factory Reset Via Web GUI
   
@@ -35,82 +36,80 @@ MOD_WAN_10_TC_01
     Set Test Message                               *HTML* <b>MOD_WAN_10_TC_01</b>
 
     ### Step 1: Open Browser & Login to WebGUI    
-    Log To Console                                \nStep 1: Login to Browser
-    Login To Browser		             		  password=${ONT}[ONT_WEB_PASS]
-    SL.Select Frame                               xpath=//frame[@name="contentfrm"]
+    Log To Console                                                      \nStep 1: Login to Browser
+    Login To Browser		             		                        password=${ONT}[ONT_WEB_PASS]
+    SL.Select Frame                                                     xpath=//frame[@name="contentfrm"]
 
     ### Step 2: Create new WAN With MTU Invalid 
-    Log To Console                                \nStep 2: Create new WAN With MTU Invalid 
+    Log To Console                                                      \nStep 2: Create new WAN With MTU Invalid 
     Open Network Settings Wan Page
     SL.Maximize Browser Window
     Add New Wan Service
-    Input VLAN ID                                 vlan_id=12
+    Input VLAN ID                                                       vlan_id=12
 
     ## Step 2.1: Config MTU EMPTY
-    Log To Console                                \nStep 2.1: Config MTU EMPTY
-    Input MTU                                     input=${EMPTY}
+    Log To Console                                                      \nStep 2.1: Config MTU EMPTY
+    Input MTU                                                           input=${EMPTY}
     Click Button Save WAN
-    Check Popup And Continue On Failure           popup=Popup MTU with special character Should Be Visible
-    ...                                           vlan_id=12
+    Check Popup WAN And Continue On Failure                             popup=Popup MTU with special character Should Be Visible
+    ...                                                                 vlan_id=12
 
     ## Step 2.2: Config MTU All Space
-    Log To Console                                \nStep 2.2: Config MTU All Space
-    Input MTU                                     input=${SPACE*4}
+    Log To Console                                                      \nStep 2.2: Config MTU All Space
+    Input MTU                                                           input=${SPACE*4}
     Click Button Save WAN
-    Check Popup And Continue On Failure           popup=Popup MTU with special character Should Be Visible
-    ...                                           vlan_id=12
+    Check Popup WAN And Continue On Failure                             popup=Popup MTU with special character Should Be Visible
+    ...                                                                 vlan_id=12
 
     ## Step 2.3: Config MTU = 1279 
-    Log To Console                                \nStep 2.3: Config MTU = 1279 
-    Input MTU                                     input=1279
+    Log To Console                                                      \nStep 2.3: Config MTU = 1279 
+    Input MTU                                                           input=1279
     Click Button Save WAN
-    Check Popup And Continue On Failure           popup=Popup MTU In Range 1280~1492 Should Be Visible
-    ...                                           vlan_id=12
+    Check Popup WAN And Continue On Failure                             popup=Popup MTU In Range 1280~1492 Should Be Visible
+    ...                                                                 vlan_id=12
 
     ### Step 2.4: Config MTU = 1493
-    Log To Console                                \nStep 2.4: Config MTU = 1493
-    Input MTU                                     input=1493
+    Log To Console                                                      \nStep 2.4: Config MTU = 1493
+    Input MTU                                                           input=1493
     Click Button Save WAN
-    Check Popup And Continue On Failure           popup=Popup MTU In Range 1280~1492 Should Be Visible
-    ...                                           vlan_id=12
+    Check Popup WAN And Continue On Failure                             popup=Popup MTU In Range 1280~1492 Should Be Visible
+    ...                                                                 vlan_id=12
     
     ### Step 2.5: Config MTU with special character
-    Log To Console                                \nStep 2.5: Config MTU with special character
-    Input MTU                                     input=@11
+    Log To Console                                                      \nStep 2.5: Config MTU with special character
+    Input MTU                                                           input=@11
     Click Button Save WAN
-    Check Popup And Continue On Failure           popup=Popup MTU with special character Should Be Visible
-    ...                                           vlan_id=12
+    Check Popup WAN And Continue On Failure                             popup=Popup MTU with special character Should Be Visible
+    ...                                                                 vlan_id=12
 
     ### Step 3: Create new WAN With MTU Valid (range 1280~1492)
-    Log To Console                                \nStep 3: Create new WAN With MTU Valid (range 1280~1492)
+    Log To Console                                                      \nStep 3: Create new WAN With MTU Valid (range 1280~1492)
 
     ## Step 3.1: Config MTU = 1280
-    Log To Console                                \nStep 3.1: Config MTU = 1280
-    Input MTU                                     input=1280
+    Log To Console                                                      \nStep 3.1: Config MTU = 1280
+    Input MTU                                                           input=1280
     Click Button Save WAN
 
     # Verify MTU
-    Verify MTU                                     vlan_id=12
-    ...                                            input=1280
+    Verify MTU                                                          vlan_id=12
+    ...                                                                 input=1280
 
     ## Step 3.2: Delete WAN was created
-    Log To Console                                 \nStep 3.2: Delete WAN was created
-    Delete WAN                                     column_name=VLAN/Priority    row_name=12
+    Log To Console                                                      \nStep 3.2: Delete WAN was created
+    Delete WAN                                                          column_name=VLAN/Priority    row_name=12
     Popup Delete WAN
-    Sleep                                          5s
+    Sleep                                                               5s
 
     ## Step 3.3: Config MTU = 1492
-    Log To Console                                \nStep 3.3: Config MTU = 1492
+    Log To Console                                                      \nStep 3.3: Config MTU = 1492
     Add New Wan Service
-    Input VLAN ID                                 vlan_id=14
-    Input MTU                                     input=1492
+    Input VLAN ID                                                       vlan_id=14
+    Input MTU                                                           input=1492
     Click Button Save WAN
 
     # Verify MTU
-    Verify MTU                                    vlan_id=14
-    ...                                           input=1492
-
-    Logout WebGUI
+    Verify MTU                                                          vlan_id=14
+    ...                                                                 input=1492
 
     [Teardown]                               Run Keyword And Ignore Error        MOD_WAN_10_TC_01_Teardown
 

@@ -12,6 +12,7 @@ MOD_WIFI5G_01_TC_23_Teardown
     Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
     
     #####Factory Reset Via Web GUI
+    Logout WebGUI
     Login To Browser		                 password=${ONT}[ONT_WEB_PASS]
     Factory Reset Via Web GUI
   
@@ -34,13 +35,13 @@ MOD_WIFI5G_01_TC_23
 
     # Open WebGUI    
     Login To Browser
-    SL.Select Frame                                xpath=//frame[@name="contentfrm"]
+    SL.Select Frame                             xpath=//frame[@name="contentfrm"]
     Open 5GHz Wireless Configure Page
     SL.Maximize Browser Window
 
 
     ### Step 1: Config Mac Filter Mode Open with SSID index 1
-    Select SSID 5G Index              ssid_index=1
+    Select SSID 5G Index                        ssid_index=1
 
     ## Step 1.1: Config Mac Filter Action Allow
     Config Mac Filter and Verify                mode=1    
@@ -53,7 +54,7 @@ MOD_WIFI5G_01_TC_23
 
 
     ### Step 2: Config Mac Filter Mode Open with SSID index 2
-    Select SSID 5G Index              ssid_index=2
+    Select SSID 5G Index                        ssid_index=2
 
     ## Step 2.1: Config Mac Filter Action Allow
     Config Mac Filter and Verify                mode=1    
@@ -66,7 +67,7 @@ MOD_WIFI5G_01_TC_23
 
 
     ### Step 3: Config Mac Filter Mode Open with SSID index 3
-    Select SSID 5G Index              ssid_index=3
+    Select SSID 5G Index                        ssid_index=3
 
     ## Step 3.1: Config Mac Filter Action Allow
     Config Mac Filter and Verify                mode=1    
@@ -79,7 +80,7 @@ MOD_WIFI5G_01_TC_23
     
 
     ### Step 4: Config Mac Filter Mode Open with SSID index 4
-    Select SSID 5G Index              ssid_index=4
+    Select SSID 5G Index                        ssid_index=4
 
     ## Step 4.1: Config Mac Filter Action Allow
     Config Mac Filter and Verify                mode=1    
@@ -89,8 +90,6 @@ MOD_WIFI5G_01_TC_23
     Config Mac Filter and Verify                mode=1    
     ...                                         action=Deny    
     ...                                         mac=AA:11:22:BB:CC:33  
-    
-    Logout WebGUI
 
     [Teardown]                               Run Keyword And Ignore Error        MOD_WIFI5G_01_TC_23_Teardown
 

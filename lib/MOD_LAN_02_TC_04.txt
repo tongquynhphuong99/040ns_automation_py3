@@ -1,0 +1,116 @@
+*** Settings ***
+Library                                            SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
+Resource                                           selenium/Login/SeleniumLoginLib.txt
+Resource                                           selenium/Network/SeleniumNetworkLANLib.txt
+Resource                                           selenium/Maintenance/SeleniumMaintenanceRebootResetLib.txt
+*** Variables ***
+
+*** Keywords ***
+MOD_LAN_02_TC_04_Teardown
+    ##Teardown
+    Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
+    
+    #####Factory Reset Via Web GUI
+    Logout WebGUI
+    Login To Browser		                 password=${ONT}[ONT_WEB_PASS]
+    Factory Reset Via Web GUI
+  
+    SL.Go To                                 url=${LOGIN_URL}
+    SL.Wait Until Element Is Visible         ${LOGIN_BUTTON}
+    ...                                      timeout=25s
+    ...                                      error=\nLogin Page Does Not Found!
+    Run Keyword If                           '${SWITCH_VARIABLE}' == '3'      Log To Console	\nDon't need to change password after reset factory
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '2'      Change Password WebGui
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '1'      Change Password WebGui
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '0'      Change Password WebGui    
+    SL.Delete All Cookies
+    SL.Close All Browsers
+
+MOD_LAN_02_TC_04
+    [Documentation]            Kiem tra chuc nang cau hinh DHCP Select Lease Time
+
+    # SL.Set Selenium Speed                          0.5
+    # SL.Set Selenium Timeout                        10s
+    Set Test Message                               *HTML* <b>MOD_LAN_02_TC_04</b>
+    
+    ### Step 1: Open Browser & Login to WebGUI    
+    Log To Console                                               \nStep 1: Login to Browser
+    Login To Browser		             		                 password=${ONT}[ONT_WEB_PASS]
+    SL.Select Frame                                              xpath=//frame[@name="contentfrm"]              
+    
+    ### Step 2: Open Config LAN Page
+    Log To Console                                               \nStep 2: Open Config LAN 
+    Open Network Settings LAN Page
+    SL.Maximize Browser Window
+
+    ### Step 3: Config Select Lease Time
+    Log To Console                                               \nStep 3: Config Select Lease Time
+
+    ## Step 3.1: Select Lease Time = 30 minute
+    Log To Console                                               \nStep 3.1: Select Lease Time = 30 minute
+    Config Select DHCP Lease Time                                dhcp_lease=30 minute
+    Click Button SaveIPv4 LAN
+    SeleniumNetworkLANLib.Verify Lease Time                      dhcp_lease=30 minute
+
+    ## Step 3.2: Select Lease Time = 1 hour 
+    Log To Console                                               \nStep 3.2: Select Lease Time = 1 hour
+    Config Select DHCP Lease Time                                dhcp_lease=1 hour
+    Click Button SaveIPv4 LAN
+    SeleniumNetworkLANLib.Verify Lease Time                      dhcp_lease=1 hour
+
+    ## Step 3.3: Select Lease Time = 1 day
+    Log To Console                                               \nStep 3.3: Select Lease Time = 1 day
+    Config Select DHCP Lease Time                                dhcp_lease=1 day
+    Click Button SaveIPv4 LAN
+    SeleniumNetworkLANLib.Verify Lease Time                      dhcp_lease=1 day
+
+    ## Step 3.4: Select Lease Time = 1 week
+    Log To Console                                               \nStep 3.4: Select Lease Time = 1 week
+    Config Select DHCP Lease Time                                dhcp_lease=1 week
+    Click Button SaveIPv4 LAN
+    SeleniumNetworkLANLib.Verify Lease Time                      dhcp_lease=1 week
+                       
+    ### Step 4: Config Input Lease Time
+    Log To Console                                               \nStep 4: Config Input Lease Time
+
+    ## Step 4.1: Input Lease Time = 1799 seconds (<30 minute)
+    Log To Console                                               \nStep 4.1: Input Lease Time = 1799 seconds (<30 minute)
+    Config Input DHCP Lease Time                                 dhcp_lease=1799
+    Click Button SaveIPv4 LAN
+    Check Popup LAN DHCPv4 And Continue On Failure               popup=Popup Lease Time Is Invalid Should Be Visible
+
+    ## Step 4.2: Input Lease Time = 1800 seconds (30 minute)
+    Log To Console                                               \nStep 4.2: Input Lease Time = 1800 seconds (30 minute)
+    Config Input DHCP Lease Time                                 dhcp_lease=1800
+    Click Button SaveIPv4 LAN
+    SeleniumNetworkLANLib.Verify Lease Time                      dhcp_lease=30 minute
+
+    ## Step 4.3: Input Lease Time = 1801 seconds (>30 minute)
+    Log To Console                                               \nStep 4.3: Input Lease Time = 1801 seconds (>30 minute)
+    Config Input DHCP Lease Time                                 dhcp_lease=1801
+    Click Button SaveIPv4 LAN
+    SeleniumNetworkLANLib.Verify Lease Time                      dhcp_lease=1801 seconds
+
+    ## Step 4.4: Input Lease Time = 604801 seconds (>1 week)
+    Log To Console                                               \nStep 4.4: Input Lease Time = 604801 seconds (>1 week)
+    Config Input DHCP Lease Time                                 dhcp_lease=604801
+    Click Button SaveIPv4 LAN
+    Check Popup LAN DHCPv4 And Continue On Failure               popup=Popup Lease Time Is Invalid Should Be Visible
+
+    ## Step 4.5: Input Lease Time = 604800 seconds (1 week)
+    Log To Console                                               \nStep 4.5: Input Lease Time = 604800 seconds (1 week)
+    Config Input DHCP Lease Time                                 dhcp_lease=604800
+    Click Button SaveIPv4 LAN
+    SeleniumNetworkLANLib.Verify Lease Time                      dhcp_lease=1 week
+
+    ## Step 4.6: Input Lease Time = 604799 seconds (<1 week)
+    Log To Console                                               \nStep 4.6: Input Lease Time = 604799 seconds (<1 week)
+    Config Input DHCP Lease Time                                 dhcp_lease=604799
+    Click Button SaveIPv4 LAN
+    SeleniumNetworkLANLib.Verify Lease Time                      dhcp_lease=604799 seconds
+
+    [Teardown]                               Run Keyword And Ignore Error        MOD_LAN_02_TC_04_Teardown
+
+# *** Test Cases ***
+# MOD_LAN_02_TC_04
+#     MOD_LAN_02_TC_04

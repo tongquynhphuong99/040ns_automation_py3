@@ -22,7 +22,7 @@ Resource    lib/MOD_WAN_20_TC_01.txt
 Resource    lib/MOD_WAN_21_TC_01.txt
 
 *** Variables ***
-${REMOTE_SERVER_IP}            10.2.204.150
+${REMOTE_SERVER_IP}            10.2.204.165
 ${REMOTE_SERVER_USERNAME}      telco
 ${REMOTE_SERVER_PASSWORD}      123456
 

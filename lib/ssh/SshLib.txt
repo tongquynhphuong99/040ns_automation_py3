@@ -4,7 +4,7 @@ Library                SSHLibrary     WITH NAME    SSHL
 Library                String     WITH NAME    STR
 Resource               ../variables/AllVariables.txt
 
-*** Variable ***
+*** Variables ***
 
 *** Keywords ***
 ###
@@ -23,6 +23,68 @@ Open Connection And Login To Remote Machine
     Should Contain          ${login_output}     ${ssh_server_username}
 
 ###
+Delete All Wireless
+    Log To Console      Delete all wireless
+    ${all_wireless}=    SSHL.Execute Command       nmcli --fields UUID,Type connection show | grep 'wifi' | awk '{print $1}'
+    ${all_wireless}=    STR.Replace String    ${all_wireless}    \n    ${SPACE}
+    Run Keyword If    '${all_wireless}' != ''    SSHL.Execute Command    sudo nmcli connection delete uuid ${all_wireless}
+    ...    ELSE    Log To Console    Already deleted Wireless
+
+###
+Disable Wifi
+    Log To Console          Disable Wifi
+    SSHL.Execute Command    sudo nmcli radio wifi off
+    
+###    
+Enable Wifi
+    Log To Console          Enable Wifi
+    SSHL.Execute Command    sudo nmcli radio wifi on
+
+###
+Up Down Network Card PC Linux
+    [Arguments]    ${network_interface_card}=enp2s0
+    SSHL.Execute Command    sudo ifconfig ${network_interface_card} down
+    Sleep    5s
+    SSHL.Execute Command    sudo ifconfig ${network_interface_card} up
+    Sleep    5s
+
+###
+Renew IP Address
+    [Arguments]             ${network_interface}    ${ip_adrress_contain}
+    SSHL.Execute Command		sudo ifconfig ${network_interface} down		delay=3s
+    Sleep                   10s
+    SSHL.Execute Command		sudo ifconfig ${network_interface} up		delay=3s
+    Sleep                   10s
+    ${ip_address_on_pc}=    Get Network Interface Ip Address    network_interface=${network_interface}
+    Should Contain          ${ip_address_on_pc}    ${ip_adrress_contain}
+
+###
+Get Network Interface Ip Address
+    [Documentation]         Get IP address of network interface. Return None if IP address not found
+    ...                     Input:
+    ...                     1. network_interface
+    ...                     Return:
+    ...                     1. network_interface_ip_addr
+
+    [Arguments]             ${network_interface}
+    ${network_interface_ip_addr}=         SSHL.Execute Command    ifconfig ${network_interface} | grep 'inet' | cut -d: -f2 | awk '{print $1}'
+    ${return_code}=         Run Keyword And Return Status         Should Match Regexp     ${network_interface_ip_addr}    [0-9]{1,3}\\.+[0-9]{1,3}\\.+[0-9]{1,3}\\.+[0-9]{1,3}
+    Return From Keyword If  '${return_code}' == 'False'           None
+    RETURN                ${network_interface_ip_addr}
+
+
+
+
+
+
+
+
+
+
+
+
+
+###
 Ping From PC To
     [Documentation]         SSH to remote machine to ping to an address. Return True if ping succeed, else return False
     ...                     Input:
@@ -36,7 +98,7 @@ Ping From PC To
     Log To Console    Ping error: ${ping_error}
     ${isPingFailed}=        Run Keyword And Return Status     Should Contain    ${ping_output}    100% packet loss
     Return From Keyword If    '${isPingFailed}' == 'True' or '${ping_rc}' != '0'    False
-    [Return]   True
+    RETURN       True
 
 ###
 Ping From PC With MTU Size
@@ -55,7 +117,7 @@ Ping From PC With MTU Size
     Log To Console    Ping error: ${ping_error}
     ${isPingFailed}=        Run Keyword And Return Status     Should Contain    ${ping_output}    100% packet loss
     Return From Keyword If    '${isPingFailed}' == 'True' or '${ping_rc}' != '0'    False
-    [Return]   True
+    RETURN       True
     
 ###
 Ping Should Succeed
@@ -247,24 +309,8 @@ Telnet To ONT And Get MTU WAN Interface
     ${wan_interface_output}=        SSHL.Read    delay=${delay}
     SSHL.Write              exit
     
-    [Return]    ${wan_interface_output}
+    RETURN        ${wan_interface_output}
     
-Delete All Wireless
-    Log To Console      Delete all wireless
-    ${all_wireless}=    SSHL.Execute Command       nmcli --fields UUID,Type connection show | grep 'wireless' | awk '{print $1}'
-    ${all_wireless}=    STR.Replace String    ${all_wireless}    \n    ${SPACE}
-    Run Keyword If    '${all_wireless}' != ''    SSHL.Execute Command    sudo nmcli connection delete uuid ${all_wireless}
-    ...    ELSE    Log To Console    Already deleted Wireless
-
-###
-Disable Wifi
-    Log To Console      Disable Wifi
-    SSHL.Execute Command    sudo nmcli radio wifi off
-    Sleep                  0.5
-    
-Enable Wifi
-    Log To Console      Enable Wifi
-    SSHL.Execute Command    sudo nmcli radio wifi on
 
 ###
 Check Connected To Interface
@@ -274,7 +320,7 @@ Check Connected To Interface
 
     [Arguments]             ${network_interface}
 
-    ${ifconfigOut}=         SSHL.Execute Command    ifconfig ${network_interface} | grep 'inet addr' | cut -d: -f2 | awk '{print $1}'
+    ${ifconfigOut}=         SSHL.Execute Command    ifconfig ${network_interface} | grep 'inet' | cut -d: -f2 | awk '{print $1}'
     ${return}=              Should Match Regexp     ${ifconfigOut}    [0-9]{1,3}\\.+[0-9]{1,3}\\.+[0-9]{1,3}\\.+[0-9]{1,3}
 
     Log To Console          PC Get IP Address on interface ${network_interface}: ${return}
@@ -287,7 +333,7 @@ Check Disconnected From Interface
 
     [Arguments]             ${network_interface}
 
-    ${ifconfigOut}=         SSHL.Execute Command       ifconfig ${network_interface} | grep 'inet addr' | cut -d: -f2 | awk '{print $1}'
+    ${ifconfigOut}=         SSHL.Execute Command       ifconfig ${network_interface} | grep 'inet' | cut -d: -f2 | awk '{print $1}'
     Run Keyword If          '${ifconfigOut}' != ''     Fail       Disconnecting from ONT via LAN interface ${network_interface} failed!
 
 ###
@@ -369,19 +415,7 @@ Disconnect From ONT Via LAN
     Run Keyword If          ${isDisconnectedSuccess}        Log To Console       Disconnecting ${network_interface} from LAN successfully
     ...    ELSE             Fail      Disconnecting ${network_interface} from LAN failed
 
-###
-Get Network Interface Ip Address
-    [Documentation]         Get IP address of network interface. Return None if IP address not found
-    ...                     Input:
-    ...                     1. network_interface
-    ...                     Return:
-    ...                     1. network_interface_ip_addr
 
-    [Arguments]             ${network_interface}
-    ${network_interface_ip_addr}=         SSHL.Execute Command    ifconfig ${network_interface} | grep 'inet addr' | cut -d: -f2 | awk '{print $1}'
-    ${return_code}=         Run Keyword And Return Status         Should Match Regexp     ${network_interface_ip_addr}    [0-9]{1,3}\\.+[0-9]{1,3}\\.+[0-9]{1,3}\\.+[0-9]{1,3}
-    Return From Keyword If  '${return_code}' == 'False'           None
-    [Return]                ${network_interface_ip_addr}
 
 
 ###
@@ -395,13 +429,7 @@ Set Network Interface
 
     SSHL.Execute Command    sudo nmcli device ${action} ${network_interface} |:
 
-###
-Up Down Network Card PC Linux
-    [Arguments]    ${network_interface_card}=enp2s0
-    SSHL.Write    sudo ifconfig ${network_interface_card} down
-    Sleep    5s
-    SSHL.Write    sudo ifconfig ${network_interface_card} up
-    Sleep    5s
+
 
 ###
 Get IPv4 PC Linux
@@ -413,7 +441,7 @@ Get IPv4 PC Linux
     ${output}=    STR.Get Lines Containing String   ${output}   Mask:255.255.255.248
     ${outputipv4}=    STR.Split String    ${output}
     ${output_1}=      STR.Split String        ${outputipv4[1]}     separator=:
-    [Return]          ${output_1[1]}
+    RETURN          ${output_1[1]}
 
 ###
 Check IPv4 Public By Web
@@ -433,14 +461,7 @@ Get Time PC
 
     Return From Keyword        ${minute_cur}        ${hour_cur}        ${date_cur}        ${month_cur}        ${day_cur}
 
-Renew IP Address
-    [Arguments]             ${network_interface}    ${ip_adrress_contain}
-    SSHL.Execute Command		sudo ifconfig ${network_interface} down		delay=3s
-    Sleep                   10s
-    SSHL.Execute Command		sudo ifconfig ${network_interface} up		delay=3s
-    Sleep                   10s
-    ${ip_address_on_pc}=    Get Network Interface Ip Address    network_interface=${network_interface}
-    Should Contain          ${ip_address_on_pc}    ${ip_adrress_contain}
+
     
     
 Get Remote File

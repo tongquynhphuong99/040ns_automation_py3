@@ -11,6 +11,7 @@ MOD_WIFI2G_01_TC_16_Teardown
     Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
     
     #####Factory Reset Via Web GUI
+    Logout WebGUI
     Login To Browser		                 password=${ONT}[ONT_WEB_PASS]
     Factory Reset Via Web GUI
   
@@ -34,7 +35,7 @@ MOD_WIFI2G_01_TC_16
     
     # Open WebGUI
     Login To Browser
-    SL.Select Frame                                xpath=//frame[@name="contentfrm"]
+    SL.Select Frame                          xpath=//frame[@name="contentfrm"]
     Open 2.4GHz Wireless Configure Page
     SL.Maximize Browser Window
 
@@ -71,8 +72,6 @@ MOD_WIFI2G_01_TC_16
     Config Transmitted Power                 transmitted_power=100%
     Save Config SSID
     Verify Transmitted Power                 current_Tx=100%
-
-    Logout WebGUI
 
     [Teardown]                               Run Keyword And Ignore Error        MOD_WIFI2G_01_TC_16_Teardown
 

@@ -1,0 +1,70 @@
+*** Settings ***
+Library                                            SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
+Resource                                           selenium/Login/SeleniumLoginLib.txt
+Resource                                           selenium/Network/SeleniumNetworkLANLib.txt
+Resource                                           selenium/Maintenance/SeleniumMaintenanceRebootResetLib.txt
+*** Variables ***
+
+*** Keywords ***
+MOD_LAN_03_TC_05_Teardown
+    ##Teardown
+    Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
+    
+    #####Factory Reset Via Web GUI
+    Logout WebGUI
+    Login To Browser		                 password=${ONT}[ONT_WEB_PASS]
+    Factory Reset Via Web GUI
+  
+    SL.Go To                                 url=${LOGIN_URL}
+    SL.Wait Until Element Is Visible         ${LOGIN_BUTTON}
+    ...                                      timeout=25s
+    ...                                      error=\nLogin Page Does Not Found!
+    Run Keyword If                           '${SWITCH_VARIABLE}' == '3'      Log To Console	\nDon't need to change password after reset factory
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '2'      Change Password WebGui
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '1'      Change Password WebGui
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '0'      Change Password WebGui    
+    SL.Delete All Cookies
+    SL.Close All Browsers
+
+MOD_LAN_03_TC_05
+    [Documentation]            Kiem tra chuc nang cau hinh truong Minimum TTL
+
+    # SL.Set Selenium Speed                          0.5
+    # SL.Set Selenium Timeout                        10s
+    Set Test Message                               *HTML* <b>MOD_LAN_03_TC_05</b>
+    
+    ### Step 1: Open Browser & Login to WebGUI    
+    Log To Console                                               \nStep 1: Login to Browser
+    Login To Browser		             		                 password=${ONT}[ONT_WEB_PASS]
+    SL.Select Frame                                              xpath=//frame[@name="contentfrm"]              
+    
+    ### Step 2: Open Config LAN Page
+    Log To Console                                               \nStep 2: Open Config LAN 
+    Open Network Settings LAN Page
+    SL.Maximize Browser Window
+
+    ### Step 3: Config Minimum TTL = -1
+    Log To Console                                               \nStep 3: Config Minimum TTL = -1
+    Config Minimum TTL                                           minimum_ttl=-1
+    Click Button SaveIPv4 LAN
+    Check Popup LAN DHCPv4 And Continue On Failure               popup=Popup Minimum TTL Is Invalid Should Be Visible             
+
+    ### Step 4: Config Minimum TTL = 86401
+    Log To Console                                               \nStep 4: Config Minimum TTL = 86401
+    Config Minimum TTL                                           minimum_ttl=86401
+    Click Button SaveIPv4 LAN
+    Check Popup LAN DHCPv4 And Continue On Failure               popup=Popup Minimum TTL Is Invalid Should Be Visible             
+
+    ### Step 5: Config Minimum TTL = 200
+    Log To Console                                               \nStep 5: Config Minimum TTL = 200
+    Config Minimum TTL                                           minimum_ttl=200
+    Click Button SaveIPv4 LAN
+
+    # Verify Minimum TTL success
+    Verify Minimum TTL                                           minimum_ttl=200
+
+    [Teardown]                               Run Keyword And Ignore Error        MOD_LAN_03_TC_05_Teardown
+
+# *** Test Cases ***
+# MOD_LAN_03_TC_05
+#     MOD_LAN_03_TC_05

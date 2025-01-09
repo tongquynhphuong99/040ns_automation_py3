@@ -13,6 +13,7 @@ MOD_WAN_17_TC_01_Teardown
     Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
     
     #####Factory Reset Via Web GUI
+    Logout WebGUI
     Login To Browser		                 password=${ONT}[ONT_WEB_PASS]
     Factory Reset Via Web GUI
   
@@ -35,71 +36,75 @@ MOD_WAN_17_TC_01
     Set Test Message                               *HTML* <b>MOD_WAN_17_TC_01</b>
 
     ### Step 1: Open Browser & Login to WebGUI    
-    Log To Console                                \nStep 1: Login to Browser
-    Login To Browser		             		  password=${ONT}[ONT_WEB_PASS]
-    SL.Select Frame                               xpath=//frame[@name="contentfrm"]
+    Log To Console                                                      \nStep 1: Login to Browser
+    Login To Browser		             		                        password=${ONT}[ONT_WEB_PASS]
+    SL.Select Frame                                                     xpath=//frame[@name="contentfrm"]
 
     ### Step 2: Add WAN & para of wan interface
-    Log To Console                                \nStep 2: Add WAN & para of wan interface
+    Log To Console                                                      \nStep 2: Add WAN & para of wan interface
     Open Network Settings Wan Page
     SL.Maximize Browser Window
     Add New Wan Service
-    Input VLAN ID                                 vlan_id=11
+    Input VLAN ID                                                       vlan_id=11
 
     ### Step 3: Config Primary Time Invalid
-    Log To Console                                \nStep 3: Config Primary Time Invalid
-    Config Enable PD                              enable=On
-    Config Prefix Mode                            mode=Manual
-    Config Prefix Address                         addr=2001:0db8:85a3::/64
-    Config Lease Time                             lease_time=2222
+    Log To Console                                                      \nStep 3: Config Primary Time Invalid
+    Config Enable PD                                                    enable=On
+    Config Prefix Mode                                                  mode=Manual
+    Config Prefix Address                                               addr=2001:0db8:85a3::/64
+    Config Lease Time                                                   lease_time=2222
 
     ## Step 3.1: Config Primary Time = ${EMPTY}
-    Log To Console                                \nStep 3.1: Config Primary Time = ${EMPTY}
-    Config Primary Time                           pri_time=${EMPTY}
+    Log To Console                                                      \nStep 3.1: Config Primary Time = ${EMPTY}
+    Config Primary Time                                                 pri_time=${EMPTY}
     Click Button Save WAN
-    Popup Primary Time Invalid Should Be Visible        pri_time=${EMPTY}
+    Check Popup WAN And Continue On Failure                             popup=Popup Primary Time Invalid Should Be Visible        
+    ...                                                                 argument1=${EMPTY}
 
     ## Step 3.2: Config Primary Time = All Space
-    Log To Console                                \nStep 3.2: Config Primary Time = All Space
-    Config Primary Time                           pri_time=${SPACE*4}
+    Log To Console                                                      \nStep 3.2: Config Primary Time = All Space
+    Config Primary Time                                                 pri_time=${SPACE*4}
     Click Button Save WAN
-    Popup Primary Time Invalid Should Be Visible        pri_time=${SPACE*4}
+    Check Popup WAN And Continue On Failure                             popup=Popup Primary Time Invalid Should Be Visible        
+    ...                                                                 argument1=${SPACE*4}
 
     ## Step 3.3: Config Primary Time = 599
-    Log To Console                                \nStep 3.3: Config Primary Time = 599
-    Config Primary Time                           pri_time=599
+    Log To Console                                                      \nStep 3.3: Config Primary Time = 599
+    Config Primary Time                                                 pri_time=599
     Click Button Save WAN
-    Popup Primary Time Invalid Should Be Visible        pri_time=599
+    Check Popup WAN And Continue On Failure                             popup=Popup Primary Time Invalid Should Be Visible        
+    ...                                                                 argument1=599
 
     ## Step 3.4: Config Primary Time = 4294967296
-    Log To Console                                \nStep 3.4: Config Primary Time = 4294967296
-    Config Primary Time                           pri_time=4294967296
+    Log To Console                                                      \nStep 3.4: Config Primary Time = 4294967296
+    Config Primary Time                                                 pri_time=4294967296
     Click Button Save WAN
-    Popup Primary Time Invalid Should Be Visible        pri_time=4294967296
+    Check Popup WAN And Continue On Failure                             popup=Popup Primary Time Invalid Should Be Visible        
+    ...                                                                 argument1=4294967296
 
     ## Step 3.5: Config Primary Time with special character
-    Log To Console                                \nStep 3.5: Config Primary Time with special character
-    Config Primary Time                           pri_time=@
+    Log To Console                                                      \nStep 3.5: Config Primary Time with special character
+    Config Primary Time                                                 pri_time=@
     Click Button Save WAN
-    Popup Primary Time Invalid Should Be Visible        pri_time=@
+    Check Popup WAN And Continue On Failure                             popup=Popup Primary Time Invalid Should Be Visible        
+    ...                                                                 argument1=@
 
     ## Step 3.6: Config Primary Time Greater Than Lease Time
-    Log To Console                                \nStep 3.6: Config Primary Time Greater Than Lease Time
-    Config Primary Time                           pri_time=2500
+    Log To Console                                                      \nStep 3.6: Config Primary Time Greater Than Lease Time
+    Config Primary Time                                                 pri_time=2500
     Click Button Save WAN
-    Popup Lease Time Must Greater Than Primary Time Invalid Should Be Visible        pri_time=2500
-    ...                                                                              lease_time=2222
+    Check Popup WAN And Continue On Failure                             popup=Popup Lease Time Must Greater Than Primary Time Invalid Should Be Visible        
+    ...                                                                 argument1=2500
+    ...                                                                 argument2=2222
 
     ### Step 4: Config Primary Time Valid (range 600~4294967295)
-    Log To Console                                \nStep 4: Config Primary Time Valid (range 600~4294967295)
-    Config Primary Time                           pri_time=603
-    Click Button Save WAN
+    Log To Console                                                      \nStep 4: Config Primary Time Valid (range 600~4294967295)
+    Config Primary Time                                                 pri_time=603
+    Click Button Save WAN                
 
     # Verify Primary Time 
-    Verify Primary Time                           vlan_id=11
-    ...                                           pri_time=603
-    
-    Logout WebGUI
+    Verify Primary Time                                                 vlan_id=11
+    ...                                                                 pri_time=603
 
     [Teardown]                               Run Keyword And Ignore Error        MOD_WAN_17_TC_01_Teardown
 

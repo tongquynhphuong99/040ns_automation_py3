@@ -42,7 +42,7 @@ ${INVALID_PRIORITY}                    234
 ${INVALID_VLAN}                        4096
 
 # IP address of test control PC
-${REMOTE_SERVER_IP}                    10.2.204.164
+${REMOTE_SERVER_IP}                    10.2.204.165
 ${REMOTE_SERVER_IP_1}                  10.2.204.152
 ${REMOTE_SERVER_IP_2}                  10.2.204.165
 

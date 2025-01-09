@@ -1,0 +1,77 @@
+*** Settings ***
+Library                                            SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
+Resource                                           selenium/Login/SeleniumLoginLib.txt
+Resource                                           selenium/Network/SeleniumNetworkLANLib.txt
+Resource                                           selenium/Network/SeleniumNetworkWANLib.txt
+Resource                                           selenium/Maintenance/SeleniumMaintenanceRebootResetLib.txt
+*** Variables ***
+
+*** Keywords ***
+MOD_LAN_05_TC_02_Teardown
+    ##Teardown
+    Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
+    
+    #####Factory Reset Via Web GUI
+    Logout WebGUI
+    Login To Browser		                 password=${ONT}[ONT_WEB_PASS]
+    Factory Reset Via Web GUI
+  
+    SL.Go To                                 url=${LOGIN_URL}
+    SL.Wait Until Element Is Visible         ${LOGIN_BUTTON}
+    ...                                      timeout=25s
+    ...                                      error=\nLogin Page Does Not Found!
+    Run Keyword If                           '${SWITCH_VARIABLE}' == '3'      Log To Console	\nDon't need to change password after reset factory
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '2'      Change Password WebGui
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '1'      Change Password WebGui
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '0'      Change Password WebGui    
+    SL.Delete All Cookies
+    SL.Close All Browsers
+
+MOD_LAN_05_TC_02
+    [Documentation]    Kiem tra kha nang cau hinh truong DNS Server Source
+
+    # SL.Set Selenium Speed                          0.5
+    # SL.Set Selenium Timeout                        10s
+    Set Test Message                               *HTML* <b>MOD_LAN_05_TC_02</b>
+    
+    ### Step 1: Open Browser & Login to WebGUI    
+    Log To Console                                               \nStep 1: Login to Browser
+    Login To Browser		             		                 password=${ONT}[ONT_WEB_PASS]
+    SL.Select Frame                                              xpath=//frame[@name="contentfrm"]              
+    
+    ### Step 2: Create WAN Internet
+    Log To Console                                               \nStep 2: Create WAN Internet
+    Open Network Settings Wan Page
+    SL.Maximize Browser Window
+    Create WAN PPPoE Internet                                    11
+    Verify WAN Was Created                                       11
+
+    ### Step 3: Open Config LAN Page & Config Enable DHCPv6 Server 
+    Log To Console                                               \nStep 3: Open Config LAN Page & Config Enable DHCPv6 Server 
+    Open Network Settings LAN Page
+    SL.Maximize Browser Window
+    Enable/Disable DHCPv6 Server                                 dhcpv6_server=On
+
+    ### Step 4: Config DNS Server Source = Proxy
+    Log To Console                                               \nStep 4: Config DNS Server Source = Proxy
+    Config DNS Server Source                                     dns_server_source=Proxy
+    Click Button SaveIPv6 LAN
+    Verify DNS Server Source                                     dns_server_source=Proxy
+
+    ### Step 5: Config DNS Server Source = Static
+    Log To Console                                               \nStep 5: Config DNS Server Source = Static
+    Config DNS Server Source                                     dns_server_source=Static
+    Click Button SaveIPv6 LAN
+    Verify DNS Server Source                                     dns_server_source=Static
+
+    ### Step 6: Config DNS Server Source = WAN Internet
+    Log To Console                                               \nStep 6: Config DNS Server Source = WAN Internet
+    Config DNS Server Source                                     dns_server_source=2_INTERNET_R_VID_11
+    Click Button SaveIPv6 LAN
+    Verify DNS Server Source                                     dns_server_source=2_INTERNET_R_VID_11
+
+    [Teardown]                               Run Keyword And Ignore Error        MOD_LAN_05_TC_02_Teardown
+
+# *** Test Cases ***
+# MOD_LAN_05_TC_02
+#     MOD_LAN_05_TC_02

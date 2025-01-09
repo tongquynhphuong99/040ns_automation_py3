@@ -1,0 +1,86 @@
+*** Settings ***
+Library                                            SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
+Resource                                           selenium/Login/SeleniumLoginLib.txt
+Resource                                           selenium/Network/SeleniumNetworkLANLib.txt
+Resource                                           selenium/Maintenance/SeleniumMaintenanceRebootResetLib.txt
+*** Variables ***
+
+*** Keywords ***
+MOD_LAN_05_TC_03_Teardown
+    ##Teardown
+    Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
+    
+    #####Factory Reset Via Web GUI
+    Logout WebGUI
+    Login To Browser		                 password=${ONT}[ONT_WEB_PASS]
+    Factory Reset Via Web GUI
+  
+    SL.Go To                                 url=${LOGIN_URL}
+    SL.Wait Until Element Is Visible         ${LOGIN_BUTTON}
+    ...                                      timeout=25s
+    ...                                      error=\nLogin Page Does Not Found!
+    Run Keyword If                           '${SWITCH_VARIABLE}' == '3'      Log To Console	\nDon't need to change password after reset factory
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '2'      Change Password WebGui
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '1'      Change Password WebGui
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '0'      Change Password WebGui    
+    SL.Delete All Cookies
+    SL.Close All Browsers
+
+MOD_LAN_05_TC_03
+    [Documentation]    Kiem tra kha nang cau hinh truong Primary DNS DHCPv6
+
+    # SL.Set Selenium Speed                          0.5
+    # SL.Set Selenium Timeout                        10s
+    Set Test Message                               *HTML* <b>MOD_LAN_05_TC_03</b>
+    
+    ### Step 1: Open Browser & Login to WebGUI    
+    Log To Console                                               \nStep 1: Login to Browser
+    Login To Browser		             		                 password=${ONT}[ONT_WEB_PASS]
+    SL.Select Frame                                              xpath=//frame[@name="contentfrm"]              
+    
+    ### Step 2: Open Config LAN Page
+    Log To Console                                               \nStep 2: Open Config LAN 
+    Open Network Settings LAN Page
+    SL.Maximize Browser Window
+ 
+    ### Step 3: Enable DHCPv6 Server and Config DNS Server Source = Static
+    Log To Console                                               \nStep 3: Enable DHCPv6 Server and Config DNS Server Source = Static 
+    Enable/Disable DHCPv6 Server                                 dhcpv6_server=On 
+    Config DNS Server Source                                     dns_server_source=Static
+
+    ### Step 4: Config Primary DNS Incorrect Format
+    Log To Console                                               \nStep 4: Config Primary DNS Incorrect Format
+
+    ## Step 4.1: Config Primary DNS = 3ffe:501:ffff:100
+    Log To Console                                               \nStep 4.1: Config Primary DNS = 3ffe:501:ffff:100
+    Config Primary DNS DHCPv6                                    primary_dns=3ffe:501:ffff:100
+    Click Button SaveIPv6 LAN
+    Check Popup LAN DHCPv6 And Continue On Failure               popup=Popup Primary DNS DHCPv6 Invalid Should Be Visible
+    ...                                                          argument1=3ffe:501:ffff:100
+
+    ## Step 4.2: Config Primary DNS with special character
+    Log To Console                                               \nStep 4.2: Config Primary DNS with special character
+    Config Primary DNS DHCPv6                                    primary_dns=fe80::1:@@@
+    Click Button SaveIPv6 LAN
+    Check Popup LAN DHCPv6 And Continue On Failure               popup=Popup Primary DNS DHCPv6 Invalid Should Be Visible
+    ...                                                          argument1=fe80::1:@@@
+
+    ## Step 4.3: Config Primary DNS Empty
+    Log To Console                                               \nStep 4.3: Config Primary DNS Empty
+    Config Primary DNS DHCPv6                                    primary_dns=${EMPTY}
+    Click Button SaveIPv6 LAN
+    Check Popup LAN DHCPv6 And Continue On Failure               popup=Popup Primary DNS DHCPv6 Invalid Should Be Visible
+    ...                                                          argument1=${EMPTY}
+
+    ### Step 5: Config Primary DNS Correct Format
+    Log To Console                                               \nStep 5: Config Primary DNS Correct Format
+    Config Primary DNS DHCPv6                                    primary_dns=fe80::8
+    Click Button SaveIPv6 LAN
+    # Verify
+    Verify Primary DNS DHCPv6                                    primary_dns=fe80::8
+
+    [Teardown]                               Run Keyword And Ignore Error        MOD_LAN_05_TC_03_Teardown
+
+# *** Test Cases ***
+# MOD_LAN_05_TC_03
+#     MOD_LAN_05_TC_03

@@ -11,6 +11,7 @@ MOD_WIFI2G_01_TC_26_Teardown
     Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
     
     #####Factory Reset Via Web GUI
+    Logout WebGUI
     Login To Browser		                 password=${ONT}[ONT_WEB_PASS]
     Factory Reset Via Web GUI
   
@@ -44,8 +45,6 @@ MOD_WIFI2G_01_TC_26
     Config TWT Button and Verify 2G                twt_button=Disable
     Config TWT Button and Verify 2G                twt_button=Enable
     Config TWT Button and Verify 2G                twt_button=Mandatory
-
-    Logout WebGUI
 
     [Teardown]                               Run Keyword And Ignore Error        MOD_WIFI2G_01_TC_26_Teardown
 

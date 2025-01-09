@@ -11,6 +11,7 @@ MOD_WIFI2G_01_TC_22_Teardown
     Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
     
     #####Factory Reset Via Web GUI
+    Logout WebGUI
     Login To Browser		                 password=${ONT}[ONT_WEB_PASS]
     Factory Reset Via Web GUI
   
@@ -45,14 +46,12 @@ MOD_WIFI2G_01_TC_22
     ## Step 1.1: On AirTime FairNess for Wifi 2.4Ghz
     Config AirTime FairNess 2G                     value=on
     Save Config SSID
-    Verify AirTime FairNess 2G  airTime_fairNess=True
+    Verify AirTime FairNess 2G                     airTime_fairNess=True
 
     ## Step 1.2: Off AirTime FairNess for Wifi 2.4Ghz
     Config AirTime FairNess 2G                     value=off
     Save Config SSID
     Verify AirTime FairNess 2G                     airTime_fairNess=False
-
-    Logout WebGUI
 
     [Teardown]                               Run Keyword And Ignore Error        MOD_WIFI2G_01_TC_22_Teardown
 

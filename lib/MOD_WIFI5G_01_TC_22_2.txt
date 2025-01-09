@@ -11,6 +11,7 @@ MOD_WIFI5G_01_TC_22_2_Teardown
     Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
     
     #####Factory Reset Via Web GUI
+    Logout WebGUI
     Login To Browser		                 password=${ONT}[ONT_WEB_PASS]
     Factory Reset Via Web GUI
   
@@ -34,16 +35,14 @@ MOD_WIFI5G_01_TC_22_2
 
     # Open WebGUI    
     Login To Browser
-    SL.Select Frame                                xpath=//frame[@name="contentfrm"]
+    SL.Select Frame                               xpath=//frame[@name="contentfrm"]
     Open 5GHz Wireless Configure Page
     SL.Maximize Browser Window
 
     ### Step 1: Config VHT Guard Interval Wifi 5Ghz
-    Select SSID 5G Index                  ssid_index=1
-    Config VHT Guard Interval and Verify 5G   guard_interval=Long
-    Config VHT Guard Interval and Verify 5G   guard_interval=Short
-
-    Logout WebGUI
+    Select SSID 5G Index                          ssid_index=1
+    Config VHT Guard Interval and Verify 5G       guard_interval=Long
+    Config VHT Guard Interval and Verify 5G       guard_interval=Short
 
     [Teardown]                               Run Keyword And Ignore Error        MOD_WIFI5G_01_TC_22_2_Teardown
 

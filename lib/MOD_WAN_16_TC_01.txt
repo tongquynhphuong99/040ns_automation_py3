@@ -13,6 +13,7 @@ MOD_WAN_16_TC_01_Teardown
     Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
     
     #####Factory Reset Via Web GUI
+    Logout WebGUI
     Login To Browser		                 password=${ONT}[ONT_WEB_PASS]
     Factory Reset Via Web GUI
   
@@ -35,70 +36,68 @@ MOD_WAN_16_TC_01
     Set Test Message                               *HTML* <b>MOD_WAN_16_TC_01</b>
 
     ### Step 1: Open Browser & Login to WebGUI    
-    Log To Console                                \nStep 1: Login to Browser
-    Login To Browser		             		  password=${ONT}[ONT_WEB_PASS]
-    SL.Select Frame                               xpath=//frame[@name="contentfrm"]
+    Log To Console                                                      \nStep 1: Login to Browser
+    Login To Browser		             		                        password=${ONT}[ONT_WEB_PASS]
+    SL.Select Frame                                                     xpath=//frame[@name="contentfrm"]
 
     ### Step 2: Add WAN & para of wan interface
-    Log To Console                                \nStep 2: Add WAN & para of wan interface
+    Log To Console                                                      \nStep 2: Add WAN & para of wan interface
     Open Network Settings Wan Page
     SL.Maximize Browser Window
     Add New Wan Service
-    Input VLAN ID                                 vlan_id=11
+    Input VLAN ID                                                       vlan_id=11
 
     ### Step 3: Config Prefix Address Invalid
-    Log To Console                                \nStep 3: Config Prefix Address Invalid
-    Config Enable PD                              enable=On
-    Config Prefix Mode                            mode=Manual
-    Config Primary Time                           pri_time=1111
-    Config Lease Time                             lease_time=2222
+    Log To Console                                                      \nStep 3: Config Prefix Address Invalid
+    Config Enable PD                                                    enable=On
+    Config Prefix Mode                                                  mode=Manual
+    Config Primary Time                                                 pri_time=1111
+    Config Lease Time                                                   lease_time=2222
 
     ## Step 3.1: Config Prefix Address = '${EMPTY}'
-    Log To Console                                \nStep 3.1: Config Prefix Address = '${EMPTY}'
-    Config Prefix Address                         addr=${EMPTY}
+    Log To Console                                                      \nStep 3.1: Config Prefix Address = '${EMPTY}'
+    Config Prefix Address                                               addr=${EMPTY}
     Click Button Save WAN
-    Check Popup And Continue On Failure           popup=Popup Prefix Address Invalid Should Be Visible
-    ...                                           vlan_id=11
+    Check Popup WAN And Continue On Failure                             popup=Popup Prefix Address Invalid Should Be Visible
+    ...                                                                 vlan_id=11
 
     ## Step 3.2: Config Prefix Address is All Space
-    Log To Console                                \nStep 3.1: Config Prefix Address is All Space
-    Config Prefix Address                         addr=${SPACE*4}
+    Log To Console                                                      \nStep 3.1: Config Prefix Address is All Space
+    Config Prefix Address                                               addr=${SPACE*4}
     Click Button Save WAN
-    Check Popup And Continue On Failure           popup=Popup Prefix Address Invalid Should Be Visible
-    ...                                           vlan_id=11
+    Check Popup WAN And Continue On Failure                             popup=Popup Prefix Address Invalid Should Be Visible
+    ...                                                                 vlan_id=11
 
     ## Step 3.3: Config Prefix Address = abcde::/64
-    Log To Console                                \nStep 3.3: Config Prefix Address = abcde::/64
-    Config Prefix Address                         addr=abcde::/64
+    Log To Console                                                      \nStep 3.3: Config Prefix Address = abcde::/64
+    Config Prefix Address                                               addr=abcde::/64
     Click Button Save WAN
-    Check Popup And Continue On Failure           popup=Popup Prefix IP Invalid Should Be Visible
-    ...                                           vlan_id=11
+    Check Popup WAN And Continue On Failure                             popup=Popup Prefix IP Invalid Should Be Visible
+    ...                                                                 vlan_id=11
 
     ## Step 3.3: Config Prefix Address = 3ffe:501:ffff:100::ccccc
-    Log To Console                                \nStep 3.4: Config Prefix Address = 3ffe:501:ffff:100::ccccc
-    Config Prefix Address                         addr=3ffe:501:ffff:100::ccccc
+    Log To Console                                                      \nStep 3.4: Config Prefix Address = 3ffe:501:ffff:100::ccccc
+    Config Prefix Address                                               addr=3ffe:501:ffff:100::ccccc
     Click Button Save WAN
-    Check Popup And Continue On Failure           popup=Popup Prefix Address Invalid Should Be Visible
-    ...                                           vlan_id=11
+    Check Popup WAN And Continue On Failure                             popup=Popup Prefix Address Invalid Should Be Visible
+    ...                                                                 vlan_id=11
 
     ## Step 3.5: Config Prefix Address = 3ffe:501:ffff:@@@::
-    Log To Console                                \nStep 3.5: Config Prefix Address = 3ffe:501:ffff:@@@::
-    Config Prefix Address                         addr=3ffe:501:ffff:@@@::
+    Log To Console                                                      \nStep 3.5: Config Prefix Address = 3ffe:501:ffff:@@@::
+    Config Prefix Address                                               addr=3ffe:501:ffff:@@@::
     Click Button Save WAN
-    Check Popup And Continue On Failure           popup=Popup Prefix Address Invalid Should Be Visible
-    ...                                           vlan_id=11
+    Check Popup WAN And Continue On Failure                             popup=Popup Prefix Address Invalid Should Be Visible
+    ...                                                                 vlan_id=11
 
     ### Step 4: Config Prefix Address Valid
-    Log To Console                                \nStep 4: Config Prefix Address Valid
+    Log To Console                                                      \nStep 4: Config Prefix Address Valid
 
-    Config Prefix Address                         addr=2001:0db8:85a3::/64
+    Config Prefix Address                                               addr=2001:0db8:85a3::/64
     Click Button Save WAN
 
 
-    Verify Prefix Address                         vlan_id=11
-    ...                                           addr=2001:0db8:85a3::/64
-
-    Logout WebGUI
+    Verify Prefix Address                                               vlan_id=11
+    ...                                                                 addr=2001:0db8:85a3::/64
 
     [Teardown]                               Run Keyword And Ignore Error        MOD_WAN_16_TC_01_Teardown
 

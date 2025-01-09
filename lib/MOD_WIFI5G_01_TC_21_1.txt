@@ -11,6 +11,7 @@ MOD_WIFI5G_01_TC_21_1_Teardown
     Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
     
     #####Factory Reset Via Web GUI
+    Logout WebGUI
     Login To Browser		                 password=${ONT}[ONT_WEB_PASS]
     Factory Reset Via Web GUI
   
@@ -34,16 +35,14 @@ MOD_WIFI5G_01_TC_21_1
 
     # Open WebGUI    
     Login To Browser
-    SL.Select Frame                                xpath=//frame[@name="contentfrm"]
+    SL.Select Frame                                 xpath=//frame[@name="contentfrm"]
     Open 5GHz Wireless Configure Page
     SL.Maximize Browser Window
 
     ### Step 1: Config HT BandWidth Wifi 5Ghz
-    Select SSID 5G Index                ssid_index=1
-    Config HT Bandwidth and Verify 5G   bandwidth=20 MHz
-    Config HT Bandwidth and Verify 5G   bandwidth=20/40 MHz
-
-    Logout WebGUI
+    Select SSID 5G Index                            ssid_index=1
+    Config HT Bandwidth and Verify 5G               bandwidth=20 MHz
+    Config HT Bandwidth and Verify 5G               bandwidth=20/40 MHz
 
     [Teardown]                               Run Keyword And Ignore Error        MOD_WIFI5G_01_TC_21_1_Teardown
 

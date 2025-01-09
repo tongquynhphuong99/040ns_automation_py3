@@ -13,6 +13,7 @@ MOD_WAN_14_TC_01_Teardown
     Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
     
     #####Factory Reset Via Web GUI
+    Logout WebGUI
     Login To Browser		                 password=${ONT}[ONT_WEB_PASS]
     Factory Reset Via Web GUI
   
@@ -63,7 +64,6 @@ MOD_WAN_14_TC_01
     # Verify Enable PD
     Verify Enable PD                              vlan_id=11
     ...                                           enable=On
-    Logout WebGUI
 
     [Teardown]                               Run Keyword And Ignore Error        MOD_WAN_14_TC_01_Teardown
 

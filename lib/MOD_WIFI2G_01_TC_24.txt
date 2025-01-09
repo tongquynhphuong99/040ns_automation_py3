@@ -11,6 +11,7 @@ MOD_WIFI2G_01_TC_24_Teardown
     Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
     
     #####Factory Reset Via Web GUI
+    Logout WebGUI
     Login To Browser		                 password=${ONT}[ONT_WEB_PASS]
     Factory Reset Via Web GUI
   
@@ -41,11 +42,9 @@ MOD_WIFI2G_01_TC_24
     ### Step 1: Config Guard Interval Wifi 2.4Ghz
     Log To Console                                 \nStep 1: Config Guard Interval Wifi 2.4Ghz
 
-    Select SSID 2G Index                  ssid_index=1
-    Config Guard Interval and Verify 2G   guard_interval=Long
-    Config Guard Interval and Verify 2G   guard_interval=Short
-
-    Logout WebGUI
+    Select SSID 2G Index                           ssid_index=1
+    Config Guard Interval and Verify 2G            guard_interval=Long
+    Config Guard Interval and Verify 2G            guard_interval=Short
 
     [Teardown]                               Run Keyword And Ignore Error        MOD_WIFI2G_01_TC_24_Teardown
 

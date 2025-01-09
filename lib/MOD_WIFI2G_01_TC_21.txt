@@ -11,6 +11,7 @@ MOD_WIFI2G_01_TC_21_Teardown
     Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
     
     #####Factory Reset Via Web GUI
+    Logout WebGUI
     Login To Browser		                 password=${ONT}[ONT_WEB_PASS]
     Factory Reset Via Web GUI
   
@@ -39,20 +40,18 @@ MOD_WIFI2G_01_TC_21
     SL.Maximize Browser Window
     
     ### Step 1: On/Off BandSteering for Wifi 2.4Ghz on WebGui
-    Log To Console          \nStep 1: On/Off BandSteering for Wifi 2.4Ghz on WebGui
-    Select SSID 2G Index    ssid_index=1
+    Log To Console                                 \nStep 1: On/Off BandSteering for Wifi 2.4Ghz on WebGui
+    Select SSID 2G Index                           ssid_index=1
 
     ## Step 1.1: On BandSteering for Wifi 2.4Ghz
-    Config BandSteering 2G    value=on
+    Config BandSteering 2G                         value=on
     Save Config SSID
-    Verify BandSteering 2G   bandsteering=True
+    Verify BandSteering 2G                         bandsteering=True
 
     ## Step 1.2: Off BandSteering for Wifi 2.4Ghz
-    Config BandSteering 2G   value=off
+    Config BandSteering 2G                         value=off
     Save Config SSID
-    Verify BandSteering 2G   bandsteering=False
-
-    Logout WebGUI
+    Verify BandSteering 2G                         bandsteering=False
 
     [Teardown]                               Run Keyword And Ignore Error        MOD_WIFI2G_01_TC_21_Teardown
 

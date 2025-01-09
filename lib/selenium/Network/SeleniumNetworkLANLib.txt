@@ -1,5 +1,8 @@
 *** Settings ***
 Library                                        SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
+Library                                        String        WITH NAME        STR
+Resource                                       ../../ssh/SshLib.txt
+Resource                                       ../Login/SeleniumLoginLib.txt
 
 *** Variables ***
 
@@ -7,258 +10,1034 @@ Library                                        SeleniumLibrary   run_on_failure=
 
 ###
 Open Network Settings LAN Page
-    [Arguments]                                ${url}=https://192.168.1.1/cgi-bin/home_lan.asp
+    # [Arguments]                                ${url}=https://192.168.1.1/cgi-bin/home_lan.asp
 
-    SL.Go To                                   ${url}
-    SL.Wait Until Page Contains                Router Local IP
+    # SL.Go To                                   ${url}
+    # SL.Wait Until Page Contains                Router Local IP
+    # ...                                        timeout=20s
+    # ...                                        error=\nNetwork Settings LAN Configure Page Not Found
+    # SL.Page Should Contain                     Router Local IP
+
+    SL.Click Element                           xpath=//*[@id="net-wanset"]
+    SL.Click Element                           xpath=//*[@id="net-dhcp"]
+    SL.Wait Until Page Contains                LAN
     ...                                        timeout=20s
-    ...                                        error=\nNetwork Settings LAN Configure Page Not Found
-    SL.Page Should Contain                     Router Local IP
+    ...                                        error=\nNetwork Settings WAN Configure Page Not Found
+    SL.Page Should Contain                     LAN
+    SL.Select Frame                            xpath=//frame[@name="contentfrm"]        
 
+#####DHCPv4#####
+###
 Config IP Address
-    [Arguments]                                ${ip_address}=192.168.1.10
+    [Arguments]                                ${ip_address}
     
-    Log To Console                             Config ip: ${ip_address} for ONT device
-    SL.Wait Until Element Is Visible           xpath=//input[@name="uiViewIPAddr"]
-    SL.Input Text                              xpath=//input[@name="uiViewIPAddr"]    ${ip_address}
+    SL.Wait Until Element Is Visible           xpath=//*[@id="ethIpAddress"]    
+    ...                                        timeout=15s
+    ...                                        error=\nDHCP IP Address Textbox Does Not Show Up
+    Log To Console                             \nInput IP Address = ${ip_address}
+    SL.Clear Element Text                      xpath=//*[@id="ethIpAddress"]
+    Popup Lan IP Address Empty Should Be Visible
+    SL.Input Text                              xpath=//*[@id="ethIpAddress"]        ${ip_address}
 
-Config IPv4 DHCP
-    [Arguments]                                ${ip_address}=192.168.10.1    ${subnet_mask}=255.255.255.0    ${start_ip_address}=192.168.10.2    ${end_ip_address}=192.168.10.251    ${lan_ipv4_config_url}=https://192.168.1.1/cgi-bin/home_lan.asp
-    
-    Log To Console                             Config ip: ${ip_address} for ONT device
-    SL.Wait Until Element Is Visible           xpath=//input[@name="uiViewIPAddr"]
-    SL.Input Text                              xpath=//input[@name="uiViewIPAddr"]    ${ip_address}
+###
+Config IPv4 Configuration Subnet Mask 
+    [Arguments]                                 ${subnet_mask}
 
-    Log To Console                             Config ip: ${subnet_mask} for ONT device
-    SL.Wait Until Element Is Visible           xpath=//input[@name="uiViewNetMask"]
-    SL.Input Text                              xpath=//input[@name="uiViewNetMask"]    ${subnet_mask}
+    SL.Wait Until Element Is Visible            xpath=//*[@id="ethSubnetMask"]
+    ...                                         timeout=15s
+    ...                                         error=\nDHCP Subnet Mask Does Not Show Up
+    Log To Console                              \nInput Subnet Mask = ${subnet_mask}
+    SL.Clear Element Text                       xpath=//*[@id="ethSubnetMask"]
+    SL.Input Text                               xpath=//*[@id="ethSubnetMask"]          ${subnet_mask}
 
-    Log To Console                             Config start ip address: ${start_ip_address}
-    SL.Wait Until Element Is Visible           xpath=//input[@name="StartIp"]
-    SL.Input Text                              xpath=//input[@name="StartIp"]    ${start_ip_address}
+###
+Config Enable/Disable DHCPv4
+    [Arguments]                                 ${mode_dhcp}
 
-    Log To Console                             Config end ip address: ${end_ip_address}
-    SL.Wait Until Element Is Visible           xpath=//input[@name="End_IP"]
-    SL.Input Text                              xpath=//input[@name="End_IP"]    ${end_ip_address}
+    SL.Wait Until Element Is Visible            xpath=//*[@id="dhcpSrvType"]
+    ...                                         timeout=10s 
+    ...                                         error=\nSelect DHCP Does Not Show Up 
+    Log To Console                              Config DHCPv4 mode ${mode_dhcp}
+    Run Keyword If    '${mode_dhcp}' == 'Enable'         SL.Click Element        xpath=//*[@id="dhcpSrvType" and @value="1"] 
+    ...  ELSE IF      '${mode_dhcp}' == 'Disable'        SL.Click Element        xpath=//*[@id="dhcpSrvType" and @value="0"] 
 
-Config DHCP Lease Time
-    [Arguments]                                  ${dhcp_lease}=86400
+###
+Config Start IP Address DHCPv4
+    [Arguments]                                 ${start_ip_address}
 
-    ### Input Beacon Interval
-    Log To Console                              \nInput DHCP Lease Time
-    SL.Wait Until Element Is Visible             xpath=//input[@name="dhcp_LeaseTime"]
+    SL.Wait Until Element Is Visible            xpath=//*[@id="dhcpEthStart"]
+    ...                                         timeout=15s
+    ...                                         error=\nDHCP Start IP Address Does Not Show Up
+    Log To Console                              \nInput Start IP Address DHCPv4 = ${start_ip_address}
+    SL.Clear Element Text                       xpath=//*[@id="dhcpEthStart"]
+    SL.Input Text                               xpath=//*[@id="dhcpEthStart"]          ${start_ip_address}
+
+###
+Config End IP Address DHCPv4
+    [Arguments]                                 ${end_ip_address}
+
+    SL.Wait Until Element Is Visible            xpath=//*[@id="dhcpEthEnd"]
+    ...                                         timeout=15s
+    ...                                         error=\nDHCP End IP Address Does Not Show Up
+    Log To Console                              \nInput End IP Address DHCPv4 = ${end_ip_address}
+    SL.Clear Element Text                       xpath=//*[@id="dhcpEthEnd"]
+    SL.Input Text                               xpath=//*[@id="dhcpEthEnd"]          ${end_ip_address}
+
+###
+Config Select DHCP Lease Time   
+    [Arguments]                                  ${dhcp_lease}
+
+    SL.Wait Until Element Is Visible             xpath=//*[@id="dhcpLeasedTimeFrag"]
     ...                                          timeout=15s
     ...                                          error=\nDHCP Lease Time Textbox Does Not Show Up
-    SL.Input Text                                xpath=//input[@name="dhcp_LeaseTime"]         ${dhcp_lease}
+    Log To Console                               \nSelect DHCP Lease Time = ${dhcp_lease}
+    ${value}=    SL.Get Value                    xpath=//*[@id="dhcpLeasedTimeFrag"]/option[contains(text(), "${dhcp_lease}")]
+    SL.Select From List By Value                 xpath=//*[@id="dhcpLeasedTimeFrag"]        ${value} 
 
-Config DHCP Reservation 	
-    [Arguments]                                  ${dhcp_reser_ip}=192.168.1.2            ${dhcp_reser_mac}=AA:BB:CC:11:22:33
-    
-    ### Input Beacon Interval
-    Log To Console                              \nInput DHCP Reservation IP 	
-    SL.Wait Until Element Is Visible             xpath=//input[@name="IpAddr"]
-    ...                                          timeout=15s
-    ...                                          error=\nDHCP Reservation IP Textbox Does Not Show Up
-    SL.Input Text                                xpath=//input[@name="IpAddr"]         ${dhcp_reser_ip}
-    Log To Console                              \nInput Input DHCP Reservation MAC 
-    SL.Wait Until Element Is Visible             xpath=//input[@name="MACAddr"]
-    ...                                          timeout=15s
-    ...                                          error=\nDHCP Reservation MAC Textbox Does Not Show Up
-    SL.Input Text                                xpath=//input[@name="MACAddr"]         ${dhcp_reser_mac}
+###
+Config Input DHCP Lease Time
+    [Arguments]                                  ${dhcp_lease}
 
-Config DNS Server
-    [Documentation]                     Auto/Manually/ISP
+    SL.Scroll Element Into View                  xpath=//*[@id="leaseTimeValue"]
+    SL.Wait Until Element Is Visible             xpath=//*[@id="leaseTimeValue"]
+    ...                                          timeout=15s
+    ...                                          error=\nDHCP Input Lease Time Textbox Does Not Show Up
+    Log To Console                               \nInput DHCP Lease Time = ${dhcp_lease}
+    SL.Input Text                                xpath=//*[@id="leaseTimeValue"]          ${dhcp_lease}
+
+###
+Config DNS Mode
+    [Documentation]                     Automatically/Manually/ISP
     [Arguments]                                  ${dns_mode}
 
-    Run Keyword If    '${dns_mode}' == 'Auto'           SL.Execute Javascript                      document.getElementsByName('dnsTypeRadio')[0].click();
-    ...    ELSE IF    '${dns_mode}' == 'Manually'       SL.Execute Javascript                      document.getElementsByName('dnsTypeRadio')[1].click();
-    ...    ELSE IF    '${dns_mode}' == 'ISP'            SL.Execute Javascript                      document.getElementsByName('dnsTypeRadio')[2].click();
+    Log To Console                               \nChoose DNS Mode = ${dns_mode}
+    Run Keyword If    '${dns_mode}' == 'Automatically'        SL.Execute Javascript            document.getElementsByName('dnsMode')[0].click();
+    ...    ELSE IF    '${dns_mode}' == 'Manually'             SL.Execute Javascript            document.getElementsByName('dnsMode')[1].click();
+    ...    ELSE IF    '${dns_mode}' == 'ISP DNS'              SL.Execute Javascript            document.getElementsByName('dnsMode')[2].click(); 
 
-    Log To Console                                        Choose DNS Mode ${dns_mode}
-
+###
 Config DNS Manually
-    [Documentation]                    
-    [Arguments]                                  ${dns_pri}=8.8.8.8       ${dns_secon}=8.8.4.4
+    [Arguments]                                ${primary_dns}=4.4.4.4       
+    ...                                        ${secondary_dns}=6.6.6.6
 
-    SL.Clear Element Text                      xpath=//input[@name="PrimaryDns"]
-    SL.Input Text                              xpath=//input[@name="PrimaryDns"]      ${dns_pri}
-    Log To Console                             Input DNS Primary
+    Log To Console                             \nInput Primary DNS = ${primary_dns}
+    # SL.Clear Element Text                      xpath=//*[@id="pridns"]
+    SL.Input Text                              xpath=//*[@id="pridns"]      ${primary_dns}
 
-    SL.Clear Element Text                      xpath=//input[@name="SecondDns"]
-    SL.Input Text                              xpath=//input[@name="SecondDns"]       ${dns_secon}
-    Log To Console                             Input DNS Second
+    Log To Console                             Input Secondary DNS = ${secondary_dns}
+    # SL.Clear Element Text                      xpath=//*[@id="secdns"]
+    SL.Input Text                              xpath=//*[@id="secdns"]      ${secondary_dns}
 
-Config DHCPv6
-    [Documentation]                     Enable/Disable
-    [Arguments]                                  ${dhcpv6_mode}=Enable
+###
+Config Cache Size 
+    [Arguments]                                  ${cache_size}
 
-    Run Keyword If    '${dhcpv6_mode}' == 'Enable'           SL.Execute Javascript                      document.getElementsByName('dhcp6sEnableRadio')[0].click();
-    ...    ELSE IF    '${dhcpv6_mode}' == 'Disable'          SL.Execute Javascript                      document.getElementsByName('dhcp6sEnableRadio')[1].click();
-    
-# Config DHCPv6 Manually
-#     [Arguments]        ${prefix}        ${length}=128        ${prefer_time}        ${valid_time}        ${dns_pri}=8.8.8.8       ${dns_secon}=8.8.4.4
-    
-#     SL.Clear Element Text                      xpath=//input[@name="uiViewIPv6DHCPPrefix"]
-#     SL.Input Text                              xpath=//input[@name="uiViewIPv6DHCPPrefix"]       ${prefix}
-#     SL.Clear Element Text                      xpath=//input[@name="uiViewIPv6DHCPPrefixLen"]
-#     SL.Input Text                              xpath=//input[@name="uiViewIPv6DHCPPrefixLen"]       ${length}
-#     SL.Clear Element Text                      xpath=//input[@name="uiPreferredLifetimeDHCP6"]
-#     SL.Input Text                              xpath=//input[@name="uiPreferredLifetimeDHCP6"]      ${prefer_time}
-#     SL.Clear Element Text                      xpath=//input[@name="uiValidLifetimeDHCP6"]
-#     SL.Input Text                              xpath=//input[@name="uiValidLifetimeDHCP6"]      ${valid_time} 
-#     SL.Clear Element Text                      xpath=//input[@name="uiPrimaryDNSDHCP6"]
-#     SL.Input Text                              xpath=//input[@name="uiPrimaryDNSDHCP6"]       ${dns_pri}
-#     SL.Clear Element Text                      xpath=//input[@name="uiSecondaryDNSDHCP6"]
-#     SL.Input Text                              xpath=//input[@name="uiSecondaryDNSDHCP6"]      ${dns_secon}
-    
-Select Vlan QinQ Mode
-    [Documentation]                     No/Yes
-    [Arguments]                                  ${vlan_mode}=Yes
-    
-    Run Keyword If    '${vlan_mode}' == 'No'           SL.Execute Javascript                      document.getElementsByName('vlanqinqActive')[0].click();
-    ...    ELSE IF    '${vlan_mode}' == 'Yes'          SL.Execute Javascript                      document.getElementsByName('vlanqinqActive')[1].click();
+    SL.Scroll Element Into View                  xpath=//*[@id="sizecache"]
+    SL.Wait Until Element Is Visible             xpath=//*[@id="sizecache"]
+    ...                                          timeout=10s 
+    ...                                          error=\nSelect Cache Size Does Not Show Up 
+    Log To Console                               \nInput Cache Size = ${cache_size}
+    SL.Input Text                                xpath=//*[@id="sizecache"]             ${cache_size}
 
-Config Vlan QinQ
-    [Arguments]                                  ${lan}=LAN1      ${vlan_mode}=Yes     ${pvid}=11     ${c_tag}=11     ${s_tag}=11
-      
-    Log To Console                               \nSelect LAN Interface
-    SL.Wait Until Element Is Visible             xpath=//option[contains(text(), "${lan}")]
-    ...                                          timeout=20s
-    ...                                          error=\nNetwork Authentication Dropdown Does Not Show Up
-    ${lan_value}=              SL.Get Value      xpath=//option[contains(text(), "${lan}")]
-    SL.Select From List By Value                 xpath=//select[@name="vlanqinqPort"]     ${lan_value}
-    Run Keyword If    '${vlan_mode}' == 'Yes'          SL.Execute Javascript                      document.getElementsByName('vlanqinqActivePerPort')[1].click();
-    SL.Clear Element Text                        xpath=//input[@name="uivlanQinQPVID"]
-    SL.Input Text                                xpath=//input[@name="uivlanQinQPVID"]        ${pvid}
-    SL.Clear Element Text                        xpath=//input[@name="uivlanQinQCTag"]
-    SL.Input Text                                xpath=//input[@name="uivlanQinQCTag"]        ${c_tag}
-    SL.Clear Element Text                        xpath=//input[@name="uivlanQinQSTag"]
-    SL.Input Text                                xpath=//input[@name="uivlanQinQSTag"]        ${s_tag}
-    SL.Execute Javascript                        document.getElementsByName('VLanAddBtn')[0].click();
-    Run Keyword If       '${vlan_mode}' == 'No'           SL.Execute Javascript                      document.getElementsByName('vlanqinqActivePerPort')[0].click();    
-    
-Config Radvd
-    [Documentation]                     Enable/Disable
-    [Arguments]                                  ${radvd}=Enable
-    
-    Run Keyword If    '${radvd}' == 'Disable'           SL.Execute Javascript                      document.getElementsByName('radvdRadio')[0].click();
-    ...    ELSE IF    '${radvd}' == 'Enable'            SL.Execute Javascript                      document.getElementsByName('radvdRadio')[1].click();
-    Log To Console                        Config ${radvd} DHCPv6 Radvd     
+###
+Config Minimum TTL
+    [Arguments]                                  ${minimum_ttl}
 
-Config Radvd Mode       
-    [Documentation]                     Auto/Manual
-    [Arguments]                                  ${radvd_mode}=Auto
-    
-    Run Keyword If    '${radvd_mode}' == 'Auto'            SL.Execute Javascript                      document.getElementsByName('radvdModeRadio')[0].click();
-    ...    ELSE IF    '${radvd_mode}' == 'Manual'          SL.Execute Javascript                      document.getElementsByName('radvdModeRadio')[1].click();    
-    Log To Console                        Config Radvd Mode ${radvd_mode} 
+    SL.Scroll Element Into View                  xpath=//*[@id="minimumttl"]
+    SL.Wait Until Element Is Visible             xpath=//*[@id="minimumttl"]
+    ...                                          timeout=10s 
+    ...                                          error=\nSelect Minimum TTL Does Not Show Up 
+    Log To Console                               \nInput Minimum TTL = ${minimum_ttl}
+    SL.Input Text                                xpath=//*[@id="minimumttl"]             ${minimum_ttl}
 
-Config IPv6 Address
-    [Documentation]                   
-    [Arguments]                                  ${ipv6_address}=          ${prefix}=64
+###
+Config DHCP Reservation 	
+    [Arguments]                                  ${dhcp_reser_ip}=192.168.1.5            
+    ...                                          ${dhcp_reser_mac}=AA:BB:CC:11:22:33
     
-    SL.Clear Element Text                        xpath=//input[@name="uiViewIPv6Addr"]
-    SL.Input Text                                xpath=//input[@name="uiViewIPv6Addr"]        ${ipv6_address}
-    SL.Clear Element Text                        xpath=//input[@name="uiViewIPv6Prefix"]
-    SL.Input Text                                xpath=//input[@name="uiViewIPv6Prefix"]       ${prefix}            
-    
-Select LAN VLAN
-    [Documentation]                   
-    [Arguments]                     ${interface}=LAN2             ${mode}=Yes         
-    
-    Run Keyword If    '${mode}' == 'Yes'           SL.Execute Javascript                      document.getElementsByName('vlanLanActive')[1].click();
-    Run Keyword If    '${interface}' == 'LAN1'     SL.Execute Javascript                      document.getElementsByName('VlanLan0_Enabled')[0].click();
-    Run Keyword If    '${interface}' == 'LAN2'     SL.Execute Javascript                      document.getElementsByName('VlanLan1_Enabled')[0].click();
-    Run Keyword If    '${interface}' == 'LAN3'     SL.Execute Javascript                      document.getElementsByName('VlanLan2_Enabled')[0].click();
-    Run Keyword If    '${interface}' == 'LAN4'     SL.Execute Javascript                      document.getElementsByName('VlanLan3_Enabled')[0].click();
-    Run Keyword If    '${mode}' == 'No'            SL.Execute Javascript                      document.getElementsByName('vlanLanActive')[0].click();    
+    Log To Console                               \nInput DHCP Reservation IP Address = ${dhcp_reser_ip}	
+    SL.Wait Until Element Is Visible             xpath=//*[@id="IpAddr"]
+    ...                                          timeout=15s
+    ...                                          error=\nDHCP Reservation IP Textbox Does Not Show Up
+    SL.Input Text                                xpath=//*[@id="IpAddr"]         ${dhcp_reser_ip}
+    Log To Console                               Input DHCP Reservation MAC Address = ${dhcp_reser_mac}
+    SL.Wait Until Element Is Visible             xpath=//*[@id="MACAddr"]
+    ...                                          timeout=15s
+    ...                                          error=\nDHCP Reservation MAC Textbox Does Not Show Up
+    SL.Input Text                                xpath=//*[@id="MACAddr"]         ${dhcp_reser_mac}
 
-Config LAN VLAN
-    [Arguments]                          ${interface}=LAN2        ${vlan_list}=11,223,333
+###
+Delete DHCP Reservation 	
+    [Arguments]                                ${rule_index}
     
-    Run Keyword If    '${interface}' == 'LAN1'      SL.Input Text                                xpath=//input[@name="Vlan_Lan0_List"]       ${vlan_list}  
-    Run Keyword If    '${interface}' == 'LAN2'      SL.Input Text                                xpath=//input[@name="Vlan_Lan1_List"]       ${vlan_list}
-    Run Keyword If    '${interface}' == 'LAN3'      SL.Input Text                                xpath=//input[@name="Vlan_Lan2_List"]       ${vlan_list}  
-    Run Keyword If    '${interface}' == 'LAN4'      SL.Input Text                                xpath=//input[@name="Vlan_Lan3_List"]       ${vlan_list}    
+    Log To Console                             \nDelete DHCP Reservation	
+    ${rule_index}=                             Evaluate            int(${rule_index}) + 1
+    SL.Click Element                           xpath=//*[@id="static_list"]/tbody/tr[${rule_index}]/td[3]/img
 
-Popup Lan Ip Address Is Special Should Be Visible
-    [Documentation]                     Handle popup LAN IP address is special
-    [Arguments]                         ${lan_ip_address}
 
+
+
+
+
+#####DHCPv6#####
+###
+Enable/Disable SLAAC 
+    [Documentation]                               On/Off
+    [Arguments]                                   ${slaac}
+
+    Log To Console                                \nConfig SLAAC mode: ${slaac} 
+    SL.Scroll Element Into View                   xpath=//*[@id="save_dhcp"]
+    SL.Wait Until Element Is Visible              xpath=//*[@id="radvdSrvType"]    timeout=10s
+    ...                                           error=\nEnable SLAAC Does Not Show Up
+    ${status}=        SL.Execute Javascript        return document.querySelector("#radvdSrvType").checked
+    Run Keyword If        '${slaac}' == 'On' and '${status}' == 'False'        SL.Execute Javascript        document.querySelector("#radvdSrvType").click();
+    ...   ELSE IF         '${slaac}' == 'Off' and '${status}' == 'True'        SL.Execute Javascript        document.querySelector("#radvdSrvType").click();
+
+###
+Config RA Mode
+    [Arguments]                                ${ra_mode}
+
+    Log To Console                             \nSelect RA Mode = ${ra_mode}
+    SL.Scroll Element Into View                xpath=//*[@id="save_dhcp"]
+    SL.Wait Until Element Is Visible           xpath=//*[@id="RAUseWan"]  
+    ...                                        timeout=10s
+    ...                                        error=\RA Mode Checkbox Does Not Show Up
+    ${value_get}=    SL.Get Value              xpath=//*[@id="RAUseWan"]/option[contains(text(),"${ra_mode}")]
+    SL.Select From List By Value               xpath=//*[@id="RAUseWan"]        ${value_get}
+
+###
+Config Prefix
+    [Arguments]                                  ${prefix}
+    Log To Console                               \nInput Prefix = ${prefix}
+    SL.Scroll Element Into View                  xpath=//*[@id="save_dhcp"]
+    SL.Wait Until Element Is Visible             xpath=//*[@id="radvdPrefix"]
+    ...                                          timeout=15s
+    ...                                          error=\nPrefix Textbox Does Not Show Up
+    SL.Input Text                                xpath=//*[@id="radvdPrefix"]      ${prefix}
+
+###
+Config Prefix Length
+    [Arguments]                                  ${prefix_length}
+
+    Log To Console                               \nInput Prefix Length = ${prefix_length}
+    SL.Scroll Element Into View                  xpath=//*[@id="save_dhcp"]
+    SL.Wait Until Element Is Visible             xpath=//*[@id="RAPrefixLen"]
+    ...                                          timeout=15s
+    ...                                          error=\nPrefix Length Textbox Does Not Show Up
+    SL.Input Text                                xpath=//*[@id="RAPrefixLen"]      ${prefix_length}
+
+###
+Config Preferred Lifetime 
+    [Arguments]                                  ${pre_lifetime}
+
+    Log To Console                               \nInput Preferred Lifetime = ${pre_lifetime}
+    SL.Scroll Element Into View                  xpath=//*[@id="save_dhcp"]
+    SL.Wait Until Element Is Visible             xpath=//*[@id="PreferredLifetime"]
+    ...                                          timeout=15s
+    ...                                          error=\nPreferred Lifetime Textbox Does Not Show Up
+    SL.Input Text                                xpath=//*[@id="PreferredLifetime"]      ${pre_lifetime}
+
+###
+Config Valid Lifetime 
+    [Arguments]                                  ${valid_lifetime}
+
+    Log To Console                               \nInput Valid Lifetime = ${valid_lifetime}
+    SL.Scroll Element Into View                  xpath=//*[@id="save_dhcp"]
+    SL.Wait Until Element Is Visible             xpath=//*[@id="ValidLifetime"]
+    ...                                          timeout=15s
+    ...                                          error=\nValid Lifetime Textbox Does Not Show Up
+    SL.Input Text                                xpath=//*[@id="ValidLifetime"]      ${valid_lifetime}
+
+###
+Config Flag 
+    [Arguments]                                   ${managed}    
+    ...                                           ${other}
+
+    Log To Console                                \nSelect Managed: ${managed} & Other: ${other}
+    SL.Scroll Element Into View                   xpath=//*[@id="save_dhcp"]
+    SL.Wait Until Element Is Visible              xpath=//*[@id="ramflag"]    timeout=10s
+    ...                                           error=\nFlag Does Not Show Up
+    
+    ${status_managed}=        SL.Execute Javascript        return document.querySelector("#ramflag").checked
+    ${status_other}=          SL.Execute Javascript        return document.querySelector("#raoflag").checked
+
+    Run Keyword If        '${managed}' == 'On' and '${status_managed}' == 'False'        SL.Execute Javascript        document.querySelector("#ramflag").click();
+    ...   ELSE IF         '${managed}' == 'Off' and '${status_managed}' == 'True'        SL.Execute Javascript        document.querySelector("#ramflag").click();
+
+    Run Keyword If        '${other}' == 'On' and '${status_other}' == 'False'            SL.Execute Javascript        document.querySelector("#raoflag").click();
+    ...   ELSE IF         '${other}' == 'Off' and '${status_other}' == 'True'            SL.Execute Javascript        document.querySelector("#raoflag").click();
+
+###
+Config RA Minimum Interval
+    [Arguments]                                  ${ra_min}
+
+    Log To Console                               \nInput RA minimum interval = ${ra_min}
+    SL.Scroll Element Into View                  xpath=//*[@id="save_dhcp"]
+    SL.Wait Until Element Is Visible             xpath=/html/body/div[2]/form[2]/div[1]/div[1]/table/tbody/tr[5]/td[5]/input
+    ...                                          timeout=15s
+    ...                                          error=\nRA minimum interval Textbox Does Not Show Up
+    SL.Input Text                                xpath=/html/body/div[2]/form[2]/div[1]/div[1]/table/tbody/tr[5]/td[5]/input      ${ra_min}
+
+###
+Config RA Maximum Interval             
+    [Arguments]                                  ${ra_max}
+
+    Log To Console                               \nInput RA maximum interval = ${ra_max}
+    SL.Scroll Element Into View                  xpath=//*[@id="save_dhcp"]
+    SL.Wait Until Element Is Visible             xpath=/html/body/div[2]/form[2]/div[1]/div[1]/table/tbody/tr[6]/td[5]/input
+    ...                                          timeout=15s
+    ...                                          error=\nRA maximum interval Textbox Does Not Show Up
+    SL.Input Text                                xpath=/html/body/div[2]/form[2]/div[1]/div[1]/table/tbody/tr[6]/td[5]/input      ${ra_max}
+
+###
+Enable/Disable DHCPv6 Server                   
+    [Documentation]                               On/Off
+    [Arguments]                                   ${dhcpv6_server}
+
+    Log To Console                                \nConfig DHCPv6 Server mode: ${dhcpv6_server} 
+    SL.Scroll Element Into View                   xpath=//*[@id="save_dhcp"]
+    SL.Wait Until Element Is Visible              xpath=//*[@id="dhcp6SrvType"]    timeout=10s
+    ...                                           error=\nEnable DHCPv6 Server Does Not Show Up
+    ${status}=        SL.Execute Javascript       return document.querySelector("#dhcp6SrvType").checked
+    Run Keyword If        '${dhcpv6_server}' == 'On' and '${status}' == 'False'        SL.Execute Javascript        document.querySelector("#dhcp6SrvType").click();
+    ...   ELSE IF         '${dhcpv6_server}' == 'Off' and '${status}' == 'True'        SL.Execute Javascript        document.querySelector("#dhcp6SrvType").click();
+
+###
+Config DNS Server Source
+    [Arguments]                                   ${dns_server_source}
+
+    Log To Console                                \nSelect DNS Server Source = ${dns_server_source}
+    SL.Scroll Element Into View                   xpath=//*[@id="save_dhcp"]
+    SL.Wait Until Element Is Visible              xpath=//*[@id="dnssource"]    
+    ...                                           timeout=10s
+    ...                                           error=\nDNS Server Source Checkbox Does Not Show Up
+    ${value_get}=        SL.Get Value             xpath=//*[@id="dnssource"]/option[contains(text(),"${dns_server_source}")]
+    SL.Select From List By Value                  xpath=//*[@id="dnssource"]        ${value_get}
+
+###
+Config Primary DNS DHCPv6
+    [Arguments]                                   ${primary_dns}
+
+    Log To Console                                \nInput Primary DNS = ${primary_dns}
+    SL.Scroll Element Into View                   xpath=//*[@id="save_dhcp"]
+    SL.Wait Until Element Is Visible              xpath=//*[@id="dnssourcepart_2"]/td[5]/input
+    ...                                           timeout=15s
+    ...                                           error=\nPrimary DNS Textbox Does Not Show Up
+    SL.Input Text                                 xpath=//*[@id="dnssourcepart_2"]/td[5]/input         ${primary_dns}
+
+###
+Config Secondary DNS DHCPv6
+    [Arguments]                                   ${secondary_dns}
+
+    Log To Console                                \nInput Secondary DNS = ${secondary_dns}
+    SL.Scroll Element Into View                   xpath=//*[@id="save_dhcp"]
+    SL.Wait Until Element Is Visible              xpath=//*[@id="dnssourcepart_3"]/td[5]/input
+    ...                                           timeout=15s
+    ...                                           error=\nSecondary DNS Textbox Does Not Show Up
+    SL.Input Text                                 xpath=//*[@id="dnssourcepart_3"]/td[5]/input          ${secondary_dns}
+
+
+
+
+
+
+###############
+###
+Click Button SaveIPv4 LAN
+    SL.Wait Until Element Is Visible           xpath=//*[@id="saveIPv4"]
+    ...                                        timeout=10s
+    ...                                        error=\nSaveIPv4 Button Not Found    
+    SL.Click Button                            xpath=//*[@id="saveIPv4"]
+    Sleep                                      5s
+
+###
+Click Button SaveIPv6 LAN
+    SL.Scroll Element Into View                xpath=//*[@id="save_dhcp"]
+    SL.Wait Until Element Is Visible           xpath=//*[@id="save_dhcp"]
+    ...                                        timeout=10s
+    ...                                        error=\nSaveIPv6 Button Not Found    
+    SL.Click Button                            xpath=//*[@id="save_dhcp"]
+    Sleep                                      5s
+
+
+
+
+
+
+################
+#####DHCPv4#####
+###
+Popup Lan IP Address Empty Should Be Visible
+    [Documentation]                     Handle popup Lan IP Address Empty
+    ${popup_message}=                   SL.Handle Alert    timeout=10s
+    Should Contain                      ${popup_message}        Address "" is invalid
+    RETURN                              ${popup_message}
+
+###
+Popup Lan IP Address Is Invalid Should Be Visible
+    [Documentation]                     Handle popup LAN IP address is Invalid
+    [Arguments]                         ${ip_address}
+    ${popup_message}=                   SL.Handle Alert    timeout=10s
+    SL.Handle Alert
+    Log To Console                      Popup message: ${popup_message}
+    Should Contain                      ${popup_message}        Address "${ip_address}" is invalid
+    RETURN                              ${popup_message}
+
+###
+Popup Warning Change IP Address Pool Should Be Visible
+    [Documentation]                     Handle popup Warning Change IP Address Pool
     ${popup_message}=                   SL.Handle Alert    timeout=10s
     Log To Console                      Popup message: ${popup_message}
-    Should Contain                      ${popup_message}     Invalid IP address ${lan_ip_address}
+    Should Contain                      ${popup_message}        Warning: this operation will change the IP address pool!
+    RETURN                              ${popup_message}
 
+###
+Popup Lan IP Address Is Special Should Be Visible
+    [Documentation]                     Handle popup LAN IP address is special
+    [Arguments]                         ${ip_address}
+    ${popup_message}=                   SL.Handle Alert    timeout=10s
+    Log To Console                      Popup message: ${popup_message}
+    Should Contain                      ${popup_message}        Address "${ip_address}" is invalid
+    RETURN                              ${popup_message}
+
+###
+Popup Warning Broadcast IP Address Should Be Visible
+    [Documentation]                     Handle popup Warning Change IP Address Pool
+    ${popup_message}=                   SL.Handle Alert    timeout=10s
+    Log To Console                      Popup message: ${popup_message}
+    Should Contain                      ${popup_message}        The last segment of DHCP IP address should be lesser than 254
+    RETURN                              ${popup_message}
+
+###
 Popup Lan Subnet Mask Is Special Should Be Visible
     [Documentation]                     Handle popup LAN subnet mask is special
-    [Arguments]                         ${lan_subnet_mask}
-
+    [Arguments]                         ${subnet_mask}
     ${popup_message}=                   SL.Handle Alert    timeout=10s
+    SL.Handle Alert
     Log To Console                      Popup message: ${popup_message}
-    Should Contain                      ${popup_message}     Invalid network mask  ${lan_subnet_mask}
+    Should Contain                      ${popup_message}       Subnet mask "${subnet_mask}"is invalid
+    RETURN                              ${popup_message}
 
-Popup Start IP Address Special Should Be Visible
+###
+Popup Start IP Address Is Invalid Should Be Visible
     [Documentation]                     Handle popup Start IP Address is special
-
+    [Arguments]                         ${start_ip_address}
     ${popup_message}=                   SL.Handle Alert    timeout=10s
     Log To Console                      Popup message: ${popup_message}
-    Should Contain                      ${popup_message}    DHCP Start IP and Router Local IP are not allowed to be the same
+    Should Contain                      ${popup_message}       Starting IP address"${start_ip_address}" is invalid
+    RETURN                              ${popup_message}
 
-Popup Start IP Address Other Special Should Be Visible
-    [Documentation]                     Handle popup Start IP Address is other special
-
+###
+Popup Start IP Address Is Special Should Be Visible
+    [Documentation]                     Handle popup Start IP Address is special
     ${popup_message}=                   SL.Handle Alert    timeout=10s
     Log To Console                      Popup message: ${popup_message}
-    Should Contain                      ${popup_message}    DHCP Start IP and Router Local IP are not in the same subnet
+    Should Contain                      ${popup_message}       Starting IP address cannot be same with router
+    RETURN                              ${popup_message}
 
-Popup End IP Address Special Should Be Visible
-    [Documentation]                     Handle popup End IP Address is special
-
+###
+Popup End IP Address Is Invalid Should Be Visible
+    [Documentation]                     Handle popup Start IP Address is special
+    [Arguments]                         ${end_ip_address}
     ${popup_message}=                   SL.Handle Alert    timeout=10s
     Log To Console                      Popup message: ${popup_message}
-    Should Contain                      ${popup_message}     DHCP End IP and Router Local IP are not in the same subnet!
+    Should Contain                      ${popup_message}       Finishing IP address "${end_ip_address}" is invalid
+    RETURN                              ${popup_message}
 
-Popup End IP Address Other Special Should Be Visible
-    [Documentation]                     Handle popup End IP Address is other special
-
+###
+Popup End IP Address Is Special Should Be Visible
+    [Documentation]                     Handle popup Start IP Address is special
     ${popup_message}=                   SL.Handle Alert    timeout=10s
     Log To Console                      Popup message: ${popup_message}
-    Should Contain                      ${popup_message}    DHCP End IP and Router Local IP are not allowed to be the same! 
-    
-Popup MAC Address Is Special Should Be Visible
-    [Documentation]                     Handle popup MAC address is special
+    Should Contain                      ${popup_message}       Finishing IP address should be same or larger than starting IP address
+    RETURN                              ${popup_message}
+
+###
+Popup Lease Time Is Invalid Should Be Visible
+    [Documentation]                     Handle popup Lease Time is invalid
+    ${popup_message}=                   SL.Handle Alert        timeout=10s  
+    Log To Console                      Popup message: ${popup_message}
+    Should Contain                      ${popup_message}       Lease time must be in range: 1800 - 604800 seconds
+    RETURN                              ${popup_message}
+
+###
+Popup DNS Manually Is Invalid Should Be Visible
+    [Documentation]                     Handle popup DNS Manually Is Invalid
+    [Arguments]                         ${dns}
+    ${popup_message}=                   SL.Handle Alert        timeout=10s    
+    Log To Console                      Popup message: ${popup_message} 
+    Should Contain                      ${popup_message}       Address "${dns}" is invalid 
+    RETURN                              ${popup_message}
+
+###
+Popup Cache Size Is Invalid Should Be Visible
+    [Documentation]                     Handle popup Cache Size is Invalid
+    ${popup_message}=                   SL.Handle Alert        timeout=10s   
+    Log To Console                      Popup message: ${popup_message} 
+    Should Contain                      ${popup_message}       Invalid DNS cache size
+    RETURN                              ${popup_message}
+
+###
+Popup Minimum TTL Is Invalid Should Be Visible
+    [Documentation]                     Handle popup minimum TTL is Invalid
+    ${popup_message}=                   SL.Handle Alert        timeout=10s
+    Log To Console                      Popup message: ${popup_message}
+    Should Contain                      ${popup_message}       Invalid TTL Count
+    RETURN                              ${popup_message}
+
+###
+Popup MAC Address Is Invalid Should Be Visible
+    [Documentation]                     Handle popup MAC address is Invalid
     [Arguments]                         ${mac_address}
-
     ${popup_message}=                   SL.Handle Alert    timeout=10s
     Log To Console                      Popup message: ${popup_message}
-    Should Contain                      ${popup_message}     Invalid MAC address:${mac_address}
-    
-Popup Lan Ipv6 Address Is Special Should Be Visible
-    [Documentation]                     Handle popup LAN IPv6 address is special
-    [Arguments]                         ${ipv6_address}
+    Should Contain                      ${popup_message}         MAC "${mac_address}" is invalid 
+    RETURN                              ${popup_message}
 
+###
+Popup Address Exists Should Be Visible
+    [Documentation]                     Handle popup Address already exists!!
+    ${popup_message}=                   SL.Handle Alert        timeout=10s
+    Log To Console                      Popup message: ${popup_message}
+    Should Contain                      ${popup_message}         Address already exists
+    RETURN                              ${popup_message}
+
+###
+Check Popup LAN DHCPv4 And Continue On Failure
+    [Arguments]                              ${popup}        
+    ...                                      ${argument1}=argument
+    ...                                      ${argument2}=argument
+
+    ${status}=    Run Keyword If    '${argument1}' == 'argument' and '${argument2}' == 'argument'    Run Keyword And Continue On Failure    ${popup}
+    ...           ELSE IF           '${argument1}' != 'argument' and '${argument2}' == 'argument'    Run Keyword And Continue On Failure    ${popup}    ${argument1}
+    ...           ELSE IF           '${argument1}' != 'argument' and '${argument2}' != 'argument'    Run Keyword And Continue On Failure    ${popup}    ${argument1}    ${argument2}
+
+    Run Keyword If        '${status}' == 'None'            Run Keywords    
+    ...                   SL.Reload Page
+    ...    AND            SL.Select Frame                  xpath=//frame[@name="contentfrm"]              
+    ...    AND            Open Network Settings LAN Page
+
+
+
+
+
+#####DHCPv6#####
+###
+Popup Prefix Invalid Should Be Visible 
+    [Documentation]                     Handle popup Prefix
+    [Arguments]                         ${prefix}
     ${popup_message}=                   SL.Handle Alert    timeout=10s
     Log To Console                      Popup message: ${popup_message}
-    Should Contain                      ${popup_message}     Invalid IPv6 Address: ${ipv6_address}
-    
-Popup Lan Ipv6 Prefix Is Special Should Be Visible
-    [Documentation]                     Handle popup LAN IPv6 prefix is special
-    [Arguments]                         ${ipv6_prefix}
-    
+    Should Contain                      ${popup_message}       Prefix"${prefix} "is invalid for IPv6 address !
+    RETURN                              ${popup_message}
+
+###
+Popup Prefix Length Invalid Should Be Visible 
+    [Documentation]                     Handle popup Prefix Length Invalid 
+    [Arguments]                         ${prefix_length}
     ${popup_message}=                   SL.Handle Alert    timeout=10s
     Log To Console                      Popup message: ${popup_message}
-    Should Contain                      ${popup_message}     Invalid IPv6 Prefix: ${ipv6_prefix}
+    Should Contain                      ${popup_message}       The length of prefix"${prefix_length} "is invalid !
+    RETURN                              ${popup_message}
 
-Click Button Save LAN
-    [Timeout]                           20s
-    SL.Execute Javascript               document.querySelector("input[onclick='uiSave()']").click();
+###
+Popup Preferred Lifetime Invalid Should Be Visible 
+    [Documentation]                     Handle popup Preferred Lifetime Invalid
+    [Arguments]                         ${pre_lifetime}
+    ${popup_message}=                   SL.Handle Alert    timeout=10s
+    Log To Console                      Popup message: ${popup_message}
+    Should Contain                      ${popup_message}   Time"${pre_lifetime} "is invalid !
+    RETURN                              ${popup_message}
+
+###    
+Popup Valid Lifetime Invalid Should Be Visible 
+    [Documentation]                     Handle popup Valid Lifetime
+    [Arguments]                         ${valid_lifetime}
+    ${popup_message}=                   SL.Handle Alert    timeout=10s
+    Log To Console                      Popup message: ${popup_message}
+    Should Contain                      ${popup_message}   Time"${valid_lifetime} "is invalid !
+    RETURN                              ${popup_message}
+
+###
+Popup Valid Lifetime is same or lesser than Preferred Lifetime
+    [Documentation]                     Handle popup Valid Lifetime is same or lesser than Preferred Lifetime
+    [Arguments]                         ${pre_lifetime}        ${valid_lifetime}
+    ${popup_message}=                   SL.Handle Alert        timeout=10s
+    Log To Console                      Popup message: ${popup_message}
+    Should Contain                      ${popup_message}       Valid Lifetime${valid_lifetime}is same or lesser than primary time: ${pre_lifetime}
+    RETURN                              ${popup_message}
+
+###
+Popup RA Minimum Interval Invalid Should Be Visible 
+    [Documentation]                     Handle popup RA Minimum Interval Invalid
+    [Arguments]                         ${ra_min}
+    ${popup_message}=                   SL.Handle Alert        timeout=10s
+    Log To Console                      Popup message: ${popup_message}
+    Should Contain                      ${popup_message}       RA minimum interval"${ra_min} "is invalid !
+    RETURN                              ${popup_message}
+
+###
+Popup RA Maximum Interval Invalid Should Be Visible 
+    [Documentation]                     Handle popup RA Maximum Interval Invalid
+    [Arguments]                         ${ra_max}
+    ${popup_message}=                   SL.Handle Alert        timeout=10s
+    Log To Console                      Popup message: ${popup_message}
+    Should Contain                      ${popup_message}       RA maximum interval"${ra_max} "is invalid !
+    RETURN                              ${popup_message}
+
+###
+Popup RA Minimum Interval should be lesser than 0.75 times RA Maximal Interval
+    [Documentation]                     Handle popup RA minimum interval
+    [Arguments]                         ${ra_min}              ${ra_max}
+    ${value}=                           Evaluate               ${ra_max} * 0.75
+    ${value}=                           Evaluate               int(${value}) if ${value} == int(${value}) else ${value}
+    ${popup_message}=                   SL.Handle Alert        timeout=10s
+    Log To Console                      Popup message: ${popup_message}
+    Should Contain                      ${popup_message}       RA minimum interval${ra_min} should be lesser than 0.75 times RA maximal interval: ${value}
+    RETURN                              ${popup_message}
+
+###
+Popup RA Maximal Interval is lesser than times RA Minimum Interval
+    [Documentation]                     Handle popup RA minimum interval
+    [Arguments]                         ${ra_min}              ${ra_max}
+    ${popup_message}=                   SL.Handle Alert        timeout=10s
+    Log To Console                      Popup message: ${popup_message}
+    Should Contain                      ${popup_message}       RA maximum interval${ra_max} is lesser than RA minimum interval: ${ra_min}
+    RETURN                              ${popup_message}
+
+###
+Check Popup LAN IPv6 Config And Continue On Failure
+    [Arguments]                              ${popup}        
+    ...                                      ${argument1}=argument
+    ...                                      ${argument2}=argument
+
+    ${status}=    Run Keyword If    '${argument1}' == 'argument' and '${argument2}' == 'argument'    Run Keyword And Continue On Failure    ${popup}
+    ...           ELSE IF           '${argument1}' != 'argument' and '${argument2}' == 'argument'    Run Keyword And Continue On Failure    ${popup}    ${argument1}
+    ...           ELSE IF           '${argument1}' != 'argument' and '${argument2}' != 'argument'    Run Keyword And Continue On Failure    ${popup}    ${argument1}    ${argument2}
+
+    Run Keyword If        '${status}' == 'None'            Run Keywords    
+    ...                   SL.Reload Page
+    ...    AND            SL.Select Frame                  xpath=//frame[@name="contentfrm"]              
+    ...    AND            Open Network Settings LAN Page
+    ...    AND            Enable/Disable SLAAC             slaac=On 
+    ...    AND            Config RA Mode                   ra_mode=Manually
+
+
+
+
+###
+Popup Primary DNS DHCPv6 Invalid Should Be Visible 
+    [Documentation]                     Handle popup Primary DNS DHCPv6 Invalid
+    [Arguments]                         ${primary_dns}
+    ${popup_message}=                   SL.Handle Alert        timeout=10s
+    Log To Console                      Popup message: ${popup_message}
+    Should Contain                      ${popup_message}       Primary DNS"${primary_dns}" is invalid for IPv6 address !
+
+###
+Popup Secondary DNS DHCPv6 Invalid Should Be Visible 
+    [Documentation]                     Handle popup Secondary DNS DHCPv6 Invalid
+    [Arguments]                         ${secondary_dns}
+    ${popup_message}=                   SL.Handle Alert        timeout=10s
+    Log To Console                      Popup message: ${popup_message}
+    Should Contain                      ${popup_message}       Secondary DNS "${secondary_dns}" is invalid for IPv6 address ! 
+
+###
+Check Popup LAN DHCPv6 And Continue On Failure
+    [Arguments]                              ${popup}        
+    ...                                      ${argument1}=argument
+    ...                                      ${argument2}=argument
+
+    ${status}=    Run Keyword If    '${argument1}' == 'argument' and '${argument2}' == 'argument'    Run Keyword And Continue On Failure    ${popup}
+    ...           ELSE IF           '${argument1}' != 'argument' and '${argument2}' == 'argument'    Run Keyword And Continue On Failure    ${popup}    ${argument1}
+    ...           ELSE IF           '${argument1}' != 'argument' and '${argument2}' != 'argument'    Run Keyword And Continue On Failure    ${popup}    ${argument1}    ${argument2}
+
+    Run Keyword If        '${status}' == 'None'            Run Keywords    
+    ...                   SL.Reload Page
+    ...    AND            SL.Select Frame                  xpath=//frame[@name="contentfrm"]              
+    ...    AND            Open Network Settings LAN Page
+    ...    AND            Enable/Disable DHCPv6 Server     dhcpv6_server=On 
+    ...    AND            Config DNS Server Source         dns_server_source=Static
+
+
+
+
+
+################
+#####DHCPv4#####
+###
+Verify Config IP Address Valid
+    [Arguments]                                          ${ip_current}
+    ...                                                  ${ip_change}
+
+    # SL.Reload Page
+    SL.Delete All Cookies
+    SL.Close All Browsers
+    Open Connection And Login To Remote Machine          ssh_server_ip=${REMOTE_SERVER_IP}
+    ...                                                  ssh_server_username=${REMOTE_SERVER_USERNAME}
+    ...                                                  ssh_server_password=${REMOTE_SERVER_PASSWORD}
+    Enable Wifi
+    Delete All Wireless    
+    ${lan_interface}=        SSHL.Execute Command        ifconfig | grep -B1 "inet ${ip_current}" | awk '$1!="inet" && $1!="--" {gsub(":",""); print $1}'
+    Up Down Network Card PC Linux                        network_interface_card=${lan_interface}
+
+    Login To Browser		             		         url=https://${ip_change}/cgi-bin/login.asp
+    ...                                                  password=${ONT}[ONT_WEB_PASS]
+    SL.Select Frame                                      xpath=//frame[@name="contentfrm"]              
+    Log To Console                                       \nConfig IP Address is ${ip_change} sucess!
 
 ###
 Verify Config LAN
-    [Arguments]                                		${option}
-    ...							                    ${value_set}
+    [Arguments]                               ${option}
+    ...							              ${value_set}
     
-    ${value_get}=                            	SL.Get Value            xpath=//input[@name="${option}"]
-    Should Be Equal                             	${value_get}         ${value_set}
-    Log To Console					                Config Success ${value_set}: True 
+    Log To Console                            \nVerify Config LAN
+    ${value_get}=                             SL.Get Value            xpath=//input[@name="${option}"]
+    Should Be Equal                           ${value_get}            ${value_set}
+    Log To Console					          Config Success ${value_set}: True 
+
+###
+Verify Enable/Disable DHCPv4
+    [Arguments]                                ${mode_dhcp}  
+
+    Log To Console                             \nVerify Enable/Disable DHCPv4
+    SL.Scroll Element Into View                xpath=//*[@id="dhcpSrvType"]
+    SL.Wait Until Element Is Visible           xpath=//*[@id="dhcpSrvType"]       timeout=10s
+    ...                                        error=\nLink DHCP lan Does Not Show Up
+    ${value}                                   SL.Get Value    xpath=//*[@id="dhcpSrvType" and @checked]
+    Run Keyword If    '${mode_dhcp}' == 'Enable'         Should Be Equal        ${value}        1
+    ...  ELSE IF      '${mode_dhcp}' == 'Disable'        Should Be Equal        ${value}        0
+    Log To Console					           Config Success ${mode_dhcp} DHCPv4: True 
+
+###
+Verify Lease Time
+    [Arguments]                                ${dhcp_lease}   
+
+    Log To Console                             \nVerify DHCP Lease Time
+    SL.Wait Until Element Is Visible           xpath=//*[@id="leaseTimeValue"]        timeout=10s
+    ...                                        error=\nConfig Lease Time 
+    ${value}                                   SL.Get Value    xpath=//*[@id="leaseTimeValue"]  
+    Should Be Equal                            ${dhcp_lease}                ${value}
+    Log To Console					           Config Success DHCP Lease Time = ${dhcp_lease}: True
+
+###
+Check IP Address Range Auto Hopping
+    # [Arguments]                                ${ip_address}
+
+    Log To Console                             \nCheck IP Address Range Auto Hopping
+    ${ip_address}=                             SL.Get Value            xpath=//input[@name="ethIpAddress"]
+    Log To Console                             IP Address Current is ${ip_address}
+    ${common}=                                 STR.Split String        ${ip_address}      .
+    ${ip_range}=                               Catenate                SEPARATOR=.        ${common}[0]        ${common}[1]        ${common}[2]
+    ${ip_range}=                               Catenate                SEPARATOR=         ${ip_range}         .
+
+    ${start_ip}=                               SL.Get Value            xpath=//input[@name="dhcpEthStart"]
+    Should Contain                             ${start_ip}             ${ip_range}
+    Log To Console                             Start IP Address is ${start_ip}
+
+    ${end_ip}=                                 SL.Get Value            xpath=//input[@name="dhcpEthEnd"]
+    Should Contain                             ${end_ip}               ${ip_range}
+    Log To Console                             End IP Address is ${end_ip}
+    Log To Console                             IP Address Range Auto Hopping!
+
+###
+Verify DNS Mode
+    [Arguments]                                ${dns_mode}   
+
+    Log To Console                             \nVerify Config DNS Mode
+    SL.Scroll Element Into View                xpath=//*[@id="dnsMode"]
+    SL.Wait Until Element Is Visible           xpath=//*[@id="dnsMode"]      timeout=10s
+    ...                                        error=\nLink DNS Mode Does Not Show Up
+    ${value}                                   SL.Get Value        xpath=//*[@id="dnsMode" and @checked]
     
+    Run Keyword If    '${dns_mode}' == 'Automatically'        Should Be Equal        ${value}        0
+    ...    ELSE IF    '${dns_mode}' == 'Manually'             Should Be Equal        ${value}        1
+    ...    ELSE IF    '${dns_mode}' == 'ISP DNS'              Should Be Equal        ${value}        2 
+    Log To Console					           Config Success DNS Mode ${dns_mode}: True 
+
+###
+Check DNS on PC
+    [Arguments]                                          ${primary_dns}
+    ...                                                  ${secondary_dns}  
+
+    Open Connection And Login To Remote Machine          ssh_server_ip=${REMOTE_SERVER_IP}
+    ...                                                  ssh_server_username=${REMOTE_SERVER_USERNAME}
+    ...                                                  ssh_server_password=${REMOTE_SERVER_PASSWORD}
+    Enable Wifi
+    Delete All Wireless    
+
+    ${lan_interface}=        SSHL.Execute Command        ifconfig | grep -B1 "inet 192.168.1." | awk '$1!="inet" && $1!="--" {gsub(":",""); print $1}'
+    Up Down Network Card PC Linux                  network_interface_card=${lan_interface}
+    Log To Console                                 \nCheck DNS on PC
+    ${dns_pc}=                                     SSHL.Execute Command    nmcli device show ${lan_interface} | grep DNS 
+    Should Contain                                 ${dns_pc}           ${primary_dns}
+    Log To Console                                 Primary DNS is ${primary_dns}
+    Should Contain                                 ${dns_pc}           ${secondary_dns}
+    Log To Console                                 Secondary DNS is ${secondary_dns}
+
+###
+Verify Cache Size
+    [Arguments]                                ${cache_size}
+
+    Log To Console                             \nVerify Config Cache Size
+    SL.Scroll Element Into View                xpath=//*[@id="sizecache"]
+    SL.Wait Until Element Is Visible           xpath=//*[@id="sizecache"]        timeout=10s
+    ...                                        error=\nConfig Cache Size 
+    ${value}                                   SL.Get Value            xpath=//*[@id="sizecache"]
+    Should Be Equal                            ${cache_size}            ${value}
+    Log To Console					           Config Success Cache Size = ${cache_size}: True
+
+###
+Verify Minimum TTL
+    [Arguments]                                ${minimum_ttl}
+
+    Log To Console                             \nVerify Config Minimum TTL
+    SL.Scroll Element Into View                xpath=//*[@id="minimumttl"]
+    SL.Wait Until Element Is Visible           xpath=//*[@id="minimumttl"]        timeout=10s
+    ...                                        error=\nConfig Cache Size 
+    ${value}                                   SL.Get Value            xpath=//*[@id="minimumttl"]
+    Should Be Equal                            ${minimum_ttl}            ${value}
+    Log To Console					           Config Success Minimum TTL = ${minimum_ttl}: True
+
+###
+Verify DHCP Reservation
+    [Arguments]                                ${rule_index}
+    ...                                        ${dhcp_reser_ip}
+    ...                                        ${dhcp_reser_mac}
+
+    ${rule_index}=                             Evaluate            int(${rule_index}) + 1
+    Log To Console                             \nVerify DHCP Reservation
+    ${value_ip}                                SL.Get Text             xpath=//*[@id="static_list"]/tbody/tr[${rule_index}]/td[1]/font
+    Should Be Equal                            ${dhcp_reser_ip}        ${value_ip}  
+    Log To Console					           Config Success DHCP Reservation IP = ${dhcp_reser_ip}: True 
+
+    ${value_mac}                               SL.Get Text             xpath=//*[@id="static_list"]/tbody/tr[${rule_index}]/td[2]/font
+    Should Be Equal                            ${dhcp_reser_mac}       ${value_mac}  
+    Log To Console					           Config Success DHCP Reservation MAC = ${dhcp_reser_mac}: True 
+
+
+
+
+
+
+#####DHCPv6#####
+###
+Verify Enable/Disable SLAAC
+    [Arguments]                                ${slaac}
+
+    Log To Console                             \nVerify Enable/Disable SLAAC
+    SL.Reload Page
+    SL.Select Frame                            xpath=//frame[@name="contentfrm"]              
+    Open Network Settings LAN Page
+    SL.Scroll Element Into View                xpath=//*[@id="save_dhcp"]
+    ${status}=                                 SL.Execute Javascript        return document.querySelector("#radvdSrvType").checked
+    Run Keyword If        '${slaac}' == 'On'         Run Keywords
+    ...                   Should Contain             '${status}'        'True'
+    ...    AND            SL.Element Should Be Visible                  xpath=//*[@id="RAUseWan"]
+    ...   ELSE IF         '${slaac}' == 'Off'        Run Keywords
+    ...                   Should Contain             '${status}'        'False'
+    ...    AND            SL.Element Should Not Be Visible              xpath=//*[@id="RAUseWan"]
+    Log To Console                             SLAAC Mode is ${slaac}
+
+###
+Verify RA Mode 
+    [Arguments]                                ${ra_mode}
+
+    Log To Console                             \nVerify RA Mode
+    SL.Reload Page
+    SL.Select Frame                            xpath=//frame[@name="contentfrm"]              
+    Open Network Settings LAN Page
+    SL.Scroll Element Into View                xpath=//*[@id="save_dhcp"]
+    ${current_ra_mode}=                        SL.Get Value               xpath=//*[@id="RAUseWan"]
+    Run Keyword If    '${ra_mode}' == 'Automatically'         Should Be Equal        ${current_ra_mode}        UseAllocatedSubnet
+    ...  ELSE IF      '${ra_mode}' == 'Manually'              Should Be Equal        ${current_ra_mode}        Normal
+    Log To Console                             RA Mode is ${ra_mode}
+
+###
+Verify Prefix
+    [Arguments]                              ${prefix}
+
+    Log To Console                           \nVerify Prefix
+    SL.Reload Page
+    SL.Select Frame                          xpath=//frame[@name="contentfrm"]              
+    Open Network Settings LAN Page
+    SL.Scroll Element Into View              xpath=//*[@id="save_dhcp"]
+    SL.Wait Until Element Is Visible         xpath=//*[@id="radvdPrefix"]    timeout=15s
+    ...                                      error=\nPrefix Textbox Does Not Show Up
+    ${value}=                                SL.Get Value        xpath=//*[@id="radvdPrefix"]
+    Should Be Equal                          ${prefix}           ${value}
+    Log To Console                           Prefix = ${prefix}
+
+###
+Verify Prefix Length
+    [Arguments]                              ${prefix_length}
+
+    Log To Console                           \nVerify Prefix Length
+    SL.Reload Page
+    SL.Select Frame                          xpath=//frame[@name="contentfrm"]              
+    Open Network Settings LAN Page
+    SL.Scroll Element Into View              xpath=//*[@id="save_dhcp"]
+    SL.Wait Until Element Is Visible         xpath=//*[@id="RAPrefixLen"]    timeout=15s
+    ...                                      error=\nPrefix Length Textbox Does Not Show Up
+    ${value}=                                SL.Get Value            xpath=//*[@id="RAPrefixLen"]
+    Should Be Equal                          ${prefix_length}        ${value}
+    Log To Console                           Prefix Length = ${prefix_length}
+
+###
+Verify Preferred Lifetime
+    [Arguments]                              ${pre_lifetime}
+
+    Log To Console                           \nVerify Preferred Lifetime
+    SL.Reload Page
+    SL.Select Frame                          xpath=//frame[@name="contentfrm"]              
+    Open Network Settings LAN Page
+    SL.Scroll Element Into View              xpath=//*[@id="save_dhcp"]
+    SL.Wait Until Element Is Visible         xpath=//*[@id="PreferredLifetime"]    timeout=15s
+    ...                                      error=\nPreferred Lifetime Textbox Does Not Show Up
+    ${value}=                                SL.Get Value            xpath=//*[@id="PreferredLifetime"]
+    Should Be Equal                          ${pre_lifetime}         ${value}
+    Log To Console                           Preferred Lifetime = ${pre_lifetime}
+
+###
+Verify Valid Lifetime
+    [Arguments]                              ${valid_lifetime}
+
+    Log To Console                           \nVerify Valid Lifetime
+    SL.Reload Page
+    SL.Select Frame                          xpath=//frame[@name="contentfrm"]              
+    Open Network Settings LAN Page
+    SL.Scroll Element Into View              xpath=//*[@id="save_dhcp"]
+    SL.Wait Until Element Is Visible         xpath=//*[@id="ValidLifetime"]   timeout=15s
+    ...                                      error=\nValid Lifetime Textbox Does Not Show Up
+    ${value}=                                SL.Get Value         xpath=//*[@id="ValidLifetime"]
+    Should Be Equal                          ${valid_lifetime}    ${value}
+    Log To Console                           Valid Lifetime = ${valid_lifetime}
+
+###
+Verify Flag                                    
+    [Arguments]                                 ${managed}    
+    ...                                         ${other}
+
+    Log To Console                              \nVerify Flag Mode
+    SL.Reload Page
+    SL.Select Frame                             xpath=//frame[@name="contentfrm"]              
+    Open Network Settings LAN Page
+    SL.Scroll Element Into View                 xpath=//*[@id="save_dhcp"]
+    ${status_managed}=                          SL.Execute Javascript        return document.querySelector("#ramflag").checked
+    ${status_other}=                            SL.Execute Javascript        return document.querySelector("#raoflag").checked
+    Run Keyword If    '${managed}' == 'On'      Should Be Equal        '${status_managed}'        'True'
+    ...  ELSE IF      '${managed}' == 'Off'     Should Be Equal        '${status_managed}'        'False'
+
+    Run Keyword If    '${other}' == 'On'        Should Be Equal        '${status_other}'          'True'
+    ...  ELSE IF      '${other}' == 'Off'       Should Be Equal        '${status_other}'          'False'
+    
+    ${style_dhcpv6_prefix}=                     SL.Get Element Attribute        xpath=//*[@id="DHCP6SPrefixCfg"]        style
+    ${style_dnsv6}=                             SL.Get Element Attribute        xpath=//*[@id="DnsV6Config"]            style
+    Run Keyword If    '${managed}' == 'Off' and '${other}' == 'Off'      Run Keywords
+    ...               Should Be Equal        '${style_dhcpv6_prefix}'        'display: none;'
+    ...    AND        Should Be Equal        '${style_dnsv6}'                'display: none;'
+    ...  ELSE IF      '${managed}' == 'Off' and '${other}' == 'On'       Run Keywords
+    ...               Should Be Equal        '${style_dhcpv6_prefix}'        'display: none;'
+    ...    AND        Should Be Equal        '${style_dnsv6}'                ''
+    ...  ELSE IF      '${managed}' == 'On' and '${other}' == 'Off'       Run Keywords
+    ...               Should Be Equal        '${style_dhcpv6_prefix}'        ''
+    ...    AND        Should Be Equal        '${style_dnsv6}'                ''
+    ...  ELSE IF      '${managed}' == 'On' and '${other}' == 'On'        Run Keywords
+    ...               Should Be Equal        '${style_dhcpv6_prefix}'        ''
+    ...    AND        Should Be Equal        '${style_dnsv6}'                ''
+    
+    Log To Console                              Flag Managed mode: ${managed}
+    Log To Console                              Flag Other mode: ${other}
+
+###
+Verify RA Minimum Interval
+    [Arguments]                              ${ra_min}
+
+    Log To Console                           \nVerify RA Minimum Interval
+    SL.Reload Page
+    SL.Select Frame                          xpath=//frame[@name="contentfrm"]              
+    Open Network Settings LAN Page
+    SL.Scroll Element Into View              xpath=//*[@id="save_dhcp"]
+    SL.Wait Until Element Is Visible         xpath=//*[@id="device"]/tbody/tr[5]/td[5]/input    timeout=15s
+    ...                                      error=\nRA minimum interval Textbox Does Not Show Up
+    ${value}=                                SL.Get Value     xpath=/html/body/div[2]/form[2]/div[1]/div[1]/table/tbody/tr[5]/td[5]/input
+    Should Be Equal                          ${ra_min}        ${value}
+    Log To Console                           RA Minimum Interval = ${ra_min}
+
+###
+Verify RA Maximum Interval
+    [Arguments]                              ${ra_max}
+
+    Log To Console                           \nVerify RA Maximum Interval
+    SL.Reload Page
+    SL.Select Frame                          xpath=//frame[@name="contentfrm"]              
+    Open Network Settings LAN Page
+    SL.Scroll Element Into View              xpath=//*[@id="save_dhcp"]
+    SL.Wait Until Element Is Visible         xpath=//*[@id="device"]/tbody/tr[6]/td[5]/input     timeout=15s
+    ...                                      error=\nRA maximum interval Textbox Does Not Show Up
+    ${value}=                                SL.Get Value     xpath=/html/body/div[2]/form[2]/div[1]/div[1]/table/tbody/tr[6]/td[5]/input
+    Should Be Equal                          ${ra_max}        ${value}
+    Log To Console                           RA Maximum Interval = ${ra_max}
+
+###
+Verify Enable/Disable DHCPv6 Server
+    [Arguments]                                ${dhcpv6_server}
+
+    Log To Console                             \nVerify Enable/Disable DHCPv6 Server
+    SL.Reload Page
+    SL.Select Frame                            xpath=//frame[@name="contentfrm"]              
+    Open Network Settings LAN Page
+    SL.Scroll Element Into View                xpath=//*[@id="save_dhcp"]
+    ${status}=                                 SL.Execute Javascript        return document.querySelector("#dhcp6SrvType").checked
+    Run Keyword If        '${dhcpv6_server}' == 'On'         Should Contain             '${status}'        'True'
+    ...   ELSE IF         '${dhcpv6_server}' == 'Off'        Should Contain             '${status}'        'False'
+    Log To Console                             DHCPv6 Server Mode is ${dhcpv6_server}
+
+###
+Verify DNS Server Source   
+    [Arguments]                                ${dns_server_source}
+
+    Log To Console                             \nVerify DNS Server Source
+    SL.Reload Page
+    SL.Select Frame                            xpath=//frame[@name="contentfrm"]              
+    Open Network Settings LAN Page
+    SL.Scroll Element Into View                xpath=//*[@id="save_dhcp"]
+    ${current_dns_srv}=                        SL.Get Value          xpath=//*[@id="dnssource"]
+    Run Keyword If        '${dns_server_source}' == 'Proxy'          Should Be Equal        ${current_dns_srv}        999
+    ...    ELSE IF        '${dns_server_source}' == 'Static'         Should Be Equal        ${current_dns_srv}        998
+    ...    ELSE                                                      Should Be Equal        ${current_dns_srv}        8
+    Log To Console                             DNS Server Source is ${dns_server_source}
+
+###
+Verify Primary DNS DHCPv6
+    [Arguments]                                ${primary_dns}
+
+    Log To Console                             \nVerify Primary DNS DHCPv6
+    SL.Reload Page
+    SL.Select Frame                            xpath=//frame[@name="contentfrm"]              
+    Open Network Settings LAN Page
+    SL.Scroll Element Into View                xpath=//*[@id="save_dhcp"]
+    SL.Wait Until Element Is Visible           xpath=//*[@id="dnssourcepart_2"]/td[5]/input    timeout=10s
+    ...                                        error=\nPrimary DNS Textbox Does Not Show Up
+    ${value}=                                  SL.Get Value        xpath=//*[@id="dnssourcepart_2"]/td[5]/input
+    Should Be Equal                            ${primary_dns}      ${value}
+    Log To Console                             Primary DNS is ${primary_dns}
+
+###
+Verify Secondary DNS DHCPv6
+    [Arguments]                                ${secondary_dns}
+
+    Log To Console                             \nVerify Secondary DNS DHCPv6
+    SL.Reload Page
+    SL.Select Frame                            xpath=//frame[@name="contentfrm"]              
+    Open Network Settings LAN Page
+    SL.Scroll Element Into View                xpath=//*[@id="save_dhcp"]
+
+    SL.Wait Until Element Is Visible           xpath=//*[@id="dnssourcepart_3"]/td[5]/input    timeout=10s
+    ...                                        error=\nSecondary DNS Textbox Does Not Show Up
+    ${value}=                                  SL.Get Value    xpath=//*[@id="dnssourcepart_3"]/td[5]/input
+    Should Be Equal                            ${secondary_dns}    ${value}
+    Log To Console                             Secondary DNS is ${secondary_dns}
+
+
+
+

@@ -1,0 +1,167 @@
+*** Settings ***
+Library                                            SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
+Resource                                           selenium/Login/SeleniumLoginLib.txt
+Resource                                           selenium/Network/SeleniumNetworkLANLib.txt
+Resource                                           selenium/Maintenance/SeleniumMaintenanceRebootResetLib.txt
+*** Variables ***
+
+*** Keywords ***
+MOD_LAN_03_TC_06_Teardown
+    ##Teardown
+    Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
+    
+    #####Factory Reset Via Web GUI
+    Logout WebGUI
+    Login To Browser		                 password=${ONT}[ONT_WEB_PASS]
+    Factory Reset Via Web GUI
+  
+    SL.Go To                                 url=${LOGIN_URL}
+    SL.Wait Until Element Is Visible         ${LOGIN_BUTTON}
+    ...                                      timeout=25s
+    ...                                      error=\nLogin Page Does Not Found!
+    Run Keyword If                           '${SWITCH_VARIABLE}' == '3'      Log To Console	\nDon't need to change password after reset factory
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '2'      Change Password WebGui
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '1'      Change Password WebGui
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '0'      Change Password WebGui    
+    SL.Delete All Cookies
+    SL.Close All Browsers
+
+MOD_LAN_03_TC_06
+    [Documentation]            Kiem tra chuc nang cau hinh DHCP Reservation
+
+    # SL.Set Selenium Speed                          0.5
+    # SL.Set Selenium Timeout                        10s
+    Set Test Message                               *HTML* <b>MOD_LAN_03_TC_06</b>
+
+    ### Step 1: Open Browser & Login to WebGUI    
+    Log To Console                                               \nStep 1: Login to Browser
+    Login To Browser		             		                 password=${ONT}[ONT_WEB_PASS]
+    SL.Select Frame                                              xpath=//frame[@name="contentfrm"]              
+    
+    ### Step 2: Open Config LAN Page
+    Log To Console                                               \nStep 2: Open Config LAN 
+    Open Network Settings LAN Page
+    SL.Maximize Browser Window
+
+    ### Step 3: Config DHCP Reservation IP Address Wrong
+    Log To Console                                               \nStep 3: Config DHCP Reservation IP Address Wrong
+
+    ## Step 3.1: Config IP Address = All Space
+    Log To Console                                               \nStep 3.1: Config IP Address = All Space
+    Config DHCP Reservation                                      dhcp_reser_ip=${SPACE*4}
+    Click Button SaveIPv4 LAN
+    Check Popup LAN DHCPv4 And Continue On Failure               popup=Popup Lan Ip Address Is Special Should Be Visible
+    ...                                                          argument1=${SPACE*4}
+
+    ## Step 3.2: Config IP Address = 192.168.1.
+    Log To Console                                               \nStep 3.2: Config IP Address = 192.168.1.
+    Config DHCP Reservation                                      dhcp_reser_ip=192.168.1.
+    Click Button SaveIPv4 LAN
+    Check Popup LAN DHCPv4 And Continue On Failure               popup=Popup Lan Ip Address Is Special Should Be Visible
+    ...                                                          argument1=192.168.1.
+
+    ## Step 3.3: Config IP Address = 192.168.1.a
+    Log To Console                                               \nStep 3.3: Config IP Address = 192.168.1.a
+    Config DHCP Reservation                                      dhcp_reser_ip=192.168.1.a
+    Click Button SaveIPv4 LAN
+    Check Popup LAN DHCPv4 And Continue On Failure               popup=Popup Lan Ip Address Is Special Should Be Visible
+    ...                                                          argument1=192.168.1.a
+
+    ## Step 3.4: Config IP Address = 192.168.1.@
+    Log To Console                                               \nStep 3.4: Config IP Address = 192.168.1.@
+    Config DHCP Reservation                                      dhcp_reser_ip=192.168.1.@
+    Click Button SaveIPv4 LAN
+    Check Popup LAN DHCPv4 And Continue On Failure               popup=Popup Lan Ip Address Is Special Should Be Visible
+    ...                                                          argument1=192.168.1.@
+
+    ## Step 3.5: Config IP Address = 192.168.1.256
+    Log To Console                                               \nStep 3.5: Config IP Address = 192.168.1.256
+    Config DHCP Reservation                                      dhcp_reser_ip=192.168.1.256
+    Click Button SaveIPv4 LAN
+    Check Popup LAN DHCPv4 And Continue On Failure               popup=Popup Lan Ip Address Is Special Should Be Visible
+    ...                                                          argument1=192.168.1.256
+
+    ### Step 4: Config DHCP Reservation MAC Address Wrong
+    Log To Console                                               \nStep 4: Config DHCP Reservation MAC Address Wrong
+
+    ## Step 4.1: Config IP Address = All Space
+    Log To Console                                               \nStep 4.1: Config IP Address = All Space
+    Config DHCP Reservation                                      dhcp_reser_mac=${SPACE*4}
+    Click Button SaveIPv4 LAN
+    Check Popup LAN DHCPv4 And Continue On Failure               popup=Popup MAC Address Is Invalid Should Be Visible
+    ...                                                          argument1=${SPACE*4}
+
+    ## Step 4.2: Config IP Address = AA:BB:CC:11:22:
+    Log To Console                                               \nStep 4.2: Config IP Address = AA:BB:CC:11:22:
+    Config DHCP Reservation                                      dhcp_reser_mac=AA:BB:CC:11:22:
+    Click Button SaveIPv4 LAN
+    Check Popup LAN DHCPv4 And Continue On Failure               popup=Popup MAC Address Is Invalid Should Be Visible
+    ...                                                          argument1=AA:BB:CC:11:22:
+
+    ## Step 4.3: Config IP Address = AA:BB:CC:11:22:a
+    Log To Console                                               \nStep 4.3: Config IP Address = AA:BB:CC:11:22:a
+    Config DHCP Reservation                                      dhcp_reser_mac=AA:BB:CC:11:22:a
+    Click Button SaveIPv4 LAN
+    Check Popup LAN DHCPv4 And Continue On Failure               popup=Popup MAC Address Is Invalid Should Be Visible
+    ...                                                          argument1=AA:BB:CC:11:22:a
+
+    ## Step 4.4: Config IP Address = AA:BB:CC:11:22:@
+    Log To Console                                               \nStep 4.4: Config IP Address = AA:BB:CC:11:22:@
+    Config DHCP Reservation                                      dhcp_reser_mac=AA:BB:CC:11:22:@
+    Click Button SaveIPv4 LAN
+    Check Popup LAN DHCPv4 And Continue On Failure               popup=Popup MAC Address Is Invalid Should Be Visible
+    ...                                                          argument1=AA:BB:CC:11:22:@
+
+    ### Step 5: Config DHCP Reservation Valid
+    Log To Console                                               \nStep 5: Config DHCP Reservation Valid
+    Config DHCP Reservation                                      dhcp_reser_ip=192.168.1.4
+    ...                                                          dhcp_reser_mac=AA:BB:CC:11:22:44
+    Click Button SaveIPv4 LAN
+
+    # Verify DHCP Reservation
+    Verify DHCP Reservation                                      rule_index=1
+    ...                                                          dhcp_reser_ip=192.168.1.4
+    ...                                                          dhcp_reser_mac=AA:BB:CC:11:22:44
+
+    ### Step 6: Config DHCP Reservation Valid Same
+    Log To Console                                               \nStep 6: Config DHCP Reservation Valid Same
+
+    ## Step 6.1: Config MAC Address Same Rule Config
+    Log To Console                                               \nStep 6.1: Config MAC Address Same Rule Config
+    Config DHCP Reservation                                      dhcp_reser_ip=192.168.1.4
+    ...                                                          dhcp_reser_mac=AA:BB:CC:11:22:44
+    Click Button SaveIPv4 LAN
+    Check Popup LAN DHCPv4 And Continue On Failure               popup=Popup Address Exists Should Be Visible
+
+    ## Step 6.1: Config IP Address Same Rule Config
+    Log To Console                                               \nStep 6.1: Config MAC Address Same Rule Config
+    Config DHCP Reservation                                      dhcp_reser_ip=192.168.1.4
+    ...                                                          dhcp_reser_mac=AA:BB:CC:11:22:45
+    Click Button SaveIPv4 LAN
+    Check Popup LAN DHCPv4 And Continue On Failure               popup=Popup Address Exists Should Be Visible
+
+    ### Step 7: Config DHCP Reservation Valid Another
+    Log To Console                                               \nStep 7: Config DHCP Reservation Valid Another
+    Config DHCP Reservation                                      dhcp_reser_ip=192.168.1.5
+    ...                                                          dhcp_reser_mac=AA:BB:CC:11:22:45
+    Click Button SaveIPv4 LAN
+
+    # Verify DHCP Reservation
+    Verify DHCP Reservation                                      rule_index=2
+    ...                                                          dhcp_reser_ip=192.168.1.5
+    ...                                                          dhcp_reser_mac=AA:BB:CC:11:22:45
+
+    ### Step 8: Delete Rule DHCP Reservation
+    Log To Console                                               \nStep 8: Delete Rule DHCP Reservation
+    Delete DHCP Reservation                                      rule_index=1
+
+    # Verify DHCP Reservation
+    Verify DHCP Reservation                                      rule_index=1
+    ...                                                          dhcp_reser_ip=192.168.1.5
+    ...                                                          dhcp_reser_mac=AA:BB:CC:11:22:45
+
+    [Teardown]                          Run Keyword And Ignore Error                MOD_LAN_03_TC_06_Teardown
+
+# *** Test Cases ***
+# MOD_LAN_03_TC_06
+#     MOD_LAN_03_TC_06

@@ -13,6 +13,7 @@ MOD_WAN_20_TC_01_Teardown
     Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
     
     #####Factory Reset Via Web GUI
+    Logout WebGUI
     Login To Browser		                 password=${ONT}[ONT_WEB_PASS]
     Factory Reset Via Web GUI
   
@@ -64,8 +65,6 @@ MOD_WAN_20_TC_01
 
     # Verify WAN was Delete
     Verify WAN Was Delete                         vlan_id=11
-    
-    Logout WebGUI
 
     [Teardown]                               Run Keyword And Ignore Error        MOD_WAN_20_TC_01_Teardown
 

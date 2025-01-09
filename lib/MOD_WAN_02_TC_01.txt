@@ -13,6 +13,7 @@ MOD_WAN_02_TC_01_Teardown
     Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
     
     #####Factory Reset Via Web GUI
+    Logout WebGUI
     Login To Browser		                 password=${ONT}[ONT_WEB_PASS]
     Factory Reset Via Web GUI
   
@@ -60,27 +61,25 @@ MOD_WAN_02_TC_01
     ...                                           vlan_id=11
    
     ### Step 4: Delete WAN was created
-    Log To Console                                 \nStep 4: Delete WAN was created
-    Delete WAN                                     column_name=VLAN/Priority    row_name=11
+    Log To Console                                \nStep 4: Delete WAN was created
+    Delete WAN                                    column_name=VLAN/Priority    row_name=11
     Popup Delete WAN
-    Sleep                                          5s
+    Sleep                                         5s
 
     ### Step 5: Config Gateway Type Bridge
-    Log To Console                               \nStep 5: Config Gateway Type Bridge
+    Log To Console                                \nStep 5: Config Gateway Type Bridge
 
     ## Step 5.1: Add WAN & para of wan interface
     Log To Console                                \nStep 5.1: Add WAN & para of wan interface
     Add New Wan Service
-    Config Gateway Type                          mode=Bridge
-    Input VLAN ID                                vlan_id=11
+    Config Gateway Type                           mode=Bridge
+    Input VLAN ID                                 vlan_id=11
     Click Button Save WAN
 
     ## Step 5.2 Verify Gateway Type Route
     Log To Console                                \nStep 5.2 Gateway Type Bridge
     Verify Gateway Type                           mode_gw=Bridge
     ...                                           vlan_id=11
-
-    Logout WebGUI
 
     [Teardown]                               Run Keyword And Ignore Error        MOD_WAN_02_TC_01_Teardown
 

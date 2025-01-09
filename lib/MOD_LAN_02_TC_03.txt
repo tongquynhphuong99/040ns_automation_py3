@@ -1,0 +1,86 @@
+*** Settings ***
+Library                                            SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
+Resource                                           selenium/Login/SeleniumLoginLib.txt
+Resource                                           selenium/Network/SeleniumNetworkLANLib.txt
+Resource                                           selenium/Maintenance/SeleniumMaintenanceRebootResetLib.txt
+*** Variables ***
+
+*** Keywords ***
+MOD_LAN_02_TC_03_Teardown
+    ##Teardown
+    Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
+    
+    #####Factory Reset Via Web GUI
+    Logout WebGUI
+    Login To Browser		                 password=${ONT}[ONT_WEB_PASS]
+    Factory Reset Via Web GUI
+  
+    SL.Go To                                 url=${LOGIN_URL}
+    SL.Wait Until Element Is Visible         ${LOGIN_BUTTON}
+    ...                                      timeout=25s
+    ...                                      error=\nLogin Page Does Not Found!
+    Run Keyword If                           '${SWITCH_VARIABLE}' == '3'      Log To Console	\nDon't need to change password after reset factory
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '2'      Change Password WebGui
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '1'      Change Password WebGui
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '0'      Change Password WebGui    
+    SL.Delete All Cookies
+    SL.Close All Browsers
+
+MOD_LAN_02_TC_03
+    [Documentation]    Kiem tra kha nang cau hinh End IP
+
+    # SL.Set Selenium Speed                    0.5
+    # SL.Set Selenium Timeout                  10s
+    Set Test Message                         *HTML* <b>MOD_LAN_02_TC_03</b>
+
+    ### Step 1: Open Browser & Login to WebGUI    
+    Log To Console                                               \nStep 1: Login to Browser
+    Login To Browser		             		                 password=${ONT}[ONT_WEB_PASS]
+    SL.Select Frame                                              xpath=//frame[@name="contentfrm"]              
+    
+    ### Step 2: Open Config LAN Page
+    Log To Console                                               \nStep 2: Open Config LAN 
+    Open Network Settings LAN Page
+    SL.Maximize Browser Window
+
+    ### Step 3: Config End IP 192.168.1
+    Log To Console                                               \nStep 3: Config End IP 192.168.1
+    Config End IP Address DHCPv4                                 end_ip_address=192.168.1
+    Click Button SaveIPv4 LAN 
+    Check Popup LAN DHCPv4 And Continue On Failure               popup=Popup End IP Address Is Invalid Should Be Visible
+    ...                                                          argument1=192.168.1
+
+    ### Step 4: Config End IP 192.168.1.255
+    Log To Console                                               \nStep 4: Config End IP 192.168.1.255
+    Config End IP Address DHCPv4                                 end_ip_address=192.168.1.255
+    Click Button SaveIPv4 LAN 
+    Check Popup LAN DHCPv4 And Continue On Failure               popup=Popup End IP Address Is Invalid Should Be Visible
+    ...                                                          argument1=192.168.1.255
+
+    ### Step 5: Config End IP 192.168.1.1
+    Log To Console                                               \nStep 5: Config End IP 192.168.1.1
+    Config End IP Address DHCPv4                                 end_ip_address=192.168.1.1
+    Click Button SaveIPv4 LAN 
+    Check Popup LAN DHCPv4 And Continue On Failure               popup=Popup End IP Address Is Special Should Be Visible            
+
+    ### Step 6: Config End IP 192.168.2.254
+    Log To Console                                               \nStep 6: Config End IP 192.168.2.254
+    Config End IP Address DHCPv4                                 end_ip_address=192.168.2.254
+    Click Button SaveIPv4 LAN 
+    Check Popup LAN DHCPv4 And Continue On Failure               popup=Popup End IP Address Is Invalid Should Be Visible
+    ...                                                          argument1=192.168.2.254
+
+    ### Step 7: Config IP Address success
+    Log To Console                                               \nStep 7: Config IP Address success
+    Config End IP Address DHCPv4                                 end_ip_address=192.168.1.254
+    Click Button SaveIPv4 LAN 
+
+    # Verify End IP success
+    Verify Config LAN                                            option=dhcpEthEnd
+    ...							                                 value_set=192.168.1.254
+    
+    [Teardown]                               Run Keyword And Ignore Error        MOD_LAN_02_TC_03_Teardown
+
+# *** Test Cases ***
+# MOD_LAN_02_TC_03
+#     MOD_LAN_02_TC_03     

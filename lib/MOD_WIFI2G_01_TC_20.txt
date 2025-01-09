@@ -11,6 +11,7 @@ MOD_WIFI2G_01_TC_20_Teardown
     Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
     
     #####Factory Reset Via Web GUI
+    Logout WebGUI
     Login To Browser		                 password=${ONT}[ONT_WEB_PASS]
     Factory Reset Via Web GUI
   
@@ -37,7 +38,7 @@ MOD_WIFI2G_01_TC_20
     SL.Select Frame                                xpath=//frame[@name="contentfrm"]
     Open 2.4GHz Wireless Configure Page
     SL.Maximize Browser Window
-    Scroll Element Into View    css=#wlInfo > tbody > tr:nth-child(3) > td.tabdata.oneline > input
+    Scroll Element Into View                       css=#wlInfo > tbody > tr:nth-child(3) > td.tabdata.oneline > input
 
     ### Step 1: Config Station Number Wifi 2.4Ghz with SSID index 1
     Log To Console                                 \nStep 1: Config Station Number Wifi 2.4Ghz with SSID index 1
@@ -46,12 +47,12 @@ MOD_WIFI2G_01_TC_20
     ## Step 1.1: Config Station Number Wifi 2.4Ghz Wrong
     Config Station Number 2G                       input_station_number=0
     Save Config SSID
-    Popup Station Number Is Special Should Be Visible
+    Run Keyword And Continue On Failure            Popup Station Number Is Special Should Be Visible
 
     ## Step 1.2: Config Other Station Number Wifi 2.4Ghz Wrong 
     Config Station Number 2G                       input_station_number=35
     Save Config SSID
-    Popup Station Number Is Special Should Be Visible
+    Run Keyword And Continue On Failure            Popup Station Number Is Special Should Be Visible
 
     ## Step 1.3: Config Station Number Wifi 2.4Ghz Correct
     Config Station Number and Verify 2G            station_number=25
@@ -62,55 +63,53 @@ MOD_WIFI2G_01_TC_20
     Select SSID 2G Index                           ssid_index=2
 
     ## Step 2.1: Config Station Number Wifi 2.4Ghz Wrong
-    Config Station Number 2G                         input_station_number=0
+    Config Station Number 2G                       input_station_number=0
     Save Config SSID
-    Popup Station Number Is Special Should Be Visible
+    Run Keyword And Continue On Failure            Popup Station Number Is Special Should Be Visible
 
     ## Step 2.2: Config Other Station Number Wifi 2.4Ghz Wrong 
-    Config Station Number 2G                         input_station_number=35
+    Config Station Number 2G                       input_station_number=35
     Save Config SSID
-    Popup Station Number Is Special Should Be Visible
+    Run Keyword And Continue On Failure            Popup Station Number Is Special Should Be Visible
 
     ## Step 2.3: Config Station Number Wifi 2.4Ghz Correct
-    Config Station Number and Verify 2G             station_number=25
+    Config Station Number and Verify 2G            station_number=25
 
     
     ### Step 3: Config Station Number Wifi 2.4Ghz with SSID index 3
     Log To Console                                 \nStep 3: Config Station Number Wifi 2.4Ghz with SSID index 3
-    Select SSID 2G Index                            ssid_index=3
+    Select SSID 2G Index                           ssid_index=3
 
     ## Step 3.1: Config Station Number Wifi 2.4Ghz Wrong
-    Config Station Number 2G                          input_station_number=0
+    Config Station Number 2G                       input_station_number=0
     Save Config SSID
-    Popup Station Number Is Special Should Be Visible
+    Run Keyword And Continue On Failure            Popup Station Number Is Special Should Be Visible
 
     ## Step 3.2: Config Other Station Number Wifi 2.4Ghz Wrong 
-    Config Station Number 2G                          input_station_number=35
+    Config Station Number 2G                       input_station_number=35
     Save Config SSID
-    Popup Station Number Is Special Should Be Visible
+    Run Keyword And Continue On Failure            Popup Station Number Is Special Should Be Visible
 
     ## Step 3.3: Config Station Number Wifi 2.4Ghz Correct
-    Config Station Number and Verify 2G             station_number=25
+    Config Station Number and Verify 2G            station_number=25
 
 
     ### Step 4: Config Station Number Wifi 2.4Ghz with SSID index 4
     Log To Console                                 \nStep 4: Config Station Number Wifi 2.4Ghz with SSID index 4
-    Select SSID 2G Index                            ssid_index=4
+    Select SSID 2G Index                           ssid_index=4
 
     ## Step 4.1: Config Station Number Wifi 2.4Ghz Wrong
-    Config Station Number 2G                          input_station_number=0
+    Config Station Number 2G                       input_station_number=0
     Save Config SSID
-    Popup Station Number Is Special Should Be Visible
+    Run Keyword And Continue On Failure            Popup Station Number Is Special Should Be Visible
 
     ## Step 4.2: Config Other Station Number Wifi 2.4Ghz Wrong 
-    Config Station Number 2G                          input_station_number=35
+    Config Station Number 2G                       input_station_number=35
     Save Config SSID
-    Popup Station Number Is Special Should Be Visible
+    Run Keyword And Continue On Failure            Popup Station Number Is Special Should Be Visible
     
     ## Step 4.3: Config Station Number Wifi 2.4Ghz Correct
-    Config Station Number and Verify 2G             station_number=25
-
-    Logout WebGUI
+    Config Station Number and Verify 2G            station_number=25
 
     [Teardown]                               Run Keyword And Ignore Error        MOD_WIFI2G_01_TC_20_Teardown
 

@@ -13,6 +13,7 @@ MOD_WAN_06_TC_01_Teardown
     Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
     
     #####Factory Reset Via Web GUI
+    Logout WebGUI
     Login To Browser		                 password=${ONT}[ONT_WEB_PASS]
     Factory Reset Via Web GUI
   
@@ -60,13 +61,13 @@ MOD_WAN_06_TC_01
     ...                                           vlan_id=11
 
     # ### Step 4: Delete WAN was created
-    # Log To Console                                 \nStep 4: Delete WAN was created
-    # Delete WAN                                     column_name=VLAN/Priority    row_name=11
+    # Log To Console                                \nStep 4: Delete WAN was created
+    # Delete WAN                                    column_name=VLAN/Priority    row_name=11
     # Popup Delete WAN
-    # Sleep                                          5s
+    # Sleep                                         5s
 
     # ### Step 5: Config VLAN Type UNTAG
-    # Log To Console                               \nStep 5: Config VLAN Type UNTAG
+    # Log To Console                                \nStep 5: Config VLAN Type UNTAG
 
     # ## Step 5.1: Add WAN & para of wan interface
     # Log To Console                                \nStep 5.1: Add WAN & para of wan interface
@@ -82,18 +83,18 @@ MOD_WAN_06_TC_01
     # Verify VLAN Type                              vlan_type=UNTAG
 
     # ### Step 6: Delete WAN was created
-    # Log To Console                                 \nStep 6: Delete WAN was created
-    # Delete WAN                                     column_name=Way of getting IP    row_name=PPPoE
+    # Log To Console                                \nStep 6: Delete WAN was created
+    # Delete WAN                                    column_name=Way of getting IP    row_name=PPPoE
     # Popup Delete WAN
-    # Sleep                                          5s
+    # Sleep                                         5s
 
     # ### Step 7: Config VLAN Type TRANSPARENT
-    # Log To Console                               \nStep 7: Config VLAN Type TRANSPARENT
+    # Log To Console                                \nStep 7: Config VLAN Type TRANSPARENT
 
     # ## Step 7.1: Add WAN & para of wan interface
     # Log To Console                                \nStep 7.1: Add WAN & para of wan interface
     # Add New Wan Service
-    # Config VLAN Type                             type=TRANSPARENT
+    # Config VLAN Type                              type=TRANSPARENT
     # Config Link Mode                              link_mode=linkPPP
     # Click Button Save WAN
 
@@ -102,8 +103,6 @@ MOD_WAN_06_TC_01
     # Click WAN                                     column_name=Way of getting IP   column_value=PPPoE
     # SL.Scroll Element Into View                   xpath=//*[@id="VLANMode"]
     # Verify VLAN Type                              vlan_type=TRANSPARENT
-
-    Logout WebGUI
 
     [Teardown]                               Run Keyword And Ignore Error        MOD_WAN_06_TC_01_Teardown
 

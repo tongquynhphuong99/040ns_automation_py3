@@ -13,6 +13,7 @@ MOD_WAN_12_TC_01_Teardown
     Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
     
     #####Factory Reset Via Web GUI
+    Logout WebGUI
     Login To Browser		                 password=${ONT}[ONT_WEB_PASS]
     Factory Reset Via Web GUI
   
@@ -35,143 +36,141 @@ MOD_WAN_12_TC_01
     Set Test Message                               *HTML* <b>MOD_WAN_12_TC_01</b>
 
     ### Step 1: Open Browser & Login to WebGUI    
-    Log To Console                                \nStep 1: Login to Browser
-    Login To Browser		             		  password=${ONT}[ONT_WEB_PASS]
-    SL.Select Frame                               xpath=//frame[@name="contentfrm"]
+    Log To Console                                                      \nStep 1: Login to Browser
+    Login To Browser		             		                        password=${ONT}[ONT_WEB_PASS]
+    SL.Select Frame                                                     xpath=//frame[@name="contentfrm"]
 
     ### Step 2: Add WAN & para of wan interface
-    Log To Console                                \nStep 2: Add WAN & para of wan interface
+    Log To Console                                                      \nStep 2: Add WAN & para of wan interface
     Open Network Settings Wan Page
     SL.Maximize Browser Window
     Add New Wan Service
-    Input VLAN ID                                 vlan_id=12
+    Input VLAN ID                                                       vlan_id=12
 
     ### Step 3: Config Username Invalid
-    Log To Console                                \nStep 3: Config Username Invalid
+    Log To Console                                                      \nStep 3: Config Username Invalid
 
-    Log To Console                               	\nStep 3.1: Config UserName Empty
-    Config Username		                            name=${EMPTY}
+    Log To Console                               	                      \nStep 3.1: Config UserName Empty
+    Config Username		                                                  name=${EMPTY}
     Click Button Save WAN
-    Check Popup And Continue On Failure             popup=Popup Username Invalid Should Be Visible
+    Check Popup WAN And Continue On Failure                               popup=Popup Username Invalid Should Be Visible
 
-    Log To Console                               	\nStep 3.2: Config UserName All Space 
-    Config Username		                            name=${SPACE*4}
+    Log To Console                               	                      \nStep 3.2: Config UserName All Space 
+    Config Username		                                                  name=${SPACE*4}
     Click Button Save WAN
-    Check Popup And Continue On Failure             popup=Popup Username Invalid Should Be Visible
+    Check Popup WAN And Continue On Failure                               popup=Popup Username Invalid Should Be Visible
 
-    Log To Console                               	\nStep 3.3: Config UserName With Special Characters &|;$><`\!'" For Wifi 2.4Ghz On WebGui
-    Config Username	                                name=${PPP_USERNAME}&
+    Log To Console                               	                      \nStep 3.3: Config UserName With Special Characters &|;$><`\!'" For Wifi 2.4Ghz On WebGui
+    Config Username	                                                      name=${PPP_USERNAME}&
     Click Button Save WAN
-    Check Popup And Continue On Failure             popup=Popup Username Invalid Should Be Visible
+    Check Popup WAN And Continue On Failure                               popup=Popup Username Invalid Should Be Visible
 
-    Config Username			                        name=${PPP_USERNAME}|
+    Config Username			                                              name=${PPP_USERNAME}|
     Click Button Save WAN
-    Check Popup And Continue On Failure             popup=Popup Username Invalid Should Be Visible
+    Check Popup WAN And Continue On Failure                               popup=Popup Username Invalid Should Be Visible
 
-    Config Username			                        name=${PPP_USERNAME};
+    Config Username			                                              name=${PPP_USERNAME};
     Click Button Save WAN
-    Check Popup And Continue On Failure             popup=Popup Username Invalid Should Be Visible
+    Check Popup WAN And Continue On Failure                               popup=Popup Username Invalid Should Be Visible
 
-    Config Username			                        name=${PPP_USERNAME}$
+    Config Username			                                              name=${PPP_USERNAME}$
     Click Button Save WAN
-    Check Popup And Continue On Failure             popup=Popup Username Invalid Should Be Visible
+    Check Popup WAN And Continue On Failure                               popup=Popup Username Invalid Should Be Visible
 
-    Config Username			                        name=${PPP_USERNAME}>
+    Config Username			                                              name=${PPP_USERNAME}>
     Click Button Save WAN
-    Check Popup And Continue On Failure             popup=Popup Username Invalid Should Be Visible
+    Check Popup WAN And Continue On Failure                               popup=Popup Username Invalid Should Be Visible
 
-    Config Username			                        name=${PPP_USERNAME}<
+    Config Username			                                              name=${PPP_USERNAME}<
     Click Button Save WAN
-    Check Popup And Continue On Failure             popup=Popup Username Invalid Should Be Visible
+    Check Popup WAN And Continue On Failure                               popup=Popup Username Invalid Should Be Visible
 
-    Config Username			                        name=${PPP_USERNAME}`
+    Config Username			                                              name=${PPP_USERNAME}`
     Click Button Save WAN
-    Check Popup And Continue On Failure             popup=Popup Username Invalid Should Be Visible
+    Check Popup WAN And Continue On Failure                               popup=Popup Username Invalid Should Be Visible
 
-    Config Username			                        name=${PPP_USERNAME}\\
+    Config Username			                                              name=${PPP_USERNAME}\\
     Click Button Save WAN
-    Check Popup And Continue On Failure             popup=Popup Username Invalid Should Be Visible
+    Check Popup WAN And Continue On Failure                               popup=Popup Username Invalid Should Be Visible
 
-    Config Username			                        name=${PPP_USERNAME}!
+    Config Username			                                              name=${PPP_USERNAME}!
     Click Button Save WAN
-    Check Popup And Continue On Failure             popup=Popup Username Invalid Should Be Visible
+    Check Popup WAN And Continue On Failure                               popup=Popup Username Invalid Should Be Visible
 
-    Config Username			                        name=${PPP_USERNAME}'
+    Config Username			                                              name=${PPP_USERNAME}'
     Click Button Save WAN
-    Check Popup And Continue On Failure             popup=Popup Username Invalid Should Be Visible
+    Check Popup WAN And Continue On Failure                               popup=Popup Username Invalid Should Be Visible
 
-    Config Username			                        name=${PPP_USERNAME}"
+    Config Username			                                              name=${PPP_USERNAME}"
     Click Button Save WAN
-    Check Popup And Continue On Failure             popup=Popup Username Invalid Should Be Visible
+    Check Popup WAN And Continue On Failure                               popup=Popup Username Invalid Should Be Visible
 
     ### Step 4: Config Username Valid & Password Invalid
-    Log To Console                               	\nStep 4: Config Username Valid & Password Invalid
-    Config Username			                        name=${PPP_USERNAME}@%^*
+    Log To Console                               	                      \nStep 4: Config Username Valid & Password Invalid
+    Config Username			                                              name=${PPP_USERNAME}@%^*
     
-    Log To Console                               	\nStep 4.1: Config Password Empty
-    Config Password		                            pass=${EMPTY}
+    Log To Console                               	                      \nStep 4.1: Config Password Empty
+    Config Password		                                                  pass=${EMPTY}
     Click Button Save WAN
-    Check Popup And Continue On Failure             popup=Popup Password Invalid Should Be Visible
+    Check Popup WAN And Continue On Failure                               popup=Popup Password Invalid Should Be Visible
 
-    Log To Console                               	\nStep 4.2: Config Password All Space 
-    Config Password		                            pass=${SPACE*4}
+    Log To Console                               	                      \nStep 4.2: Config Password All Space 
+    Config Password		                                                  pass=${SPACE*4}
     Click Button Save WAN
-    Check Popup And Continue On Failure             popup=Popup Password Invalid Should Be Visible
+    Check Popup WAN And Continue On Failure                               popup=Popup Password Invalid Should Be Visible
 
-    Log To Console                               	\nStep 4.3: Config Password With Special Characters &|;$><`\!'" For Wifi 2.4Ghz On WebGui
-    Config Password	                                pass=${PPP_PASSWORD}&
+    Log To Console                               	                      \nStep 4.3: Config Password With Special Characters &|;$><`\!'" For Wifi 2.4Ghz On WebGui
+    Config Password	                                                      pass=${PPP_PASSWORD}&
     Click Button Save WAN
-    Check Popup And Continue On Failure             popup=Popup Password Invalid Should Be Visible
+    Check Popup WAN And Continue On Failure                               popup=Popup Password Invalid Should Be Visible
 
-    Config Password			                        pass=${PPP_PASSWORD}|
+    Config Password			                                              pass=${PPP_PASSWORD}|
     Click Button Save WAN
-    Check Popup And Continue On Failure             popup=Popup Password Invalid Should Be Visible
+    Check Popup WAN And Continue On Failure                               popup=Popup Password Invalid Should Be Visible
 
-    Config Password			                        pass=${PPP_PASSWORD};
+    Config Password			                                              pass=${PPP_PASSWORD};
     Click Button Save WAN
-    Check Popup And Continue On Failure             popup=Popup Password Invalid Should Be Visible
+    Check Popup WAN And Continue On Failure                               popup=Popup Password Invalid Should Be Visible
 
-    Config Password			                        pass=${PPP_PASSWORD}$
+    Config Password			                                              pass=${PPP_PASSWORD}$
     Click Button Save WAN
-    Check Popup And Continue On Failure             popup=Popup Password Invalid Should Be Visible
+    Check Popup WAN And Continue On Failure                               popup=Popup Password Invalid Should Be Visible
 
-    Config Password			                        pass=${PPP_PASSWORD}>
+    Config Password			                                              pass=${PPP_PASSWORD}>
     Click Button Save WAN
-    Check Popup And Continue On Failure             popup=Popup Password Invalid Should Be Visible
+    Check Popup WAN And Continue On Failure                               popup=Popup Password Invalid Should Be Visible
 
-    Config Password			                        pass=${PPP_PASSWORD}<
+    Config Password			                                              pass=${PPP_PASSWORD}<
     Click Button Save WAN
-    Check Popup And Continue On Failure             popup=Popup Password Invalid Should Be Visible
+    Check Popup WAN And Continue On Failure                               popup=Popup Password Invalid Should Be Visible
 
-    Config Password			                        pass=${PPP_PASSWORD}`
+    Config Password			                                              pass=${PPP_PASSWORD}`
     Click Button Save WAN
-    Check Popup And Continue On Failure             popup=Popup Password Invalid Should Be Visible
+    Check Popup WAN And Continue On Failure                               popup=Popup Password Invalid Should Be Visible
 
-    Config Password			                        pass=${PPP_PASSWORD}\\
+    Config Password			                                              pass=${PPP_PASSWORD}\\
     Click Button Save WAN
-    Check Popup And Continue On Failure             popup=Popup Password Invalid Should Be Visible
+    Check Popup WAN And Continue On Failure                               popup=Popup Password Invalid Should Be Visible
 
-    Config Password			                        pass=${PPP_PASSWORD}!
+    Config Password			                                              pass=${PPP_PASSWORD}!
     Click Button Save WAN
-    Check Popup And Continue On Failure             popup=Popup Password Invalid Should Be Visible
+    Check Popup WAN And Continue On Failure                               popup=Popup Password Invalid Should Be Visible
 
-    Config Password			                        pass=${PPP_PASSWORD}'
+    Config Password			                                              pass=${PPP_PASSWORD}'
     Click Button Save WAN
-    Check Popup And Continue On Failure             popup=Popup Password Invalid Should Be Visible
+    Check Popup WAN And Continue On Failure                               popup=Popup Password Invalid Should Be Visible
 
-    Config Password			                        pass=${PPP_PASSWORD}"
+    Config Password			                                              pass=${PPP_PASSWORD}"
     Click Button Save WAN
-    Check Popup And Continue On Failure             popup=Popup Password Invalid Should Be Visible
+    Check Popup WAN And Continue On Failure                               popup=Popup Password Invalid Should Be Visible
 
     ### Step 5: Config Username & Password Valid
-    Log To Console                               	\nStep 5: Config Username & Password Valid
-    Config Password			                        pass=${PPP_PASSWORD}@%^*
+    Log To Console                               	                      \nStep 5: Config Username & Password Valid
+    Config Password			                                              pass=${PPP_PASSWORD}@%^*
     Click Button Save WAN
 
     # Verify Username/Password 
-    Verify WAN Was Created                          vlan_id=12
-
-    Logout WebGUI
+    Verify WAN Was Created                                                vlan_id=12
 
     [Teardown]                               Run Keyword And Ignore Error        MOD_WAN_12_TC_01_Teardown
 

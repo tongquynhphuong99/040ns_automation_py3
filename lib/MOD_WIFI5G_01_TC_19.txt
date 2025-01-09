@@ -11,6 +11,7 @@ MOD_WIFI5G_01_TC_19_Teardown
     Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
     
     #####Factory Reset Via Web GUI
+    Logout WebGUI
     Login To Browser		                 password=${ONT}[ONT_WEB_PASS]
     Factory Reset Via Web GUI
   
@@ -34,30 +35,28 @@ MOD_WIFI5G_01_TC_19
     
     # Open WebGUI    
     Login To Browser
-    SL.Select Frame                                xpath=//frame[@name="contentfrm"]
+    SL.Select Frame                                 xpath=//frame[@name="contentfrm"]
     Open 5GHz Wireless Configure Page
     SL.Maximize Browser Window
 
     ### Step 1: Config Select Mode Wifi 5Ghz
-    Log To Console                      \nStep 1: Config Select Mode Wifi 5Ghz
-    Select SSID 5G Index                ssid_index=1
+    Log To Console                                  \nStep 1: Config Select Mode Wifi 5Ghz
+    Select SSID 5G Index                            ssid_index=1
 
     ## Step 1.1: Config Select Mode Wifi 5Ghz 11a only
-    Config Select Mode and Verify 5G    select_mode=11a only
+    Config Select Mode and Verify 5G                select_mode=11a only
 
     ## Step 1.2: Config Select Mode Wifi 5Ghz 11a/n mixed mode
-    Config Select Mode and Verify 5G   select_mode=11a/n mixed mode
+    Config Select Mode and Verify 5G                select_mode=11a/n mixed mode
 
     ## Step 1.3: Config Select Mode Wifi 5Ghz 811vht AC/AN/A
-    Config Select Mode and Verify 5G   select_mode=11vht AC/AN/A
+    Config Select Mode and Verify 5G                select_mode=11vht AC/AN/A
 
     ## Step 1.4: Config Select Mode Wifi 5Ghz 11vht AC/AN
-    Config Select Mode and Verify 5G   select_mode=11vht AC/AN
+    Config Select Mode and Verify 5G                select_mode=11vht AC/AN
     
     ## Step 1.5: Config Select Mode Wifi 5Ghz 11n/ac/ax Mixed
-    Config Select Mode and Verify 5G   select_mode=11n/ac/ax Mixed
-
-    Logout WebGUI
+    Config Select Mode and Verify 5G                select_mode=11n/ac/ax Mixed
 
     [Teardown]                               Run Keyword And Ignore Error        MOD_WIFI5G_01_TC_19_Teardown
 

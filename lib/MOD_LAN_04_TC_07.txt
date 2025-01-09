@@ -1,0 +1,99 @@
+*** Settings ***
+Library                                            SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
+Library                                            SSHLibrary    WITH NAME    SSHL
+Resource                                           selenium/Login/SeleniumLoginLib.txt
+Resource                                           selenium/Network/SeleniumNetworkLANLib.txt
+Resource                                           variables/AllVariables.txt
+Resource                                           selenium/Maintenance/SeleniumMaintenanceRebootResetLib.txt
+*** Variables ***
+
+*** Keywords ***
+MOD_LAN_04_TC_07_Teardown
+    ##Teardown
+    Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
+
+    #####Factory Reset Via Web GUI
+    Logout WebGUI
+    Login To Browser		                 password=${ONT}[ONT_WEB_PASS]
+    Factory Reset Via Web GUI
+  
+    SL.Go To                                 url=${LOGIN_URL}
+    SL.Wait Until Element Is Visible         ${LOGIN_BUTTON}
+    ...                                      timeout=25s
+    ...                                      error=\nLogin Page Does Not Found!
+    Run Keyword If                           '${SWITCH_VARIABLE}' == '3'      Log To Console	\nDon't need to change password after reset factory
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '2'      Change Password WebGui
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '1'      Change Password WebGui
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '0'      Change Password WebGui    
+    SL.Delete All Cookies
+    SL.Close All Browsers
+
+    Open Connection And Login To Remote Machine    ssh_server_ip=${REMOTE_SERVER_IP}
+    ...                                            ssh_server_username=${REMOTE_SERVER_USERNAME}
+    ...                                            ssh_server_password=${REMOTE_SERVER_PASSWORD}
+    Delete All Wireless
+    Disable Wifi
+    SSHL.Close All Connections
+
+MOD_LAN_04_TC_07
+    [Documentation]    Kiem tra kha nang cau hinh truong Flag
+
+    # SL.Set Selenium Speed                          0.5
+    # SL.Set Selenium Timeout                        10s
+    Set Test Message                               *HTML* <b>MOD_LAN_04_TC_07</b>
+
+    ### Step 1: Open Browser & Login to WebGUI    
+    Log To Console                                               \nStep 1: Login to Browser
+    Login To Browser		             		                 password=${ONT}[ONT_WEB_PASS]
+    SL.Select Frame                                              xpath=//frame[@name="contentfrm"]              
+    
+    ### Step 2: Open Config LAN Page
+    Log To Console                                               \nStep 2: Open Config LAN 
+    Open Network Settings LAN Page
+    SL.Maximize Browser Window
+
+    ### Step 3: Config Enable SLAAC
+    Log To Console                                               \nStep 3: Config Enable SLAAC
+    Enable/Disable SLAAC                                         slaac=On 
+
+    ### Step 4: Config Flag Managed Off and Flag Other Off
+    Log To Console                                               \nStep 4: Config Flag Managed Off and Flag Other Off
+    Config Flag                                                  managed=Off
+    ...                                                          other=Off
+    Click Button SaveIPv6 LAN
+    # Verify Config
+    Verify Flag                                                  managed=Off
+    ...                                                          other=Off
+
+    ### Step 5: Config Flag Managed Off and Flag Other On
+    Log To Console                                               \nStep 5: Config Flag Managed Off and Flag Other On
+    Config Flag                                                  managed=Off
+    ...                                                          other=On
+    Click Button SaveIPv6 LAN
+    # Verify Config
+    Verify Flag                                                  managed=Off
+    ...                                                          other=On
+
+    ### Step 6: Config Flag Managed On and Flag Other Off
+    Log To Console                                               \nStep 6: Config Flag Managed On and Flag Other Off
+    Config Flag                                                  managed=On
+    ...                                                          other=Off
+    Click Button SaveIPv6 LAN
+    # Verify Config
+    Verify Flag                                                  managed=On
+    ...                                                          other=Off
+
+    ### Step 7: Config Flag Managed On and Flag Other On
+    Log To Console                                               \nStep 7: Config Flag Managed On and Flag Other On
+    Config Flag                                                  managed=On
+    ...                                                          other=On
+    Click Button SaveIPv6 LAN
+    # Verify Config
+    Verify Flag                                                  managed=On
+    ...                                                          other=On
+
+    [Teardown]                               Run Keyword And Ignore Error        MOD_LAN_04_TC_07_Teardown
+
+# *** Test Cases ***
+# MOD_LAN_04_TC_07
+#     MOD_LAN_04_TC_07

@@ -1,0 +1,145 @@
+*** Settings ***
+Library                                            SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
+Resource                                           selenium/Login/SeleniumLoginLib.txt
+Resource                                           selenium/Network/SeleniumNetworkLANLib.txt
+Resource                                           selenium/Network/SeleniumNetworkWANLib.txt
+Resource                                           selenium/Maintenance/SeleniumMaintenanceRebootResetLib.txt
+*** Variables ***
+
+*** Keywords ***
+MOD_LAN_03_TC_02_Teardown
+    ##Teardown
+    Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
+    
+    #####Factory Reset Via Web GUI
+    Logout WebGUI
+    Login To Browser		                 password=${ONT}[ONT_WEB_PASS]
+    Factory Reset Via Web GUI
+  
+    SL.Go To                                 url=${LOGIN_URL}
+    SL.Wait Until Element Is Visible         ${LOGIN_BUTTON}
+    ...                                      timeout=25s
+    ...                                      error=\nLogin Page Does Not Found!
+    Run Keyword If                           '${SWITCH_VARIABLE}' == '3'      Log To Console	\nDon't need to change password after reset factory
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '2'      Change Password WebGui
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '1'      Change Password WebGui
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '0'      Change Password WebGui    
+    SL.Delete All Cookies
+    SL.Close All Browsers
+
+    Open Connection And Login To Remote Machine    ssh_server_ip=${REMOTE_SERVER_IP}
+    ...                                            ssh_server_username=${REMOTE_SERVER_USERNAME}
+    ...                                            ssh_server_password=${REMOTE_SERVER_PASSWORD}
+    Delete All Wireless
+    Disable Wifi
+    SSHL.Close All Connections
+    
+MOD_LAN_03_TC_02
+    [Documentation]            Kiem tra chuc nang cau hinh truong DNS Mode Manually
+
+    # SL.Set Selenium Speed                          0.5
+    # SL.Set Selenium Timeout                        10s
+    Set Test Message                               *HTML* <b>MOD_LAN_03_TC_02</b>
+
+    ### Step 1: Open Browser & Login to WebGUI    
+    Log To Console                                               \nStep 1: Login to Browser
+    Login To Browser		             		                 password=${ONT}[ONT_WEB_PASS]
+    SL.Select Frame                                              xpath=//frame[@name="contentfrm"]              
+    
+    ### Step 2: Create WAN Internet
+    Log To Console                                               \nStep 2: Create WAN Internet
+    Open Network Settings Wan Page
+    SL.Maximize Browser Window
+    Create WAN PPPoE Internet                                    11
+    Verify WAN Was Created                                       11
+
+    ### Step 3: Open Config LAN Page 
+    Log To Console                                               \nStep 3: Open Config LAN 
+    Open Network Settings LAN Page
+    SL.Maximize Browser Window
+
+    ### Step 4: Config DNS Mode Manually
+    Log To Console                                               \nStep 4: Config DNS Mode Manually
+    Config DNS Mode                                              dns_mode=Manually
+
+    ### Step 5: Config Primary DNS Invalid
+    Log To Console                                               \nStep 5: Config Primary DNS Invalid
+
+    ## Step 5.1: Config Primary DNS = Empty
+    Log To Console                                               \nStep 5.1: Config Primary DNS = Empty
+    Config DNS Manually                                          primary_dns=${EMPTY}               
+    Click Button SaveIPv4 LAN
+    Check Popup LAN DHCPv4 And Continue On Failure               popup=Popup DNS Manually Is Invalid Should Be Visible
+    ...                                                          argument1=${EMPTY}
+
+    ## Step 5.2: Config Primary DNS = 4.4.4.
+    Log To Console                                               \nStep 5.2: Config Primary DNS = 4.4.4.
+    Config DNS Manually                                          primary_dns=4.4.4.            
+    Click Button SaveIPv4 LAN
+    Check Popup LAN DHCPv4 And Continue On Failure               popup=Popup DNS Manually Is Invalid Should Be Visible
+    ...                                                          argument1=4.4.4.                 
+
+    ## Step 5.3: Config Primary DNS = 4.4.4.a
+    Log To Console                                               \nStep 5.3: Config Primary DNS = 4.4.4.a
+    Config DNS Manually                                          primary_dns=4.4.4.a         
+    Click Button SaveIPv4 LAN
+    Check Popup LAN DHCPv4 And Continue On Failure               popup=Popup DNS Manually Is Invalid Should Be Visible
+    ...                                                          argument1=4.4.4.a
+
+    ## Step 5.4: Config Primary DNS = 4.4.4.@
+    Log To Console                                               \nStep 5.4: Config Primary DNS = 4.4.4.@
+    Config DNS Manually                                          primary_dns=4.4.4.@         
+    Click Button SaveIPv4 LAN
+    Check Popup LAN DHCPv4 And Continue On Failure               popup=Popup DNS Manually Is Invalid Should Be Visible
+    ...                                                          argument1=4.4.4.@
+
+    ### Step 6: Config Secondary DNS Invalid
+    Log To Console                                               \nStep 6: Config Secondary DNS Invalid
+
+    ## Step 6.1: Config Secondary DNS = Empty
+    Log To Console                                               \nStep 6.1: Config Secondary DNS = Empty
+    Config DNS Manually                                          secondary_dns=${EMPTY}               
+    Click Button SaveIPv4 LAN
+    Check Popup LAN DHCPv4 And Continue On Failure               popup=Popup DNS Manually Is Invalid Should Be Visible
+    ...                                                          argument1=${EMPTY}
+
+    ## Step 6.2: Config Secondary DNS = 6.6.6.
+    Log To Console                                               \nStep 6.2: Config Secondary DNS = 6.6.6.
+    Config DNS Manually                                          secondary_dns=6.6.6.           
+    Click Button SaveIPv4 LAN
+    Check Popup LAN DHCPv4 And Continue On Failure               popup=Popup DNS Manually Is Invalid Should Be Visible
+    ...                                                          argument1=6.6.6.                 
+
+    ## Step 6.3: Config Secondary DNS = 6.6.6.a
+    Log To Console                                               \nStep 6.3: Config Secondary DNS = 6.6.6.a
+    Config DNS Manually                                          secondary_dns=6.6.6.a         
+    Click Button SaveIPv4 LAN
+    Check Popup LAN DHCPv4 And Continue On Failure               popup=Popup DNS Manually Is Invalid Should Be Visible
+    ...                                                          argument1=6.6.6.a
+
+    ## Step 6.4: Config Secondary DNS = 6.6.6.@
+    Log To Console                                               \nStep 6.4: Config Secondary DNS = 6.6.6.@
+    Config DNS Manually                                          secondary_dns=6.6.6.@         
+    Click Button SaveIPv4 LAN
+    Check Popup LAN DHCPv4 And Continue On Failure               popup=Popup DNS Manually Is Invalid Should Be Visible
+    ...                                                          argument1=6.6.6.@
+
+    ### Step 7: Config Primary DNS & Secondary DNS Valid
+    Log To Console                                               \nStep 7: Config Primary DNS & Secondary DNS Valid
+    Config DNS Manually                                          primary_dns=4.4.4.4         
+    ...                                                          secondary_dns=6.6.6.6
+    Click Button SaveIPv4 LAN
+    
+    # Verify DNS Mode Manually success
+    Verify DNS Mode                                              dns_mode=Manually   
+    
+    ### Step 8: Check DNS on PC
+    Log To Console                                               \nStep 8: Check DNS on PC
+    Check DNS on PC                                              primary_dns=4.4.4.4         
+    ...                                                          secondary_dns=6.6.6.6
+
+    [Teardown]                          Run Keyword And Ignore Error                MOD_LAN_03_TC_02_Teardown
+
+# *** Test Cases ***
+# MOD_LAN_03_TC_02
+#     MOD_LAN_03_TC_02

@@ -16,6 +16,7 @@ MOD_WIFI5G_01_TC_09_Teardown
     Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
 
     #####Factory Reset Via Web GUI
+    Logout WebGUI
     Login To Browser		                 password=${ONT}[ONT_WEB_PASS]
     Factory Reset Via Web GUI
   
@@ -37,12 +38,12 @@ MOD_WIFI5G_01_TC_09
     # SL.Set Selenium Timeout                       10s
     Set Test Message                              *HTML* <b>MOD_WIFI5G_01_TC_09</b>
     Login To Browser		                      password=${ONT}[ONT_WEB_PASS]
+    SL.Maximize Browser Window
     SL.Select Frame                               xpath=//frame[@name="contentfrm"]
     Open 5GHz Wireless Configure Page
 
     ### Step 1: Config Security mode WPA2-PSK Password Empty for Wifi 5GHz
     Log To Console                                \nStep 1: Config Security mode WPA2-PSK Password Empty for Wifi 5GHz
-    SL.Maximize Browser Window
     Select SSID 5G Index                          ssid_index=1
     Select 5G Security Mode                       secu_mode=WPA2-PSK
     Configure 5G Security Mode WPA2-PSK           password=${EMPTY}
@@ -50,11 +51,23 @@ MOD_WIFI5G_01_TC_09
     ...                                           key_renew=3600
     Save Config SSID
     # Verify Config
-    Popup PreSharedKey Length Error Should Be Visible
+    Run Keyword And Continue On Failure           Popup PreSharedKey Length Error Should Be Visible
+
+    ### Step 2: Config Security mode WPA2-PSK Password All Space for Wifi 5GHz
+    Log To Console                                \nStep 2: Config Security mode WPA2-PSK Password All Space for Wifi 5GHz
+    
+    Select SSID 5G Index                          ssid_index=1
+    Select 5G Security Mode                       secu_mode=WPA2-PSK
+    Configure 5G Security Mode WPA2-PSK           password=${SPACE*8}
+    ...                                           encry_type=AES
+    ...                                           key_renew=3600
+    Save Config SSID
+    # Verify Config
+    Run Keyword And Continue On Failure           Popup PreSharedKey Length Error Should Be Visible
 
     ### Step 3: Config Security mode WPA2-PSK Password Special Characters &|;$><`\!'" for Wifi 5GHz
     Log To Console                                \nStep 3: Config Security mode WPA2-PSK Password Special Characters &|;$><`\!'" for Wifi 5GHz
-    SL.Maximize Browser Window
+
     Log To Console					              Step 3.1: WPA2-PSK Password with &
     Select SSID 5G Index                          ssid_index=1
     Select 5G Security Mode                       secu_mode=WPA2-PSK
@@ -63,7 +76,7 @@ MOD_WIFI5G_01_TC_09
     ...                                           key_renew=3600
     Save Config SSID
     # Verify Config
-    Message WPA Password Invalid Should Be Visible
+    Run Keyword And Continue On Failure           Message WPA Password Invalid Should Be Visible
 
     Log To Console					              Step 3.2: WPA2-PSK Password with |
     Select SSID 5G Index                          ssid_index=1
@@ -73,7 +86,7 @@ MOD_WIFI5G_01_TC_09
     ...                                           key_renew=3600
     Save Config SSID
     # Verify Config
-    Message WPA Password Invalid Should Be Visible
+    Run Keyword And Continue On Failure           Message WPA Password Invalid Should Be Visible
 
     Log To Console					              Step 3.3: WPA2-PSK Password with ;
     Select SSID 5G Index                          ssid_index=1
@@ -83,7 +96,7 @@ MOD_WIFI5G_01_TC_09
     ...                                           key_renew=3600
     Save Config SSID
     # Verify Config
-    Message WPA Password Invalid Should Be Visible
+    Run Keyword And Continue On Failure           Message WPA Password Invalid Should Be Visible
 
     Log To Console					              Step 3.4: WPA2-PSK Password with $
     Select SSID 5G Index                          ssid_index=1
@@ -93,7 +106,7 @@ MOD_WIFI5G_01_TC_09
     ...                                           key_renew=3600
     Save Config SSID
     # Verify Config
-    Message WPA Password Invalid Should Be Visible
+    Run Keyword And Continue On Failure           Message WPA Password Invalid Should Be Visible
 
     Log To Console					              Step 3.5: WPA2-PSK Password with >
     Select SSID 5G Index                          ssid_index=1
@@ -103,7 +116,7 @@ MOD_WIFI5G_01_TC_09
     ...                                           key_renew=3600
     Save Config SSID
     # Verify Config
-    Message WPA Password Invalid Should Be Visible
+    Run Keyword And Continue On Failure           Message WPA Password Invalid Should Be Visible
 
     Log To Console					              Step 3.6: WPA2-PSK Password with <
     Select SSID 5G Index                          ssid_index=1
@@ -113,7 +126,7 @@ MOD_WIFI5G_01_TC_09
     ...                                           key_renew=3600
     Save Config SSID
     # Verify Config
-    Message WPA Password Invalid Should Be Visible
+    Run Keyword And Continue On Failure           Message WPA Password Invalid Should Be Visible
 
     Log To Console					              Step 3.7: WPA2-PSK Password with `
     Select SSID 5G Index                          ssid_index=1
@@ -123,7 +136,7 @@ MOD_WIFI5G_01_TC_09
     ...                                           key_renew=3600
     Save Config SSID
     # Verify Config
-    Message WPA Password Invalid Should Be Visible
+    Run Keyword And Continue On Failure           Message WPA Password Invalid Should Be Visible
 
     Log To Console					              Step 3.8: WPA2-PSK Password with \\\
     Select SSID 5G Index                          ssid_index=1
@@ -133,7 +146,7 @@ MOD_WIFI5G_01_TC_09
     ...                                           key_renew=3600
     Save Config SSID
     # Verify Config
-    Message WPA Password Invalid Should Be Visible
+    Run Keyword And Continue On Failure           Message WPA Password Invalid Should Be Visible
 
     Log To Console					              Step 3.9: WPA2-PSK Password with !
     Select SSID 5G Index                          ssid_index=1
@@ -143,7 +156,7 @@ MOD_WIFI5G_01_TC_09
     ...                                           key_renew=3600
     Save Config SSID
     # Verify Config
-    Message WPA Password Invalid Should Be Visible
+    Run Keyword And Continue On Failure           Message WPA Password Invalid Should Be Visible
 
     Log To Console					              Step 3.10: WPA2-PSK Password with '
     Select SSID 5G Index                          ssid_index=1
@@ -153,28 +166,26 @@ MOD_WIFI5G_01_TC_09
     ...                                           key_renew=3600
     Save Config SSID
     # Verify Config
-    Message WPA Password Invalid Should Be Visible
+    Run Keyword And Continue On Failure           Message WPA Password Invalid Should Be Visible
 
     Log To Console					              Step 3.11: WPA2-PSK Password with "
     Select SSID 5G Index                          ssid_index=1
-    SL.Maximize Browser Window
-    SL.Maximize Browser Window
     Select 5G Security Mode                       secu_mode=WPA2-PSK
     Configure 5G Security Mode WPA2-PSK           password=${WIFI_PASS}"
     ...                                           encry_type=AES
     ...                                           key_renew=3600
     Save Config SSID
     # Verify Config
-    Message WPA Password Invalid Should Be Visible
+    Run Keyword And Continue On Failure           Message WPA Password Invalid Should Be Visible
     Logout WebGUI
 
     ### Step 4: Config Security mode WPA2-PSK Password Invalid Length for Wifi 5GHz
     Log To Console                                \nStep 4: Config Security mode WPA2-PSK Password Invalid Length for Wifi 5GHz
-
     Login To Browser		                      password=${ONT}[ONT_WEB_PASS]
+    SL.Maximize Browser Window
     SL.Select Frame                               xpath=//frame[@name="contentfrm"]
     Open 5GHz Wireless Configure Page
-    SL.Maximize Browser Window
+
     Log To Console					              Step 4.1: WPA2-PSK Password with Length < 8 characters/numbers
     Select SSID 5G Index                          ssid_index=1
     Select 5G Security Mode                       secu_mode=WPA2-PSK
@@ -183,7 +194,7 @@ MOD_WIFI5G_01_TC_09
     ...                                           key_renew=3600
     Save Config SSID
     # Verify Config
-    Popup PreSharedKey Length Error Should Be Visible
+    Run Keyword And Continue On Failure           Popup PreSharedKey Length Error Should Be Visible
 
     Log To Console					              Step 4.2: WPA2-PSK Password with Length > 63 characters ASCII
     Select SSID 5G Index                          ssid_index=1
@@ -193,12 +204,11 @@ MOD_WIFI5G_01_TC_09
     ...                                           key_renew=3600
     Save Config SSID
     # Verify Config
-    Popup PreSharedKey Hex Error Should Be Visible
+    Run Keyword And Continue On Failure           Popup PreSharedKey Hex Error Should Be Visible
 
     ### Step 5: Config Security mode WPA2-PSK Password Valid for Wifi 5GHz
     Log To Console                                \nStep 5: Config Security mode WPA2-PSK Password Valid for Wifi 5GHz
-    SL.Maximize Browser Window
-    SL.Maximize Browser Window
+
     Log To Console					              Step 5.1: WPA2-PSK Password with Length = 63 characters ASCII
     Select SSID 5G Index                          ssid_index=1
     Select 5G Security Mode                       secu_mode=WPA2-PSK
@@ -237,8 +247,7 @@ MOD_WIFI5G_01_TC_09
 
     ### Step 6: Config Security mode WPA2-PSK Encryption Type for Wifi 5GHz
     Log To Console                                \nStep 6: Config Security mode WPA2-PSK Encryption Type for Wifi 5GHz
-    SL.Maximize Browser Window
-    SL.Maximize Browser Window
+
     Log To Console					              Step 6.1: WPA2-PSK Encryption Type TKIP
     Select SSID 5G Index                          ssid_index=1
     Select 5G Security Mode                       secu_mode=WPA2-PSK
@@ -286,7 +295,7 @@ MOD_WIFI5G_01_TC_09
     ...                                           key_renew=-1
     Save Config SSID
     # Verify Config
-    Popup Key Renewal Interval Non-integer Should Be Visible
+    Run Keyword And Continue On Failure           Popup Key Renewal Interval Non-integer Should Be Visible
 
     Log To Console					              Step 7.2: WPA2-PSK Key Renewal Interval < 10
     Select SSID 5G Index                          ssid_index=1
@@ -296,7 +305,7 @@ MOD_WIFI5G_01_TC_09
     ...                                           key_renew=9
     Save Config SSID
     # Verify Config
-    Popup Key Renewal Interval Length Error Should Be Visible
+    Run Keyword And Continue On Failure           Popup Key Renewal Interval Length Error Should Be Visible
 
     Log To Console					              Step 7.3: WPA2-PSK Key Renewal Interval > 4194303
     Select SSID 5G Index                          ssid_index=1
@@ -306,7 +315,7 @@ MOD_WIFI5G_01_TC_09
     ...                                           key_renew=4194304
     Save Config SSID
     # Verify Config
-    Popup Key Renewal Interval Length Error Should Be Visible
+    Run Keyword And Continue On Failure           Popup Key Renewal Interval Length Error Should Be Visible
 
     Log To Console					              Step 7.4: WPA2-PSK Key Renewal Interval = 10
     Select SSID 5G Index                          ssid_index=1
@@ -331,20 +340,6 @@ MOD_WIFI5G_01_TC_09
     Verify Config 5G Security mode WPA2-PSK       password=12345678
     ...                                           encry_type=AES
     ...                                           key_renew=4194303
-
-    # ### Step 2: Config Security mode WPA2-PSK Password All Space for Wifi 5GHz
-    # Log To Console                                \nStep 2: Config Security mode WPA2-PSK Password All Space for Wifi 5GHz
-    
-    # Select SSID 5G Index                          ssid_index=1
-    # Select 5G Security Mode                       secu_mode=WPA2-PSK
-    # Configure 5G Security Mode WPA2-PSK           password=${SPACE*8}
-    # ...                                           encry_type=AES
-    # ...                                           key_renew=3600
-    # Save Config SSID
-    # # Verify Config
-    # Popup PreSharedKey Length Error Should Be Visible
-
-    Logout WebGUI 
 
     [Teardown]                                     Run Keyword And Ignore Error        MOD_WIFI5G_01_TC_09_Teardown
 

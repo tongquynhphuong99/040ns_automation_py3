@@ -16,6 +16,7 @@ MOD_WIFI5G_01_TC_05_Teardown
     Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
     
     #####Factory Reset Via Web GUI
+    Logout WebGUI
     Login To Browser		                 password=${ONT}[ONT_WEB_PASS]
     Factory Reset Via Web GUI
   
@@ -59,7 +60,7 @@ MOD_WIFI5G_01_TC_05
     Select SSID 5G Index                          ssid_index=1
     Select 5G Security Mode                       secu_mode=WPA-PSK
     Select 5G Security Mode                       secu_mode=OPEN
-    Popup Security mode OPEN Should Be Visible
+    Run Keyword And Continue On Failure           Popup Security mode OPEN Should Be Visible
     Save Config SSID
 
     # Verify Config
@@ -84,7 +85,7 @@ MOD_WIFI5G_01_TC_05
     Select SSID 5G Index                          ssid_index=2
     Select 5G Security Mode                       secu_mode=WPA2-PSK
     Select 5G Security Mode                       secu_mode=OPEN
-    Popup Security mode OPEN Should Be Visible
+    Run Keyword And Continue On Failure           Popup Security mode OPEN Should Be Visible
     Save Config SSID
 
     # Verify Config
@@ -109,7 +110,7 @@ MOD_WIFI5G_01_TC_05
     Select SSID 5G Index                          ssid_index=3
     Select 5G Security Mode                       secu_mode=WPA-PSK
     Select 5G Security Mode                       secu_mode=OPEN
-    Popup Security mode OPEN Should Be Visible
+    Run Keyword And Continue On Failure           Popup Security mode OPEN Should Be Visible
     Save Config SSID
 
     # Verify Config
@@ -134,12 +135,11 @@ MOD_WIFI5G_01_TC_05
     Select SSID 5G Index                          ssid_index=4
     Select 5G Security Mode                       secu_mode=WPA2-PSK
     Select 5G Security Mode                       secu_mode=OPEN
-    Popup Security mode OPEN Should Be Visible
+    Run Keyword And Continue On Failure           Popup Security mode OPEN Should Be Visible
     Save Config SSID
 
     # Verify Config
     Verify Config 5G Security mode OPEN
-    Logout WebGUI
 
     [Teardown]                                     Run Keyword And Ignore Error        MOD_WIFI5G_01_TC_05_Teardown
 

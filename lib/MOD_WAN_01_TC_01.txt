@@ -13,6 +13,7 @@ MOD_WAN_01_TC_01_Teardown
     Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
     
     #####Factory Reset Via Web GUI
+    Logout WebGUI
     Login To Browser		                 password=${ONT}[ONT_WEB_PASS]
     Factory Reset Via Web GUI
   
@@ -35,23 +36,23 @@ MOD_WAN_01_TC_01
     Set Test Message                               *HTML* <b>MOD_WAN_01_TC_01</b>
 
     ### Step 1: Open Browser & Login to WebGUI    
-    Log To Console                                \nStep 1: Login to Browser
-    Login To Browser		             		  password=${ONT}[ONT_WEB_PASS]
-    SL.Select Frame                               xpath=//frame[@name="contentfrm"]
+    Log To Console                                 \nStep 1: Login to Browser
+    Login To Browser		             		   password=${ONT}[ONT_WEB_PASS]
+    SL.Select Frame                                xpath=//frame[@name="contentfrm"]
 
     ### Step 2: Open Config WAN Page
-    Log To Console                                \nStep 2: Open Config WAN Page
+    Log To Console                                 \nStep 2: Open Config WAN Page
     Open Network Settings Wan Page
     SL.Maximize Browser Window
 
     ### Step 3: Config Enable WAN
-    Log To Console                                \nStep 3: Config Enable WAN
+    Log To Console                                 \nStep 3: Config Enable WAN
 
     ## Step 3.1: Add WAN & para of wan interface
-    Log To Console                                \nStep 3.1: Add WAN & para of wan interface
+    Log To Console                                 \nStep 3.1: Add WAN & para of wan interface
     Add New Wan Service
-    Select Enable/Disable Button                  enable=On
-    Input VLAN ID                                 vlan_id=11
+    Select Enable/Disable Button                   enable=On
+    Input VLAN ID                                  vlan_id=11
     Click Button Save WAN
 
     ## Step 3.2: Verify Enable status WAN
@@ -78,8 +79,6 @@ MOD_WAN_01_TC_01
     ## Step 5.2: Verify Disable status WAN
     Log To Console                                 \nStep 5.2: Verify Disable status WAN
     Wan Status Should Be Unconnected               vlan_id=11
-
-    Logout WebGUI
 
     [Teardown]                               Run Keyword And Ignore Error        MOD_WAN_01_TC_01_Teardown
 

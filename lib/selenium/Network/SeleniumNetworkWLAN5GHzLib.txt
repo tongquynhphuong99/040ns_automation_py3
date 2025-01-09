@@ -9,23 +9,20 @@ Resource                                ../../variables/AllVariables.txt
 
 
 *** Keywords ***
-
-### Open 5GHz wireless configure Tab
+##############
+###
 Open 5GHz Wireless Configure Page
-    # [Arguments]                                ${url}=https://192.168.1.1/cgi-bin/home_wireless_5g.asp
-
-    # SL.Go To                                   ${url}
-
     Click Element                                   xpath=//*[@id="net-wanset"]
     Click Element                                   xpath=//*[@id="net-wlan11ac"]
 
-    SL.Wait Until Page Contains                SSID Setting
-    ...                                        timeout=20s
-    ...                                        error=\nNetwork Settings Wireless 5GHz Configure Page Not Found
-    SL.Page Should Contain                     SSID Setting
+    SL.Wait Until Page Contains                     SSID Setting
+    ...                                             timeout=20s
+    ...                                             error=\nNetwork Settings Wireless 5GHz Configure Page Not Found
+    SL.Page Should Contain                          SSID Setting
 
     SL.Select Frame                                 xpath=//frame[@name="contentfrm"]
 
+###
 Select SSID 5G Index
 	[Documentation]                              Select SSID Index
 	[Arguments]                                  ${ssid_index}
@@ -38,6 +35,7 @@ Select SSID 5G Index
     ${ssid_index_value}=      SL.Get Value       xpath=//*[@id="SSID_INDEX3"]/option[contains(text(), "${ssid_index}")]
     SL.Select From List By Value                 xpath=//*[@id="SSID_INDEX3"]    ${ssid_index_value}
 
+###
 Enable/Disable SSID 5G
     [Documentation]                               On/Off
     [Arguments]                                   ${ssid_mode}
@@ -51,6 +49,7 @@ Enable/Disable SSID 5G
     Run Keyword If        '${ssid_mode}' == 'On' and '${status}' == 'False'        SL.Execute Javascript        document.querySelector("#wlEnable").click();
     ...   ELSE IF         '${ssid_mode}' == 'Off' and '${status}' == 'True'        SL.Execute Javascript        document.querySelector("#wlEnable").click();
 
+###
 Input SSID 5G Name
     [Arguments]                                  ${ssid}
     Log To Console                               \nInput SSID Name
@@ -59,6 +58,7 @@ Input SSID 5G Name
     ...                                          error=\nSSID Text Box Not Found
     SL.Input Text                                xpath=//input[@name="ESSID"]        ${ssid}
 
+###
 Select 5G Security Mode
     [Documentation]                              OPEN 
     ...                                          WEP
@@ -78,6 +78,7 @@ Select 5G Security Mode
     SL.Select From List By Value                 xpath=//select[@name="WEP_Selection"]     ${secu_value}
 
 ###### Config WEP_64-bit/WEP_128-bit
+###
 Configure 5G Security Mode WEP
 	[Documentation]                             wep_mode = 64-bit/128-bit
     ...                                         key = Key1/Key2/Key3/Key4
@@ -99,6 +100,7 @@ Configure 5G Security Mode WEP
     ...    ELSE IF   '${key}' == 'Key3'        		Config 5G WEP Key3		${password}
     ...    ELSE IF   '${key}' == 'Key4'        		Config 5G WEP Key4		${password}
 
+###
 Config 5G WEP Key1
 	[Arguments]                                 ${password}=1234567890
 	
@@ -110,6 +112,7 @@ Config 5G WEP Key1
     SL.Click Element							xpath=//input[@id="WEP_Key13"]
     SL.Input Password                           xpath=//input[@id="WEP_Key13"]       ${password}
 
+###
 Config 5G WEP Key2
 	[Arguments]                                 ${password}=1234567890
 	
@@ -121,6 +124,7 @@ Config 5G WEP Key2
     SL.Click Element							xpath=//input[@id="WEP_Key23"]
     SL.Input Password                           xpath=//input[@id="WEP_Key23"]       ${password}
 
+###
 Config 5G WEP Key3
 	[Arguments]                                 ${password}=1234567890
 	
@@ -132,6 +136,7 @@ Config 5G WEP Key3
     SL.Click Element							xpath=//input[@id="WEP_Key33"]
     SL.Input Password                           xpath=//input[@id="WEP_Key33"]       ${password}
 
+###
 Config 5G WEP Key4
 	[Arguments]                                 ${password}=1234567890
 	
@@ -143,6 +148,7 @@ Config 5G WEP Key4
     SL.Click Element							xpath=//input[@id="WEP_Key43"]
     SL.Input Password                           xpath=//input[@id="WEP_Key43"]       ${password}
 
+###
 Configure 5G Security Mode WPA-PSK
     [Arguments]                                 
     ...                                         ${password}=12345678
@@ -168,6 +174,7 @@ Configure 5G Security Mode WPA-PSK
     ...                                         error=\nWPA Key Renewal Interval Input Does Not Show Up
     SL.Input Password                           xpath=//*[@id="keyRenewalInterval2"]       ${key_renew}
 
+###
 Configure 5G Security Mode WPA2-PSK
     [Arguments]                                 
     ...                                         ${password}=12345678
@@ -193,6 +200,7 @@ Configure 5G Security Mode WPA2-PSK
     ...                                         error=\nWPA Key Renewal Interval Input Does Not Show Up
     SL.Input Password                           xpath=//input[@name="keyRenewalInterval1"]          ${key_renew}
 
+###
 Configure 5G Security Mode WPA-PSK/WPA2-PSK
     [Arguments]                                 
     ...                                         ${password}=12345678
@@ -218,6 +226,7 @@ Configure 5G Security Mode WPA-PSK/WPA2-PSK
     ...                                         error=\nWPA Key Renewal Interval Input Does Not Show Up
     SL.Input Password                           xpath=//input[@name="keyRenewalInterval3"]          ${key_renew}
 
+###
 Configure 5G Security Mode WPA3-PSK Pass Only
     [Arguments]                                 ${password}=12345678
 		
@@ -225,9 +234,9 @@ Configure 5G Security Mode WPA3-PSK Pass Only
     SL.Wait Until Element Is Visible            xpath=//input[@name="PreSharedKey_WPA3"]
     ...                                         timeout=2s
     ...                                         error=\nWPA Password Input Does Not Show Up
-    # SL.Click Element                            xpath=//input[@name="PreSharedKey_WPA3"]
     Run Keyword And Ignore Error                SL.Input Password             xpath=//input[@name="PreSharedKey_WPA3"]          ${password}
 
+###
 Configure 5G Security Mode WPA3-PSK Key Renew Only
     [Arguments]                                 ${key_renew}=3600			
     
@@ -238,6 +247,7 @@ Configure 5G Security Mode WPA3-PSK Key Renew Only
     Run Keyword And Ignore Error                SL.Input Password             xpath=//input[@name="keyRenewalInterval_WPA3"]          ${key_renew}
     SL.Input Password             xpath=//input[@name="keyRenewalInterval_WPA3"]          ${key_renew}
 
+###
 Configure 5G Security Mode WPA3-PSK
     [Arguments]                                 
     ...                                         ${password}=12345678
@@ -258,6 +268,7 @@ Configure 5G Security Mode WPA3-PSK
     Run Keyword And Ignore Error                SL.Input Password             xpath=//input[@name="keyRenewalInterval_WPA3"]          ${key_renew}
     SL.Input Password                           xpath=//input[@name="keyRenewalInterval_WPA3"]          ${key_renew}
 
+###
 Configure 5G Security Mode WPA2-PSK/WPA3-PSK Pass Only
     [Arguments]                                 ${password}=12345678
 		
@@ -267,6 +278,7 @@ Configure 5G Security Mode WPA2-PSK/WPA3-PSK Pass Only
     ...                                         error=\nWPA Password Input Does Not Show Up
     Run Keyword And Ignore Error                SL.Input Password             xpath=//input[@name="PreSharedKey_WPA2WPA3"]          ${password}
 
+###
 Configure 5G Security Mode WPA2-PSK/WPA3-PSK Key Renew Only
     [Arguments]                                 ${key_renew}=3600			
     
@@ -277,6 +289,7 @@ Configure 5G Security Mode WPA2-PSK/WPA3-PSK Key Renew Only
     Run Keyword And Ignore Error                SL.Input Password             xpath=//input[@name="keyRenewalInterval_WPA2WPA3"]          ${key_renew}
     SL.Input Password             xpath=//input[@name="keyRenewalInterval_WPA2WPA3"]          ${key_renew}
 
+###
 Configure 5G Security Mode WPA2-PSK/WPA3-PSK
     [Arguments]                                 
     ...                                         ${password}=12345678
@@ -298,6 +311,7 @@ Configure 5G Security Mode WPA2-PSK/WPA3-PSK
     SL.Input Password                           xpath=//input[@name="keyRenewalInterval_WPA2WPA3"]          ${key_renew}
 
 #################
+###
 Get SSID 5G
     SL.Wait Until Element Is Visible              xpath=//input[@name="ESSID"] 
     ...                                           timeout=10s
@@ -306,6 +320,7 @@ Get SSID 5G
     # ${ssid}=           SL.Get Text              xpath=//option[@value="${ssid_value}"]
     Return From Keyword                           ${ssid_value}    
 
+###
 Check Status Encryption Type 5G Mode WPA3
     [Arguments]                                 ${encry_type}=AES
 
@@ -319,6 +334,7 @@ Check Status Encryption Type 5G Mode WPA3
     ...    ELSE IF   '${encry_type}' == 'TKIP'        Log To Console                   Option ${encry_type} is Disable
     ...    ELSE IF   '${encry_type}' == 'TKIP+AES'    Log To Console                   Option ${encry_type} is Disable
 
+###
 Check Status Encryption Type 5G Mode WPA2WPA3
     [Arguments]                                 ${encry_type}=AES
 
@@ -334,6 +350,7 @@ Check Status Encryption Type 5G Mode WPA2WPA3
 
 
 ##################
+###
 Compare SSID in 5GHz With BSSID
     ${ssid}=                                       Get SSID 5G
     ${bssid}=                                      Get BSSID
@@ -347,6 +364,7 @@ Compare SSID in 5GHz With BSSID
     Run Keyword If      '${ssidLastSixDigit}' == '${bssidSplitedList}'    Log To Console      Matched!
     ...       ELSE      Fail     Not Matched!
 
+###
 Compare Get SSID 5GHz With SSID Expected Index 2,3,4
     [Arguments]                               ${ssid_expect}
 
@@ -356,11 +374,13 @@ Compare Get SSID 5GHz With SSID Expected Index 2,3,4
     Run Keyword If      '${ssid}' == '${ssid_expect}'    Log To Console      Matched!
     ...       ELSE      Fail     Not Matched!
 
+###
 Verify Config 5G Security mode OPEN
     ${secu_value}=                                SL.Get Value         xpath=//select[@name="WEP_Selection"]  
     Should Be Equal                               OPEN                 ${secu_value}
     Log To Console					              \nConfig Success Authentication Mode OPEN Success!
 
+###
 Verify Config 5G Security mode WEP
     [Arguments]                                   ${wep_mode}
     ...                                           ${password}
@@ -376,6 +396,7 @@ Verify Config 5G Security mode WEP
 
     Log To Console					              \nConfig Success Authentication Mode WEP ${wep_mode} Success!
 
+###
 Verify Config 5G Security mode WPA-PSK
     [Arguments]                                   
     ...                                           ${password}
@@ -398,6 +419,7 @@ Verify Config 5G Security mode WPA-PSK
 
     Log To Console					              \nConfig Security Mode WPA-PSK Success!
 
+###
 Verify Config 5G Security mode WPA2-PSK
     [Arguments]                                   
     ...                                           ${password}
@@ -420,6 +442,7 @@ Verify Config 5G Security mode WPA2-PSK
 
     Log To Console					              \nConfig Security Mode WPA2-PSK Success!
 
+###
 Verify Config 5G Security mode WPA-PSK/WPA2-PSK
     [Arguments]                                   
     ...                                           ${password}
@@ -442,6 +465,7 @@ Verify Config 5G Security mode WPA-PSK/WPA2-PSK
 
     Log To Console					              \nConfig Security Mode WPA-PSK/WPA2-PSK Success!
 
+###
 Verify Config 5G Security mode WPA3-PSK
     [Arguments]                                   ${password}=12345678
     ...                                           ${encry_type}=AES
@@ -463,9 +487,7 @@ Verify Config 5G Security mode WPA3-PSK
 
     Log To Console					              \nConfig Security Mode WPA3-PSK Success!
 
-
-
-
+###
 Verify Config 5G Security mode WPA2-PSK/WPA3-PSK
     [Arguments]                                   ${password}=12345678
     ...                                           ${encry_type}=AES
@@ -488,24 +510,28 @@ Verify Config 5G Security mode WPA2-PSK/WPA3-PSK
     Log To Console					              \nConfig Security Mode WPA2-PSK/WPA3-PSK Success!
 
 ################
+###
 Popup PreSharedKey Length Error Should Be Visible
     [Documentation]                     Handle popup PreSharedKey Length Error
     ${popup_message}=                   SL.Handle Alert    timeout=10s
     Log To Console                      Popup message: ${popup_message}
     Should Contain                      ${popup_message}      Pre-Shared Key length error!
 
+###
 Popup Key Renewal Interval Length Error Should Be Visible
     [Documentation]                     Handle Key Renewal Interval Length Error
     ${popup_message}=                   SL.Handle Alert    timeout=10s
     Log To Console                      Popup message: ${popup_message}
     Should Contain                      ${popup_message}      Key Renewal Interval must be between 10 and 4194303
 
+###
 Popup Key Renewal Interval Non-integer Should Be Visible
     [Documentation]                     Handle Key Renewal Interval Non-integer
     ${popup_message}=                   SL.Handle Alert    timeout=10s
     Log To Console                      Popup message: ${popup_message}
     Should Contain                      ${popup_message}      Key Renewal Interval : Non-integer value given
 
+###
 Message WPA Password Invalid Should Be Visible
     [Documentation]                     Handle Message WPA Password Invalid
     ${popup_message}=                   SL.Handle Alert    timeout=10s
@@ -513,6 +539,7 @@ Message WPA Password Invalid Should Be Visible
     Log To Console                      Popup message: ${popup_message}
     Should Contain                      ${popup_message}      Password must not include special character or all characters are space and out of standard ascii table
 
+###
 Popup PreSharedKey Hex Error Should Be Visible
     [Documentation]                     Handle popup PreSharedKey Hex Error
     ${popup_message}=                   SL.Handle Alert    timeout=10s
@@ -521,6 +548,7 @@ Popup PreSharedKey Hex Error Should Be Visible
 
 
 ################
+###
 Config Name SSID 5G Incorrect On WebGui
     [Arguments]                               		${ssid_index}
     ...							                    ${ssid_change}
@@ -528,8 +556,9 @@ Config Name SSID 5G Incorrect On WebGui
     Select SSID 5G Index                            ${ssid_index}
     Input SSID 5G Name                              ${ssid_change}
     Save Config SSID
-    Popup Name SSID Incorrect Should Be Visible
+    Run Keyword And Continue On Failure             Popup Name SSID Incorrect Should Be Visible
 
+###
 Config Name SSID 5G All Space On WebGui
     [Arguments]                               		${ssid_index}
     ...							                    ${ssid_change}
@@ -537,8 +566,9 @@ Config Name SSID 5G All Space On WebGui
     Select SSID 5G Index                            ${ssid_index}
     Input SSID 5G Name                              ${ssid_change}
     Save Config SSID
-    Popup Name SSID Invalid Should Be Visible
+    Run Keyword And Continue On Failure             Popup Name SSID Invalid Should Be Visible
 
+###
 Config Name SSID 5G Correct On WebGui
     [Arguments]                               		${ssid_index}
     ...							                    ${ssid_change}
@@ -552,11 +582,8 @@ Config Name SSID 5G Correct On WebGui
     Verify Wifi Rescan Contain                      ${ssid_change}
     Log To Console                                  \nConfig Name SSID Success!
 
-
-
-
 ######### HoaLK
-##
+###
 Config Access Point 5G
     [Documentation]    Kiem tra kha nang On/Off Access Point - func cu: Turn On Access Point/Turn Off Acces Point
     [Arguments]    ${access_point}
@@ -569,7 +596,7 @@ Config Access Point 5G
     Run Keyword If    '${access_point}' == 'On' and '${status}' == 'False'    SL.Click Element            xpath=//*[@id="apEnable"]
     ...  ELSE IF      '${access_point}' == 'Off' and '${status}' == 'True'    SL.Click Element            xpath=//*[@id="apEnable"]
 
-##
+###
 Config Channel Wifi 5G  
     [Arguments]     ${input_channel}
     Log To Console                              Select Channel
@@ -579,6 +606,7 @@ Config Channel Wifi 5G
     ${value}=                                   SL.Get Value    xpath=//*[@id="Channel_ID"]/option[normalize-space(text())="${input_channel}"]
     SL.Select From List By Value                xpath=//*[@id="Channel_ID"]    ${value}
 
+###
 Config Channel WiFi and Verify 5G
     [Arguments]                               ${channel}
     ### Config Channel 
@@ -591,7 +619,7 @@ Config Channel WiFi and Verify 5G
     ${value_get}=                             SL.Get Value    xpath=//*[@id="Channel_ID"]/option[normalize-space(text())="${channel}"]
     Run Keyword If    '${output}' == '${value_get}'    Log To Console    Channel Wifi 5G is ${output}
 
-##
+###
 Config Select Mode 5G
     [Documentation]                            func cu: Select Wireless Mode
     [Arguments]                                ${input_select_mode}
@@ -604,6 +632,7 @@ Config Select Mode 5G
     Log To Console                             Select Mode Wifi
     SL.Select From List By Value               xpath=//*[@id="WirelessMode"]    ${value_get}
 
+###
 Config Select Mode and Verify 5G
     [Arguments]                         ${select_mode}
     #Config
@@ -615,7 +644,7 @@ Config Select Mode and Verify 5G
     Should Contain                      '${current_select_mode}'    '${select_mode}'
     Log To Console                      Mode Wifi 5G is ${current_select_mode}
 
-##
+###
 Config Station Number 5G 
     [Arguments]                                ${input_station_number}
 
@@ -626,6 +655,7 @@ Config Station Number 5G
     Log To Console                             Input Station Number 
     SL.Input Text                              xpath=//*[@id="StationNum"]    ${input_station_number}
 
+###
 Config Station Number and Verify 5G
     [Arguments]                               ${station_number}
     #Config
@@ -637,7 +667,7 @@ Config Station Number and Verify 5G
     Should Be Equal                           ${value_get}    ${station_number}
     Log To Console                            Station Number is ${value_get}
 
-##
+###
 Config HT BandWidth 5G
     [Arguments]                                ${input_bandwidth}
 
@@ -648,7 +678,8 @@ Config HT BandWidth 5G
     ${value_get}=                              SL.Get Value    xpath=//*[@id="WLANChannelBandwidth"]/option[normalize-space(text())="${input_bandwidth}"]
     Log To Console                             Select HT BandWidth
     SL.Select From List By Value               xpath=//*[@id="WLANChannelBandwidth"]    ${value_get}
-    
+
+###
 Config HT Bandwidth and Verify 5G
     [Arguments]                                ${bandwidth}
     #Config
@@ -660,7 +691,7 @@ Config HT Bandwidth and Verify 5G
     Should Be Equal                            ${current_bandwidth}    ${bandwidth}
     Log To Console                             HT Bandwidth is ${current_bandwidth}
 
-##
+###
 Config VHT BandWidth 5G
     [Arguments]                                ${input_bandwidth}
 
@@ -671,7 +702,8 @@ Config VHT BandWidth 5G
     ${value_get}=                              SL.Get Value    xpath=//*[@id="WLan11acVHTChannelBandwidth"]/option[normalize-space(text())="${input_bandwidth}"]
     Log To Console                             Select VHT BandWidth
     SL.Select From List By Value               xpath=//*[@id="WLan11acVHTChannelBandwidth"]    ${value_get}
-    
+
+###
 Config VHT Bandwidth and Verify 5G
     [Arguments]                                ${bandwidth}
     #Config
@@ -683,7 +715,7 @@ Config VHT Bandwidth and Verify 5G
     Should Be Equal                            ${current_bandwidth}    ${bandwidth}
     Log To Console                             VHT Bandwidth is ${current_bandwidth}
 
-##
+###
 Config HT Guard Interval 5G
     [Arguments]                                ${input_GI}
 
@@ -695,6 +727,7 @@ Config HT Guard Interval 5G
     Log To Console                             Select HT Guard Interval
     SL.Select From List By Value               xpath=//*[@id="WLANGuardInterval"]    ${value_get}
 
+###
 Config HT Guard Interval and Verify 5G
     [Arguments]                                ${guard_interval}
     #Config
@@ -706,7 +739,7 @@ Config HT Guard Interval and Verify 5G
     Should Be Equal                            ${current_GI}    ${guard_interval}
     Log To Console                             HT Guard Interval is ${current_GI}
 
-##
+###
 Config VHT Guard Interval 5G
     [Arguments]    ${input_GI}
 
@@ -718,6 +751,7 @@ Config VHT Guard Interval 5G
     Log To Console                             Select VHT Guard Interval
     SL.Select From List By Value               xpath=//*[@id="WLan11acVHTGuardInterval"]    ${value_get}
 
+###
 Config VHT Guard Interval and Verify 5G
     [Arguments]                                ${guard_interval}
     #Config
@@ -729,7 +763,7 @@ Config VHT Guard Interval and Verify 5G
     Should Be Equal                            ${current_GI}    ${guard_interval}
     Log To Console                             VHT Guard Interval is ${current_GI}
 
-##
+###
 Config TWT Button 5G
     [Arguments]                         ${input_twt_button}
 
@@ -741,6 +775,7 @@ Config TWT Button 5G
     Log To Console                          Select TWT Button
     SL.Select From List By Value            xpath=//*[@id="TWTSupport_flag"]    ${value_get}
 
+###
 Config TWT Button and Verify 5G
     [Arguments]                         ${twt_button}
     #Config
@@ -752,7 +787,7 @@ Config TWT Button and Verify 5G
     Should Be Equal                     ${curr_twt_button}    ${twt_button}
     Log To Console                      TWT Button is ${curr_twt_button}
 
-##
+###
 Config DTIM 5G
     [Arguments]                                  ${dtim}=1
 
@@ -763,6 +798,7 @@ Config DTIM 5G
     Log To Console                               Input DTIM 5G
     SL.Input Text                                xpath=//*[@id="DTIM"]         ${dtim}
 
+###
 Config DTIM and Verify 5G
     [Arguments]                                 ${d_tim}
     #Config
@@ -774,31 +810,36 @@ Config DTIM and Verify 5G
     Should Be Equal                             ${d_tim}    ${current_d_tim}
     Log To Console                              DTIM is ${d_tim}
 
-#########
+##############
+###
 Popup Beacon Interval Is Special Should Be Visible 5G
     [Documentation]                          Handle popup Beacon Interval is Special
     ${popup_message}=                        SL.Handle Alert    timeout=10s
     Log To Console                           Popup message: ${popup_message}
     Should Contain                           ${popup_message}    Beacon value must be between 20 and 1000
 
+###
 Popup Station Number Is Special Should Be Visible 5G
     [Documentation]                          Handle popup Station Number is Special
     ${popup_message}=                         SL.Handle Alert    timeout=10s
     Log To Console                           Popup message: ${popup_message}
     Should Contain                            ${popup_message}    Station Number value must be between 1 and 32
 
+###
 Popup RTS/CTS Threshold Is Special Should Be Visible 5G
     [Documentation]                         Handle popup RTS/CTS Threshold is special
     ${popup_message}=                       SL.Handle Alert    timeout=10s
     Log To Console                          Popup Message: ${popup_message}
     Should Contain                          ${popup_message}    RTS Threshold value must be between 1500 and 2347
 
+###
 Popup Fragmentation Threshold Is Special Should Be Visible 5G
     [Documentation]                          Handle popup Fragmentation Threshold is special
     ${popup_message}=                        SL.Handle Alert    timeout=10s
     Log To Console                           Popup Message: ${popup_message}
     Should Contain                           ${popup_message}    Fragmentation Threshold value must be between 256 and 2346
 
+###
 Popup DTIM Is Special Should Be Visible
     [Documentation]                          Handle popup DTIM is special
     ${popup_message}=                        SL.Handle Alert    timeout=10s

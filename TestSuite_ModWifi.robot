@@ -55,7 +55,7 @@ Resource    lib/MOD_WIFI5G_01_TC_24.txt
 Resource    lib/MOD_WIFI5G_01_TC_25.txt
 
 *** Variables ***
-${REMOTE_SERVER_IP}            10.2.204.150
+${REMOTE_SERVER_IP}            10.2.204.165
 ${REMOTE_SERVER_USERNAME}      telco
 ${REMOTE_SERVER_PASSWORD}      123456
 

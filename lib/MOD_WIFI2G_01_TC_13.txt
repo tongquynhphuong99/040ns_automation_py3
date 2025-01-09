@@ -13,6 +13,7 @@ MOD_WIFI2G_01_TC_13_Teardown
     Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
 
     #####Factory Reset Via Web GUI
+    Logout WebGUI
     Login To Browser		                 password=${ONT}[ONT_WEB_PASS]
     Factory Reset Via Web GUI
   
@@ -72,8 +73,6 @@ MOD_WIFI2G_01_TC_13
 
     # Verify Config: PC Connect to Wifi 2.4Ghz
     Verify Wifi Rescan Not Contain                 ssid=${WIFI_SSID_1}
-
-    Logout WebGUI
 
     [Teardown]                               Run Keyword And Ignore Error        MOD_WIFI2G_01_TC_13_Teardown
 

@@ -13,6 +13,7 @@ MOD_WAN_18_TC_01_Teardown
     Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
     
     #####Factory Reset Via Web GUI
+    Logout WebGUI
     Login To Browser		                 password=${ONT}[ONT_WEB_PASS]
     Factory Reset Via Web GUI
   
@@ -35,71 +36,75 @@ MOD_WAN_18_TC_01
     Set Test Message                               *HTML* <b>MOD_WAN_18_TC_01</b>
 
     ### Step 1: Open Browser & Login to WebGUI    
-    Log To Console                                \nStep 1: Login to Browser
-    Login To Browser		             		  password=${ONT}[ONT_WEB_PASS]
-    SL.Select Frame                               xpath=//frame[@name="contentfrm"]
+    Log To Console                                                      \nStep 1: Login to Browser
+    Login To Browser		             		                        password=${ONT}[ONT_WEB_PASS]
+    SL.Select Frame                                                     xpath=//frame[@name="contentfrm"]
 
     ### Step 2: Add WAN & para of wan interface
-    Log To Console                                \nStep 2: Add WAN & para of wan interface
+    Log To Console                                                      \nStep 2: Add WAN & para of wan interface
     Open Network Settings Wan Page
     SL.Maximize Browser Window
     Add New Wan Service
-    Input VLAN ID                                 vlan_id=11
+    Input VLAN ID                                                       vlan_id=11
 
     ### Step 3: Config Lease Time Invalid
-    Log To Console                                \nStep 3: Config Lease Time Invalid
-    Config Enable PD                              enable=On
-    Config Prefix Mode                            mode=Manual
-    Config Prefix Address                         addr=2001:0db8:85a3::/64
-    Config Primary Time                           pri_time=1111
+    Log To Console                                                      \nStep 3: Config Lease Time Invalid
+    Config Enable PD                                                    enable=On
+    Config Prefix Mode                                                  mode=Manual
+    Config Prefix Address                                               addr=2001:0db8:85a3::/64
+    Config Primary Time                                                 pri_time=1111
 
     ## Step 3.1: Config Lease Time = ${EMPTY}
-    Log To Console                                \nStep 3.1: Config Lease Time = ${EMPTY}
-    Config Lease Time                             lease_time=${EMPTY}
+    Log To Console                                                      \nStep 3.1: Config Lease Time = ${EMPTY}
+    Config Lease Time                                                   lease_time=${EMPTY}
     Click Button Save WAN
-    Popup Lease Time Invalid Should Be Visible        lease_time=${EMPTY}
+    Check Popup WAN And Continue On Failure                             popup=Popup Lease Time Invalid Should Be Visible        
+    ...                                                                 argument1=${EMPTY}
 
     ## Step 3.2: Config Lease Time = All Space
-    Log To Console                                \nStep 3.2: Config Lease Time = All Space
-    Config Lease Time                             lease_time=${SPACE*4}
+    Log To Console                                                      \nStep 3.2: Config Lease Time = All Space
+    Config Lease Time                                                   lease_time=${SPACE*4}
     Click Button Save WAN
-    Popup Lease Time Invalid Should Be Visible        lease_time=${SPACE*4}
+    Check Popup WAN And Continue On Failure                             popup=Popup Lease Time Invalid Should Be Visible        
+    ...                                                                 argument1=${SPACE*4}
 
     ## Step 3.3: Config Lease Time = 599
-    Log To Console                                \nStep 3.3: Config Lease Time = 599
-    Config Lease Time                             lease_time=599
+    Log To Console                                                      \nStep 3.3: Config Lease Time = 599
+    Config Lease Time                                                   lease_time=599
     Click Button Save WAN
-    Popup Lease Time Invalid Should Be Visible        lease_time=599
+    Check Popup WAN And Continue On Failure                             popup=Popup Lease Time Invalid Should Be Visible        
+    ...                                                                 argument1=599
 
     ## Step 3.4: Config Lease Time = 4294967296
-    Log To Console                                \nStep 3.4: Config Lease Time = 4294967296
-    Config Lease Time                             lease_time=4294967296
+    Log To Console                                                      \nStep 3.4: Config Lease Time = 4294967296
+    Config Lease Time                                                   lease_time=4294967296
     Click Button Save WAN
-    Popup Lease Time Invalid Should Be Visible        lease_time=4294967296
+    Check Popup WAN And Continue On Failure                             popup=Popup Lease Time Invalid Should Be Visible        
+    ...                                                                 argument1=4294967296
 
     ## Step 3.5: Config Lease Time with special character
-    Log To Console                                \nStep 3.5: Config Lease Time with special character
-    Config Lease Time                             lease_time=@
+    Log To Console                                                      \nStep 3.5: Config Lease Time with special character
+    Config Lease Time                                                   lease_time=@
     Click Button Save WAN
-    Popup Lease Time Invalid Should Be Visible        lease_time=@
+    Check Popup WAN And Continue On Failure                             popup=Popup Lease Time Invalid Should Be Visible        
+    ...                                                                 argument1=@
 
     ## Step 3.6: Config Lease Time Smaller Than Primary Time
-    Log To Console                                \nStep 3.6: Config Lease Time Smaller Than Primary Time
-    Config Lease Time                             lease_time=1000
+    Log To Console                                                      \nStep 3.6: Config Lease Time Smaller Than Primary Time
+    Config Lease Time                                                   lease_time=1000
     Click Button Save WAN
-    Popup Lease Time Must Greater Than Primary Time Invalid Should Be Visible        pri_time=1111
-    ...                                                                              lease_time=1000
+    Check Popup WAN And Continue On Failure                             popup=Popup Lease Time Must Greater Than Primary Time Invalid Should Be Visible
+    ...                                                                 argument1=1111
+    ...                                                                 argument2=1000
 
     ### Step 4: Config Lease Time Valid (range 600~4294967295)
-    Log To Console                                \nStep 4: Config Lease Time Valid (range 600~4294967295)
-    Config Lease Time                             lease_time=2222
+    Log To Console                                                      \nStep 4: Config Lease Time Valid (range 600~4294967295)
+    Config Lease Time                                                   lease_time=2222
     Click Button Save WAN
 
     # Verify Lease Time 
-    Verify Lease Time                             vlan_id=11
-    ...                                           lease_time=2222
-    
-    Logout WebGUI
+    SeleniumNetworkWANLib.Verify Lease Time                             vlan_id=11
+    ...                                                                 lease_time=2222
 
     [Teardown]                               Run Keyword And Ignore Error        MOD_WAN_18_TC_01_Teardown
 

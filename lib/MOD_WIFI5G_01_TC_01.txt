@@ -17,6 +17,7 @@ MOD_WIFI5G_01_TC_01_Teardown
     Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
     
     #####Factory Reset Via Web GUI
+    Logout WebGUI
     Login To Browser		                 password=${ONT}[ONT_WEB_PASS]
     Factory Reset Via Web GUI
   
@@ -67,8 +68,6 @@ MOD_WIFI5G_01_TC_01
     Select SSID 5G Index                        				ssid_index=4
     Save Config SSID
     Compare Get SSID 5GHz With SSID Expected Index 2,3,4		ssid_expect=${ONT}[SSID_EXPECT_5G_4]
-
-    Logout WebGUI 
 
     [Teardown]                               Run Keyword And Ignore Error        MOD_WIFI5G_01_TC_01_Teardown
 

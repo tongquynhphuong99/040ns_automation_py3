@@ -16,6 +16,7 @@ MOD_WIFI5G_01_TC_11_Teardown
     Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
 
     #####Factory Reset Via Web GUI
+    Logout WebGUI
     Login To Browser		                 password=${ONT}[ONT_WEB_PASS]
     Factory Reset Via Web GUI
   
@@ -37,44 +38,51 @@ MOD_WIFI5G_01_TC_11
     # SL.Set Selenium Timeout                       10s
     Set Test Message                              *HTML* <b>MOD_WIFI5G_01_TC_11</b>
     Login To Browser		                      password=${ONT}[ONT_WEB_PASS]
+    SL.Maximize Browser Window
     SL.Select Frame                               xpath=//frame[@name="contentfrm"]
-    Open 5GHz Wireless Configure Page
 
     ### Step 1: Config Security mode WPA3-PSK Password Empty for Wifi 5GHz
     Log To Console                                \nStep 1: Config Security mode WPA3-PSK Password Empty for Wifi 5GHz
-    
+    Open 5GHz Wireless Configure Page
     Select SSID 5G Index                          ssid_index=1
-    SL.Maximize Browser Window
-    SL.Maximize Browser Window
     Select 5G Security Mode                       secu_mode=WPA3-PSK
     Configure 5G Security Mode WPA3-PSK Pass Only           password=${EMPTY}
-
     Save Config SSID
     # Verify Config
-    Popup PreSharedKey Length Error Should Be Visible
+    Run Keyword And Continue On Failure           Popup PreSharedKey Length Error Should Be Visible
+
+    ### Step 2: Config Security mode WPA3-PSK Password All Space for Wifi 5GHz
+    Log To Console                                \nStep 2: Config Security mode WPA3-PSK Password All Space for Wifi 5GHz
+    Open 5GHz Wireless Configure Page
+    Select SSID 5G Index                          ssid_index=1
+    Select 5G Security Mode                       secu_mode=WPA3-PSK
+    Configure 5G Security Mode WPA3-PSK Pass Only           password=${SPACE*8}
+    SL.Input Password                             xpath=//input[@name="PreSharedKey_WPA3"]          ${SPACE*8}
+    Save Config SSID
+    # Verify Config
+    Run Keyword And Continue On Failure           Popup PreSharedKey Length Error Should Be Visible
 
     ### Step 3: Config Security mode WPA3-PSK Password Special Characters &|;$><`\!'" for Wifi 5GHz
     Log To Console                                \nStep 3: Config Security mode WPA3-PSK Password Special Characters &|;$><`\!'" for Wifi 5GHz
     
     Log To Console					              Step 3.1: WPA3-PSK Password with &
+    Open 5GHz Wireless Configure Page
     Select SSID 5G Index                          ssid_index=1
-    SL.Maximize Browser Window
-    SL.Maximize Browser Window
     Select 5G Security Mode                       secu_mode=WPA3-PSK
     Configure 5G Security Mode WPA3-PSK Pass Only           password=${WIFI_PASS}&
+    SL.Input Password                             xpath=//input[@name="PreSharedKey_WPA3"]          ${WIFI_PASS}&
     Save Config SSID
     # Verify Config
-    Message WPA Password Invalid Should Be Visible
+    Run Keyword And Continue On Failure           Message WPA Password Invalid Should Be Visible
 
     Log To Console					              Step 3.2: WPA3-PSK Password with |
     Select SSID 5G Index                          ssid_index=1
     Select 5G Security Mode                       secu_mode=WPA3-PSK
-    Log To Console    ${WIFI_PASS}|
     Configure 5G Security Mode WPA3-PSK Pass Only           password=${WIFI_PASS}|
-    SL.Input Password             xpath=//input[@name="PreSharedKey_WPA3"]          ${WIFI_PASS}|
+    SL.Input Password                             xpath=//input[@name="PreSharedKey_WPA3"]          ${WIFI_PASS}|
     Save Config SSID
     # Verify Config
-    Message WPA Password Invalid Should Be Visible
+    Run Keyword And Continue On Failure           Message WPA Password Invalid Should Be Visible
 
     Log To Console					              Step 3.3: WPA3-PSK Password with ;
     Select SSID 5G Index                          ssid_index=1
@@ -83,94 +91,95 @@ MOD_WIFI5G_01_TC_11
     SL.Input Password             xpath=//input[@name="PreSharedKey_WPA3"]          ${WIFI_PASS};
     Save Config SSID
     # Verify Config
-    Message WPA Password Invalid Should Be Visible
-
+    Run Keyword And Continue On Failure           Message WPA Password Invalid Should Be Visible
 
     Log To Console					              Step 3.4: WPA3-PSK Password with $
     Select SSID 5G Index                          ssid_index=1
     Select 5G Security Mode                       secu_mode=WPA3-PSK
     Configure 5G Security Mode WPA3-PSK Pass Only           password=${WIFI_PASS}$
-    SL.Input Password             xpath=//input[@name="PreSharedKey_WPA3"]          ${WIFI_PASS}$
+    SL.Input Password                             xpath=//input[@name="PreSharedKey_WPA3"]          ${WIFI_PASS}$
     Save Config SSID
     # Verify Config
-    Message WPA Password Invalid Should Be Visible
+    Run Keyword And Continue On Failure           Message WPA Password Invalid Should Be Visible
 
     Log To Console					              Step 3.5: WPA3-PSK Password with >
     Select SSID 5G Index                          ssid_index=1
     Select 5G Security Mode                       secu_mode=WPA3-PSK
     Configure 5G Security Mode WPA3-PSK Pass Only           password=${WIFI_PASS}>
-    SL.Input Password             xpath=//input[@name="PreSharedKey_WPA3"]          ${WIFI_PASS}>
+    SL.Input Password                             xpath=//input[@name="PreSharedKey_WPA3"]          ${WIFI_PASS}>
     Save Config SSID
     # Verify Config
-    Message WPA Password Invalid Should Be Visible
+    Run Keyword And Continue On Failure           Message WPA Password Invalid Should Be Visible
 
     Log To Console					              Step 3.6: WPA3-PSK Password with <
     Select SSID 5G Index                          ssid_index=1
     Select 5G Security Mode                       secu_mode=WPA3-PSK
     Configure 5G Security Mode WPA3-PSK Pass Only           password=${WIFI_PASS}<
-    SL.Input Password             xpath=//input[@name="PreSharedKey_WPA3"]          ${WIFI_PASS}<
+    SL.Input Password                             xpath=//input[@name="PreSharedKey_WPA3"]          ${WIFI_PASS}<
     Save Config SSID
     # Verify Config
-    Message WPA Password Invalid Should Be Visible
+    Run Keyword And Continue On Failure           Message WPA Password Invalid Should Be Visible
 
     Log To Console					              Step 3.7: WPA3-PSK Password with `
     Select SSID 5G Index                          ssid_index=1
     Select 5G Security Mode                       secu_mode=WPA3-PSK
     Configure 5G Security Mode WPA3-PSK Pass Only           password=${WIFI_PASS}`
-    SL.Input Password             xpath=//input[@name="PreSharedKey_WPA3"]          ${WIFI_PASS}`
+    SL.Input Password                             xpath=//input[@name="PreSharedKey_WPA3"]          ${WIFI_PASS}`
     Save Config SSID
     # Verify Config
-    Message WPA Password Invalid Should Be Visible
+    Run Keyword And Continue On Failure           Message WPA Password Invalid Should Be Visible
 
     Log To Console					              Step 3.8: WPA3-PSK Password with \\\
     Select SSID 5G Index                          ssid_index=1
     Select 5G Security Mode                       secu_mode=WPA3-PSK
     Configure 5G Security Mode WPA3-PSK Pass Only           password=${WIFI_PASS}\\
-    SL.Input Password             xpath=//input[@name="PreSharedKey_WPA3"]          ${WIFI_PASS}\\
+    SL.Input Password                             xpath=//input[@name="PreSharedKey_WPA3"]          ${WIFI_PASS}\\
     Save Config SSID
     # Verify Config
-    Message WPA Password Invalid Should Be Visible
+    Run Keyword And Continue On Failure           Message WPA Password Invalid Should Be Visible
 
     Log To Console					              Step 3.9: WPA3-PSK Password with !
     Select SSID 5G Index                          ssid_index=1
     Select 5G Security Mode                       secu_mode=WPA3-PSK
     Configure 5G Security Mode WPA3-PSK Pass Only           password=${WIFI_PASS}!
-    SL.Input Password             xpath=//input[@name="PreSharedKey_WPA3"]          ${WIFI_PASS}!
+    SL.Input Password                             xpath=//input[@name="PreSharedKey_WPA3"]          ${WIFI_PASS}!
     Save Config SSID
     # Verify Config
-    Message WPA Password Invalid Should Be Visible
+    Run Keyword And Continue On Failure           Message WPA Password Invalid Should Be Visible
 
     Log To Console					              Step 3.10: WPA3-PSK Password with '
     Select SSID 5G Index                          ssid_index=1
     Select 5G Security Mode                       secu_mode=WPA3-PSK
     Configure 5G Security Mode WPA3-PSK Pass Only           password=${WIFI_PASS}'
-    SL.Input Password             xpath=//input[@name="PreSharedKey_WPA3"]          ${WIFI_PASS}'
+    SL.Input Password                             xpath=//input[@name="PreSharedKey_WPA3"]          ${WIFI_PASS}'
     Save Config SSID
     # Verify Config
-    Message WPA Password Invalid Should Be Visible
+    Run Keyword And Continue On Failure           Message WPA Password Invalid Should Be Visible
 
     Log To Console					              Step 3.11: WPA3-PSK Password with "
     Select SSID 5G Index                          ssid_index=1
     Select 5G Security Mode                       secu_mode=WPA3-PSK
     Configure 5G Security Mode WPA3-PSK Pass Only           password=${WIFI_PASS}"
-    SL.Input Password             xpath=//input[@name="PreSharedKey_WPA3"]          ${WIFI_PASS}"
+    SL.Input Password                             xpath=//input[@name="PreSharedKey_WPA3"]          ${WIFI_PASS}"
     Save Config SSID
     # Verify Config
-    Message WPA Password Invalid Should Be Visible
+    Run Keyword And Continue On Failure           Message WPA Password Invalid Should Be Visible
+    Logout WebGUI
 
     ### Step 4: Config Security mode WPA3-PSK Password Invalid Length for Wifi 5GHz
     Log To Console                                \nStep 4: Config Security mode WPA3-PSK Password Invalid Length for Wifi 5GHz
+    Login To Browser		                      password=${ONT}[ONT_WEB_PASS]
+    SL.Maximize Browser Window
+    SL.Select Frame                               xpath=//frame[@name="contentfrm"]
     Open 5GHz Wireless Configure Page
 
     Log To Console					              Step 4.1: WPA3-PSK Password with Length < 8 characters/numbers
     Select SSID 5G Index                          ssid_index=1
-    SL.Maximize Browser Window
-    SL.Maximize Browser Window
     Select 5G Security Mode                       secu_mode=WPA3-PSK
     Configure 5G Security Mode WPA3-PSK Pass Only           password=1234567
     Save Config SSID
     # Verify Config
-    Popup PreSharedKey Length Error Should Be Visible
+    Run Keyword And Continue On Failure           Popup PreSharedKey Length Error Should Be Visible
 
     Log To Console					              Step 4.2: WPA3-PSK Password with Length > 63 characters ASCII
     Select SSID 5G Index                          ssid_index=1
@@ -178,7 +187,7 @@ MOD_WIFI5G_01_TC_11
     Configure 5G Security Mode WPA3-PSK Pass Only           password=abcdefghabcdefghabcdefghabcdefghabcdefghabcdefghabcdefghabcdefgh
     Save Config SSID
     # Verify Config
-    Popup PreSharedKey Hex Error Should Be Visible
+    Run Keyword And Continue On Failure           Popup PreSharedKey Hex Error Should Be Visible
 
     ### Step 5: Config Security mode WPA3-PSK Password Valid for Wifi 5GHz
     Log To Console                                \nStep 5: Config Security mode WPA3-PSK Password Valid for Wifi 5GHz
@@ -216,7 +225,6 @@ MOD_WIFI5G_01_TC_11
 
     Log To Console					              Step 6.1: WPA3-PSK Encryption Type TKIP
     Select SSID 5G Index                          ssid_index=1
-    SL.Maximize Browser Window
     Select 5G Security Mode                       secu_mode=WPA3-PSK
     Check Status Encryption Type 5G Mode WPA3     encry_type=TKIP
 
@@ -235,13 +243,11 @@ MOD_WIFI5G_01_TC_11
 
     Log To Console					              Step 7.1: WPA3-PSK Key Renewal Interval Non-integer
     Select SSID 5G Index                          ssid_index=1
-    SL.Maximize Browser Window
-    SL.Maximize Browser Window
     Select 5G Security Mode                       secu_mode=WPA3-PSK
     Configure 5G Security Mode WPA3-PSK Key Renew Only           key_renew=-1
     Save Config SSID
     # Verify Config
-    Popup Key Renewal Interval Non-integer Should Be Visible
+    Run Keyword And Continue On Failure           Popup Key Renewal Interval Non-integer Should Be Visible
 
     Log To Console					              Step 7.2: WPA3-PSK Key Renewal Interval < 10
     Select SSID 5G Index                          ssid_index=1
@@ -249,7 +255,7 @@ MOD_WIFI5G_01_TC_11
     Configure 5G Security Mode WPA3-PSK Key Renew Only           key_renew=9
     Save Config SSID
     # Verify Config
-    Popup Key Renewal Interval Length Error Should Be Visible
+    Run Keyword And Continue On Failure           Popup Key Renewal Interval Length Error Should Be Visible
 
     Log To Console					              Step 7.3: WPA3-PSK Key Renewal Interval > 4194303
     Select SSID 5G Index                          ssid_index=1
@@ -257,7 +263,7 @@ MOD_WIFI5G_01_TC_11
     Configure 5G Security Mode WPA3-PSK Key Renew Only           key_renew=4194304
     Save Config SSID
     # Verify Config
-    Popup Key Renewal Interval Length Error Should Be Visible
+    Run Keyword And Continue On Failure           Popup Key Renewal Interval Length Error Should Be Visible
 
     Log To Console					              Step 7.4: WPA3-PSK Key Renewal Interval = 10
     Select SSID 5G Index                          ssid_index=1
@@ -274,18 +280,6 @@ MOD_WIFI5G_01_TC_11
     Save Config SSID
     # Verify Config
     Verify Config 5G Security mode WPA3-PSK       key_renew=4194303
-
-    # ### Step 2: Config Security mode WPA3-PSK Password All Space for Wifi 5GHz
-    # Log To Console                                \nStep 2: Config Security mode WPA3-PSK Password All Space for Wifi 5GHz
-    
-    # Select SSID 5G Index                          ssid_index=1
-    # Select 5G Security Mode                       secu_mode=WPA3-PSK
-    # Configure 5G Security Mode WPA3-PSK Pass Only           password=${SPACE*8}
-    # Save Config SSID
-    # # Verify Config
-    # Popup PreSharedKey Length Error Should Be Visible
-
-    Logout WebGUI
 
     [Teardown]                                     Run Keyword And Ignore Error        MOD_WIFI5G_01_TC_11_Teardown
 

@@ -1,0 +1,126 @@
+*** Settings ***
+Library                                            SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
+Resource                                           selenium/Login/SeleniumLoginLib.txt
+Resource                                           selenium/Network/SeleniumNetworkLANLib.txt
+Resource                                           selenium/Maintenance/SeleniumMaintenanceRebootResetLib.txt
+*** Variables ***
+
+*** Keywords ***
+MOD_LAN_04_TC_05_Teardown
+    ##Teardown
+    Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
+    
+    #####Factory Reset Via Web GUI
+    Logout WebGUI
+    Login To Browser		                 password=${ONT}[ONT_WEB_PASS]
+    Factory Reset Via Web GUI
+  
+    SL.Go To                                 url=${LOGIN_URL}
+    SL.Wait Until Element Is Visible         ${LOGIN_BUTTON}
+    ...                                      timeout=25s
+    ...                                      error=\nLogin Page Does Not Found!
+    Run Keyword If                           '${SWITCH_VARIABLE}' == '3'      Log To Console	\nDon't need to change password after reset factory
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '2'      Change Password WebGui
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '1'      Change Password WebGui
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '0'      Change Password WebGui    
+    SL.Delete All Cookies
+    SL.Close All Browsers
+
+MOD_LAN_04_TC_05                
+    [Documentation]    Kiem tra kha nang cau hinh truong Preferred Lifetime
+
+    # SL.Set Selenium Speed                          0.5
+    # SL.Set Selenium Timeout                        10s
+    Set Test Message                               *HTML* <b>MOD_LAN_04_TC_05</b>
+    
+    ### Step 1: Open Browser & Login to WebGUI    
+    Log To Console                                               \nStep 1: Login to Browser
+    Login To Browser		             		                 password=${ONT}[ONT_WEB_PASS]
+    SL.Select Frame                                              xpath=//frame[@name="contentfrm"]              
+    
+    ### Step 2: Open Config LAN Page
+    Log To Console                                               \nStep 2: Open Config LAN 
+    Open Network Settings LAN Page
+    SL.Maximize Browser Window
+
+    ### Step 3: Config Enable SLAAC, RA Mode Manually
+    Log To Console                                               \nStep 3: Config Enable SLAAC, RA Mode Manually
+    Enable/Disable SLAAC                                         slaac=On 
+    Config RA Mode                                               ra_mode=Manually
+
+    ### Step 4: Config Preferred Lifetime = 599
+    Log To Console                                               \nStep 4: Config Preferred Lifetime = 599
+    Config Preferred Lifetime                                    pre_lifetime=599
+    Click Button SaveIPv6 LAN
+    Check Popup LAN IPv6 Config And Continue On Failure          popup=Popup Preferred Lifetime Invalid Should Be Visible
+    ...                                                          argument1=599
+
+    ### Step 5: Config Preferred Lifetime = 4294967296
+    Log To Console                                               \nStep 5: Config Preferred Lifetime = 4294967296
+    Config Preferred Lifetime                                    pre_lifetime=4294967296
+    Click Button SaveIPv6 LAN
+    Check Popup LAN IPv6 Config And Continue On Failure          popup=Popup Preferred Lifetime Invalid Should Be Visible
+    ...                                                          argument1=4294967296
+
+    ### Step 6: Config Preferred Lifetime Empty
+    Log To Console                                               \nStep 6: Config Preferred Lifetime Empty
+    Config Preferred Lifetime                                    pre_lifetime=${EMPTY}
+    Click Button SaveIPv6 LAN
+    Check Popup LAN IPv6 Config And Continue On Failure          popup=Popup Preferred Lifetime Invalid Should Be Visible
+    ...                                                          argument1=${EMPTY}
+
+    ### Step 7: Config Preferred Lifetime with special character
+    Log To Console                                               \nStep 7: Config Preferred Lifetime with special character
+    Config Preferred Lifetime                                    pre_lifetime=a@
+    Click Button SaveIPv6 LAN
+    Check Popup LAN IPv6 Config And Continue On Failure          popup=Popup Preferred Lifetime Invalid Should Be Visible
+    ...                                                          argument1=a@
+    
+    ### Step 8: Config Preferred Lifetime Correct Format
+    Log To Console                                               \nStep 8: Config Preferred Lifetime Correct Format
+
+    ## Step 8.1: Config Preferred Lifetime = 600
+    Log To Console                                               \nStep 8.1: Config Preferred Lifetime = 600
+    Config Preferred Lifetime                                    pre_lifetime=600
+    Click Button SaveIPv6 LAN
+    # Verify
+    Verify Preferred Lifetime                                    pre_lifetime=600
+
+    ## Step 8.2: Config Preferred Lifetime = 2400
+    Log To Console                                               \nStep 8.2: Config Preferred Lifetime = 2400
+    Config Preferred Lifetime                                    pre_lifetime=2400
+    Click Button SaveIPv6 LAN
+    # Verify
+    Verify Preferred Lifetime                                    pre_lifetime=2400
+
+    ## Step 8.3: Config Preferred Lifetime = 4294967295
+    Log To Console                                               \nStep 8.3: Config Preferred Lifetime = 4294967295
+    Config Preferred Lifetime                                    pre_lifetime=4294967295
+    Click Button SaveIPv6 LAN
+    Check Popup LAN IPv6 Config And Continue On Failure          popup=Popup Valid Lifetime is same or lesser than Preferred Lifetime
+    ...                                                          argument1=4294967295
+    ...                                                          argument2=7200
+
+    ## Step 8.4: Config Preferred Lifetime = 4294967295 & Valid Lifetime = 4294967295
+    Log To Console                                               \nStep 8.4: Config Preferred Lifetime = 4294967295 & Valid Lifetime = 4294967295
+    Config Preferred Lifetime                                    pre_lifetime=4294967295
+    Config Valid Lifetime                                        valid_lifetime=4294967295        
+    Click Button SaveIPv6 LAN
+    Check Popup LAN IPv6 Config And Continue On Failure          popup=Popup Valid Lifetime is same or lesser than Preferred Lifetime
+    ...                                                          argument1=4294967295
+    ...                                                          argument2=4294967295
+
+    ## Step 8.5: Config Preferred Lifetime = 4294967294 & Valid Lifetime = 4294967295
+    Log To Console                                               \nStep 8.5: Config Preferred Lifetime = 4294967294 & Valid Lifetime = 4294967295
+    Config Preferred Lifetime                                    pre_lifetime=4294967294
+    Config Valid Lifetime                                        valid_lifetime=4294967295        
+    Click Button SaveIPv6 LAN
+    # Verify
+    Verify Preferred Lifetime                                    pre_lifetime=4294967294
+    Verify Valid Lifetime                                        valid_lifetime=4294967295
+
+    [Teardown]                               Run Keyword And Ignore Error        MOD_LAN_04_TC_05_Teardown
+
+# *** Test Cases ***
+# MOD_LAN_04_TC_05
+#     MOD_LAN_04_TC_05

@@ -1,0 +1,68 @@
+*** Settings ***
+Library                                            SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
+Library                                            SSHLibrary    WITH NAME    SSHL
+Resource                                           selenium/Login/SeleniumLoginLib.txt
+Resource                                           selenium/Network/SeleniumNetworkLANLib.txt
+Resource                                           selenium/Maintenance/SeleniumMaintenanceRebootResetLib.txt
+Resource                                           variables/AllVariables.txt
+*** Variables ***
+
+*** Keywords ***
+MOD_LAN_04_TC_01_Teardown
+    ##Teardown
+    Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
+
+    #####Factory Reset Via Web GUI
+    Logout WebGUI
+    Login To Browser		                 password=${ONT}[ONT_WEB_PASS]
+    Factory Reset Via Web GUI
+  
+    SL.Go To                                 url=${LOGIN_URL}
+    SL.Wait Until Element Is Visible         ${LOGIN_BUTTON}
+    ...                                      timeout=25s
+    ...                                      error=\nLogin Page Does Not Found!
+    Run Keyword If                           '${SWITCH_VARIABLE}' == '3'      Log To Console	\nDon't need to change password after reset factory
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '2'      Change Password WebGui
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '1'      Change Password WebGui
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '0'      Change Password WebGui    
+    SL.Delete All Cookies
+    SL.Close All Browsers
+
+MOD_LAN_04_TC_01
+    [Documentation]    Kiem tra kha nang bat/tat SLAAC tren WebGUI cua ONT
+
+    # SL.Set Selenium Speed                          0.5
+    # SL.Set Selenium Timeout                        10s
+    Set Test Message                               *HTML* <b>MOD_LAN_04_TC_01</b>
+
+    ### Step 1: Open Browser & Login to WebGUI    
+    Log To Console                                               \nStep 1: Login to Browser
+    Login To Browser		             		                 password=${ONT}[ONT_WEB_PASS]
+    SL.Select Frame                                              xpath=//frame[@name="contentfrm"]              
+    
+    ### Step 2: Open Config LAN Page
+    Log To Console                                               \nStep 2: Open Config LAN 
+    Open Network Settings LAN Page
+    SL.Maximize Browser Window
+
+    ### Step 3: Config Disable SLAAC
+    Log To Console                                               \nStep 3: Config Disable SLAAC
+    Enable/Disable SLAAC                                         slaac=Off 
+    Click Button SaveIPv6 LAN
+
+    # Verify Config: Disable SLAAC
+    Verify Enable/Disable SLAAC                                  slaac=Off
+
+    ### Step 4: Config Enable SLAAC
+    Log To Console                                               \nStep 4: Config Enable SLAAC
+    Enable/Disable SLAAC                                         slaac=On
+    Click Button SaveIPv6 LAN
+
+    # Verify Config: Enable SLAAC
+    Verify Enable/Disable SLAAC                                  slaac=On
+
+    [Teardown]                               Run Keyword And Ignore Error        MOD_LAN_04_TC_01_Teardown
+
+# *** Test Cases ***
+# MOD_LAN_04_TC_01
+#     MOD_LAN_04_TC_01

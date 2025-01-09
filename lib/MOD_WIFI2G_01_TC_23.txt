@@ -11,6 +11,7 @@ MOD_WIFI2G_01_TC_23_Teardown
     Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
     
     #####Factory Reset Via Web GUI
+    Logout WebGUI
     Login To Browser		                 password=${ONT}[ONT_WEB_PASS]
     Factory Reset Via Web GUI
   
@@ -41,11 +42,9 @@ MOD_WIFI2G_01_TC_23
     ### Step 1: Config BandWidth Wifi 2.4Ghz
     Log To Console                                 \nStep 1: Config BandWidth Wifi 2.4Ghz
 
-    Config Bandwidth and Verify 2G   bandwidth=20
-    Config Bandwidth and Verify 2G   bandwidth=20/40
-    Config Bandwidth and Verify 2G   bandwidth=40
-
-    Logout WebGUI
+    Config Bandwidth and Verify 2G                 bandwidth=20
+    Config Bandwidth and Verify 2G                 bandwidth=20/40
+    Config Bandwidth and Verify 2G                 bandwidth=40
 
     [Teardown]                               Run Keyword And Ignore Error        MOD_WIFI2G_01_TC_23_Teardown
 

@@ -13,6 +13,7 @@ MOD_WAN_13_TC_01_Teardown
     Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
     
     #####Factory Reset Via Web GUI
+    Logout WebGUI
     Login To Browser		                 password=${ONT}[ONT_WEB_PASS]
     Factory Reset Via Web GUI
   
@@ -35,19 +36,19 @@ MOD_WAN_13_TC_01
     Set Test Message                               *HTML* <b>MOD_WAN_13_TC_01</b>
 
     ### Step 1: Open Browser & Login to WebGUI    
-    Log To Console                                \nStep 1: Login to Browser
-    Login To Browser		             		  password=${ONT}[ONT_WEB_PASS]
-    SL.Select Frame                               xpath=//frame[@name="contentfrm"]
+    Log To Console                                       \nStep 1: Login to Browser
+    Login To Browser		             		         password=${ONT}[ONT_WEB_PASS]
+    SL.Select Frame                                      xpath=//frame[@name="contentfrm"]
 
     ### Step 2: Add WAN & para of wan interface
-    Log To Console                                \nStep 2: Add WAN & para of wan interface
+    Log To Console                                       \nStep 2: Add WAN & para of wan interface
     Open Network Settings Wan Page
     SL.Maximize Browser Window
     Add New Wan Service
-    Input VLAN ID                                 vlan_id=11
+    Input VLAN ID                                        vlan_id=11
 
     ### Step 3: Config Style of Acquiring IPv6 WAN Information SLAAC
-    Log To Console                                \nStep 3: Config Style of Acquiring IPv6 WAN Information SLAAC
+    Log To Console                                       \nStep 3: Config Style of Acquiring IPv6 WAN Information SLAAC
     Config Style of Acquiring IPv6 WAN Information       input_value=SLAAC
     Click Button Save WAN
 
@@ -56,15 +57,13 @@ MOD_WAN_13_TC_01
     ...                                                  input=SLAAC
 
     ### Step 4: Config Style of Acquiring IPv6 WAN Information DHCP
-    Log To Console                                \nStep 4: Config Style of Acquiring IPv6 WAN Information DHCP
-    Config Style of Acquiring IPv6 WAN Information   input_value=DHCP
+    Log To Console                                       \nStep 4: Config Style of Acquiring IPv6 WAN Information DHCP
+    Config Style of Acquiring IPv6 WAN Information       input_value=DHCP
     Click Button Save WAN
 
     # Verify Style of Acquiring IPv6 WAN Information DHCP
     Verify Style of Acquiring IPv6 WAN Information       vlan_id=11
     ...                                                  input=DHCP
-
-    Logout WebGUI
 
     [Teardown]                               Run Keyword And Ignore Error        MOD_WAN_13_TC_01_Teardown
 

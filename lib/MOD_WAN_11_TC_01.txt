@@ -13,6 +13,7 @@ MOD_WAN_11_TC_01_Teardown
     Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
     
     #####Factory Reset Via Web GUI
+    Logout WebGUI
     Login To Browser		                 password=${ONT}[ONT_WEB_PASS]
     Factory Reset Via Web GUI
   
@@ -45,7 +46,7 @@ MOD_WAN_11_TC_01
     SL.Maximize Browser Window
 
     ### Step 3: Add WAN & para of wan interface
-    Log To Console                               \nStep 3: Add WAN & para of wan interface
+    Log To Console                                \nStep 3: Add WAN & para of wan interface
     
     Add New Wan Service
     Input VLAN ID                                 vlan_id=11
@@ -69,8 +70,6 @@ MOD_WAN_11_TC_01
     # Verify Enable NAT
     Verify Enable/Disable NAT                     vlan_id=11
     ...                                           enable=Off
-
-    Logout WebGUI
 
     [Teardown]                               Run Keyword And Ignore Error        MOD_WAN_11_TC_01_Teardown
 

@@ -11,6 +11,7 @@ MOD_WIFI5G_01_TC_21_2_Teardown
     Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
     
     #####Factory Reset Via Web GUI
+    Logout WebGUI
     Login To Browser		                 password=${ONT}[ONT_WEB_PASS]
     Factory Reset Via Web GUI
   
@@ -38,13 +39,10 @@ MOD_WIFI5G_01_TC_21_2
     SL.Maximize Browser Window
 
     ### Step 1: Config VHT BandWidth Wifi 5Ghz
-    Select SSID 5G Index                ssid_index=1
-    Config VHT Bandwidth and Verify 5G   bandwidth=20/40 MHz
-    Config VHT Bandwidth and Verify 5G   bandwidth=20/40/80 MHz
-    Config VHT Bandwidth and Verify 5G   bandwidth=160 MHz
-
-
-    Logout WebGUI
+    Select SSID 5G Index                           ssid_index=1
+    Config VHT Bandwidth and Verify 5G             bandwidth=20/40 MHz
+    Config VHT Bandwidth and Verify 5G             bandwidth=20/40/80 MHz
+    Config VHT Bandwidth and Verify 5G             bandwidth=160 MHz
 
     [Teardown]                               Run Keyword And Ignore Error        MOD_WIFI5G_01_TC_21_2_Teardown
 

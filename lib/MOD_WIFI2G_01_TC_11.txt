@@ -16,6 +16,7 @@ MOD_WIFI2G_01_TC_11_Teardown
     Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
 
     #####Factory Reset Via Web GUI
+    Logout WebGUI
     Login To Browser		                 password=${ONT}[ONT_WEB_PASS]
     Factory Reset Via Web GUI
   
@@ -49,7 +50,18 @@ MOD_WIFI2G_01_TC_11
     ...                                           password=${EMPTY}
     Save Config SSID
     # Verify Config
-    Popup WPA Password Invalid Should Be Visible
+    Run Keyword And Continue On Failure           Popup WPA Password Invalid Should Be Visible
+
+    ### Step 2: Config Security mode WPA3-PSK Password All Space for Wifi 2.4GHz
+    Log To Console                                \nStep 2: Config Security mode WPA3-PSK Password All Space for Wifi 2.4GHz
+    
+    Select SSID 2G Index                          ssid_index=1
+    Select 2G Security Mode                       secu_mode=WPA3-PSK
+    Configure 2G Security Mode WPA                encry_type=AES
+    ...                                           password=${SPACE*8}
+    Save Config SSID
+    # Verify Config
+    Run Keyword And Continue On Failure           Popup WPA Password Invalid Should Be Visible
 
     ### Step 3: Config Security mode WPA3-PSK Password Special Characters &|;$><`\!'" for Wifi 2.4GHz
     Log To Console                                \nStep 3: Config Security mode WPA3-PSK Password Special Characters &|;$><`\!'" for Wifi 2.4GHz
@@ -61,7 +73,7 @@ MOD_WIFI2G_01_TC_11
     ...                                           password=${WIFI_PASS}&
     Save Config SSID
     # Verify Config
-    Popup WPA Password Invalid Should Be Visible
+    Run Keyword And Continue On Failure           Popup WPA Password Invalid Should Be Visible
 
     Log To Console					              Step 3.2: WPA3-PSK Password with |
     Select SSID 2G Index                          ssid_index=1
@@ -70,7 +82,7 @@ MOD_WIFI2G_01_TC_11
     ...                                           password=${WIFI_PASS}|
     Save Config SSID
     # Verify Config
-    Popup WPA Password Invalid Should Be Visible
+    Run Keyword And Continue On Failure           Popup WPA Password Invalid Should Be Visible
 
     Log To Console					              Step 3.3: WPA3-PSK Password with ;
     Select SSID 2G Index                          ssid_index=1
@@ -79,7 +91,7 @@ MOD_WIFI2G_01_TC_11
     ...                                           password=${WIFI_PASS};
     Save Config SSID
     # Verify Config
-    Popup WPA Password Invalid Should Be Visible
+    Run Keyword And Continue On Failure           Popup WPA Password Invalid Should Be Visible
 
     Log To Console					              Step 3.4: WPA3-PSK Password with $
     Select SSID 2G Index                          ssid_index=1
@@ -88,7 +100,7 @@ MOD_WIFI2G_01_TC_11
     ...                                           password=${WIFI_PASS}$
     Save Config SSID
     # Verify Config
-    Popup WPA Password Invalid Should Be Visible
+    Run Keyword And Continue On Failure           Popup WPA Password Invalid Should Be Visible
 
     Log To Console					              Step 3.5: WPA3-PSK Password with >
     Select SSID 2G Index                          ssid_index=1
@@ -97,7 +109,7 @@ MOD_WIFI2G_01_TC_11
     ...                                           password=${WIFI_PASS}>
     Save Config SSID
     # Verify Config
-    Popup WPA Password Invalid Should Be Visible
+    Run Keyword And Continue On Failure           Popup WPA Password Invalid Should Be Visible
 
     Log To Console					              Step 3.6: WPA3-PSK Password with <
     Select SSID 2G Index                          ssid_index=1
@@ -106,7 +118,7 @@ MOD_WIFI2G_01_TC_11
     ...                                           password=${WIFI_PASS}<
     Save Config SSID
     # Verify Config
-    Popup WPA Password Invalid Should Be Visible
+    Run Keyword And Continue On Failure           Popup WPA Password Invalid Should Be Visible
 
     Log To Console					              Step 3.7: WPA3-PSK Password with `
     Select SSID 2G Index                          ssid_index=1
@@ -115,7 +127,7 @@ MOD_WIFI2G_01_TC_11
     ...                                           password=${WIFI_PASS}`
     Save Config SSID
     # Verify Config
-    Popup WPA Password Invalid Should Be Visible
+    Run Keyword And Continue On Failure           Popup WPA Password Invalid Should Be Visible
 
     Log To Console					              Step 3.8: WPA3-PSK Password with \\\
     Select SSID 2G Index                          ssid_index=1
@@ -124,7 +136,7 @@ MOD_WIFI2G_01_TC_11
     ...                                           password=${WIFI_PASS}\\
     Save Config SSID
     # Verify Config
-    Popup WPA Password Invalid Should Be Visible
+    Run Keyword And Continue On Failure           Popup WPA Password Invalid Should Be Visible
 
     Log To Console					              Step 3.9: WPA3-PSK Password with !
     Select SSID 2G Index                          ssid_index=1
@@ -133,7 +145,7 @@ MOD_WIFI2G_01_TC_11
     ...                                           password=${WIFI_PASS}!
     Save Config SSID
     # Verify Config
-    Popup WPA Password Invalid Should Be Visible
+    Run Keyword And Continue On Failure           Popup WPA Password Invalid Should Be Visible
 
     Log To Console					              Step 3.10: WPA3-PSK Password with '
     Select SSID 2G Index                          ssid_index=1
@@ -142,7 +154,7 @@ MOD_WIFI2G_01_TC_11
     ...                                           password=${WIFI_PASS}'
     Save Config SSID
     # Verify Config
-    Popup WPA Password Invalid Should Be Visible
+    Run Keyword And Continue On Failure           Popup WPA Password Invalid Should Be Visible
 
     Log To Console					              Step 3.11: WPA3-PSK Password with "
     Select SSID 2G Index                          ssid_index=1
@@ -151,7 +163,7 @@ MOD_WIFI2G_01_TC_11
     ...                                           password=${WIFI_PASS}"
     Save Config SSID
     # Verify Config
-    Popup WPA Password Invalid Should Be Visible
+    Run Keyword And Continue On Failure           Popup WPA Password Invalid Should Be Visible
 
     ### Step 4: Config Security mode WPA3-PSK Password Invalid Length for Wifi 2.4GHz
     Log To Console                                \nStep 4: Config Security mode WPA3-PSK Password Invalid Length for Wifi 2.4GHz
@@ -164,7 +176,7 @@ MOD_WIFI2G_01_TC_11
     ...                                           password=1234567
     Save Config SSID
     # Verify Config
-    Popup WPA Password Length Should Be Visible
+    Run Keyword And Continue On Failure           Popup WPA Password Length Should Be Visible
 
     Log To Console					              Step 4.2: WPA3-PSK Password with Length > 63 characters ASCII
     Select SSID 2G Index                          ssid_index=1
@@ -173,7 +185,7 @@ MOD_WIFI2G_01_TC_11
     ...                                           password=abcdefghabcdefghabcdefghabcdefghabcdefghabcdefghabcdefghabcdefgh
     Save Config SSID
     # Verify Config
-    Popup WPA Password Length Should Be Visible
+    Run Keyword And Continue On Failure           Popup WPA Password Length Should Be Visible
 
     Log To Console					              Step 4.3: WPA3-PSK Password with Length > 64 hexadecimal numbers
     Select SSID 2G Index                          ssid_index=1
@@ -182,7 +194,7 @@ MOD_WIFI2G_01_TC_11
     ...                                           password=12345678123456781234567812345678123456781234567812345678123456782
     Save Config SSID
     # Verify Config
-    Popup WPA Password Length Should Be Visible
+    Run Keyword And Continue On Failure           Popup WPA Password Length Should Be Visible
 
     ### Step 5: Config Security mode WPA3-PSK Password Valid for Wifi 2.4GHz
     Log To Console                                \nStep 5: Config Security mode WPA3-PSK Password Valid for Wifi 2.4GHz
@@ -238,19 +250,6 @@ MOD_WIFI2G_01_TC_11
     Select SSID 2G Index                          ssid_index=1
     Select 2G Security Mode                       secu_mode=WPA3-PSK
     Check Status Encryption Type 2G Mode WPA3     encry_type=AES
-
-    # ### Step 2: Config Security mode WPA3-PSK Password All Space for Wifi 2.4GHz
-    # Log To Console                                \nStep 2: Config Security mode WPA3-PSK Password All Space for Wifi 2.4GHz
-    
-    # Select SSID 2G Index                          ssid_index=1
-    # Select 2G Security Mode                       secu_mode=WPA3-PSK
-    # Configure 2G Security Mode WPA                encry_type=AES
-    # ...                                           password=${SPACE*8}
-    # Save Config SSID
-    # # Verify Config
-    # Popup WPA Password Invalid Should Be Visible
-
-    Logout WebGUI 
 
     [Teardown]                                     Run Keyword And Ignore Error        MOD_WIFI2G_01_TC_11_Teardown
 

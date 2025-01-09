@@ -1,0 +1,109 @@
+*** Settings ***
+Library                                            SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
+Resource                                           selenium/Login/SeleniumLoginLib.txt
+Resource                                           selenium/Network/SeleniumNetworkLANLib.txt
+Resource                                           selenium/Maintenance/SeleniumMaintenanceRebootResetLib.txt
+
+*** Variables ***
+
+*** Keywords ***
+MOD_LAN_01_TC_01_Teardown
+    ##Teardown
+    Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
+
+    #####Factory Reset Via Web GUI
+    Logout WebGUI
+    Login To Browser		                 password=${ONT}[ONT_WEB_PASS]
+    Factory Reset Via Web GUI
+  
+    SL.Go To                                 url=${LOGIN_URL}
+    SL.Wait Until Element Is Visible         ${LOGIN_BUTTON}
+    ...                                      timeout=25s
+    ...                                      error=\nLogin Page Does Not Found!
+    Run Keyword If                           '${SWITCH_VARIABLE}' == '3'      Log To Console	\nDon't need to change password after reset factory
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '2'      Change Password WebGui
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '1'      Change Password WebGui
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '0'      Change Password WebGui    
+    SL.Delete All Cookies
+    SL.Close All Browsers
+
+MOD_LAN_01_TC_01
+    [Documentation]    Kiem tra kha nang cau hinh IPv4 Configuration - IP Address
+
+    SL.Set Selenium Speed                    0.5
+    SL.Set Selenium Timeout                  10s
+    Set Test Message                         *HTML* <b>MOD_LAN_01_TC_01</b>
+
+    ### Step 1: Open Browser & Login to WebGUI    
+    Log To Console                                               \nStep 1: Login to Browser
+    Login To Browser		             		                 password=${ONT}[ONT_WEB_PASS]
+    SL.Select Frame                                              xpath=//frame[@name="contentfrm"]              
+    
+    ### Step 2: Open Config LAN Page
+    Log To Console                                               \nStep 2: Open Config LAN 
+    Open Network Settings LAN Page
+    SL.Maximize Browser Window
+
+    ### Step 3: Config IP Address All Space
+    Log To Console                                               \nStep 3: Config IP Address All Space
+    Config IP Address                                            ip_address=${SPACE*4}
+    Click Button SaveIPv4 LAN
+    Check Popup LAN DHCPv4 And Continue On Failure               popup=Popup Lan IP Address Is Invalid Should Be Visible
+    ...                                                          argument1=${SPACE*4}
+
+    ### Step 4: Config IP Address 192.168.1.
+    Log To Console                                               \nStep 4: Config IP Address 192.168.1.
+    Config IP Address                                            ip_address=192.168.1.
+    Click Button SaveIPv4 LAN
+    Check Popup LAN DHCPv4 And Continue On Failure               popup=Popup Lan IP Address Is Invalid Should Be Visible
+    ...                                                          argument1=192.168.1.
+
+    ### Step 5: Config IP Address 192.168.1.256
+    Log To Console                                               \nStep 5: Config IP Address 192.168.1.256
+    Config IP Address                                            ip_address=192.168.1.256
+    Click Button SaveIPv4 LAN
+    Check Popup LAN DHCPv4 And Continue On Failure               popup=Popup Lan IP Address Is Invalid Should Be Visible
+    ...                                                          argument1=192.168.1.256
+
+    ### Step 6: Config IP Address 192.168.1.a
+    Log To Console                                               \nStep 6: Config IP Address 192.168.1.a
+    Config IP Address                                            ip_address=192.168.1.a
+    Click Button SaveIPv4 LAN
+    Check Popup LAN DHCPv4 And Continue On Failure               popup=Popup Lan IP Address Is Invalid Should Be Visible
+    ...                                                          argument1=192.168.1.a
+
+    ### Step 7: Config IP Address 192.168.1.@@@
+    Log To Console                                               \nStep 7: Config IP Address 192.168.1.@@@
+    Config IP Address                                            ip_address=192.168.1.@@@
+    Click Button SaveIPv4 LAN
+    Check Popup LAN DHCPv4 And Continue On Failure               popup=Popup Lan IP Address Is Invalid Should Be Visible
+    ...                                                          argument1=192.168.1.@@@
+
+    ### Step 8: Config IP Address Valid
+    Log To Console                                               \nStep 8: Config IP Address Valid
+    Config IP Address                                            ip_address=192.168.10.1
+    Click Button SaveIPv4 LAN
+    Check Popup LAN DHCPv4 And Continue On Failure               popup=Popup Warning Change IP Address Pool Should Be Visible
+    Click Button SaveIPv4 LAN
+    # Verify
+    Verify Config IP Address Valid                               ip_current=192.168.1.
+    ...                                                          ip_change=192.168.10.1
+
+    ### Step 9: Config IP Address Valid
+    Log To Console                                               \nStep 9: Config IP Address Valid
+    Open Network Settings LAN Page
+    SL.Maximize Browser Window
+
+    Config IP Address                                            ip_address=192.168.1.1
+    Click Button SaveIPv4 LAN
+    Check Popup LAN DHCPv4 And Continue On Failure               popup=Popup Warning Change IP Address Pool Should Be Visible
+    Click Button SaveIPv4 LAN
+    # Verify
+    Verify Config IP Address Valid                               ip_current=192.168.10.
+    ...                                                          ip_change=192.168.1.1
+
+    [Teardown]                               Run Keyword And Ignore Error        MOD_LAN_01_TC_01_Teardown
+
+# *** Test Cases ***
+# MOD_LAN_01_TC_01
+#     MOD_LAN_01_TC_01 

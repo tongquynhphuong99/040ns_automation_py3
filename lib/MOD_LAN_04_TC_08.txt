@@ -1,0 +1,141 @@
+*** Settings ***
+Library                                            SeleniumLibrary   run_on_failure=SL.Capture Page Screenshot    WITH NAME    SL
+Resource                                           selenium/Login/SeleniumLoginLib.txt
+Resource                                           selenium/Network/SeleniumNetworkLANLib.txt
+Resource                                           selenium/Maintenance/SeleniumMaintenanceRebootResetLib.txt
+*** Variables ***
+
+*** Keywords ***
+MOD_LAN_04_TC_08_Teardown
+    ##Teardown
+    Log To Console                           \nTeardown Testcase\nReset factory ONT Device...\n
+    
+    #####Factory Reset Via Web GUI
+    Logout WebGUI
+    Login To Browser		                 password=${ONT}[ONT_WEB_PASS]
+    Factory Reset Via Web GUI
+  
+    SL.Go To                                 url=${LOGIN_URL}
+    SL.Wait Until Element Is Visible         ${LOGIN_BUTTON}
+    ...                                      timeout=25s
+    ...                                      error=\nLogin Page Does Not Found!
+    Run Keyword If                           '${SWITCH_VARIABLE}' == '3'      Log To Console	\nDon't need to change password after reset factory
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '2'      Change Password WebGui
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '1'      Change Password WebGui
+    ...    ELSE IF                           '${SWITCH_VARIABLE}' == '0'      Change Password WebGui    
+    SL.Delete All Cookies
+    SL.Close All Browsers
+
+MOD_LAN_04_TC_08
+    [Documentation]    Kiem tra kha nang cau hinh truong RA minimum interval
+
+    # SL.Set Selenium Speed                          0.5
+    # SL.Set Selenium Timeout                        10s
+    Set Test Message                               *HTML* <b>MOD_LAN_04_TC_08</b>
+    
+    ### Step 1: Open Browser & Login to WebGUI    
+    Log To Console                                               \nStep 1: Login to Browser
+    Login To Browser		             		                 password=${ONT}[ONT_WEB_PASS]
+    SL.Select Frame                                              xpath=//frame[@name="contentfrm"]              
+    
+    ### Step 2: Open Config LAN Page
+    Log To Console                                               \nStep 2: Open Config LAN 
+    Open Network Settings LAN Page
+    SL.Maximize Browser Window
+
+    ### Step 3: Config Enable SLAAC, RA Mode Manually
+    Log To Console                                               \nStep 3: Config Enable SLAAC, RA Mode Manually
+    Enable/Disable SLAAC                                         slaac=On 
+    Config RA Mode                                               ra_mode=Manually
+
+    ### Step 4: Config RA Minimum Interval = 2
+    Log To Console                                               \nStep 4: Config RA Minimum Interval = 2
+    Config RA Minimum Interval                                   ra_min=2
+    Click Button SaveIPv6 LAN
+    Check Popup LAN IPv6 Config And Continue On Failure          popup=Popup RA Minimum Interval Invalid Should Be Visible    
+    ...                                                          argument1=2
+
+    ### Step 5: Config RA Minimum Interval = 1351
+    Log To Console                                               \nStep 5: Config RA Minimum Interval = 1351
+    Config RA Minimum Interval                                   ra_min=1351
+    Click Button SaveIPv6 LAN
+    Check Popup LAN IPv6 Config And Continue On Failure          popup=Popup RA Minimum Interval Invalid Should Be Visible    
+    ...                                                          argument1=1351
+
+    ### Step 6: Config RA Minimum Interval Empty
+    Log To Console                                               \nStep 6: Config RA Minimum Interval Empty
+    Config RA Minimum Interval                                   ra_min=${EMPTY}
+    Click Button SaveIPv6 LAN
+    Check Popup LAN IPv6 Config And Continue On Failure          popup=Popup RA Minimum Interval Invalid Should Be Visible    
+    ...                                                          argument1=${EMPTY}
+
+    ### Step 7: Config RA Minimum Interval with special character
+    Log To Console                                               \nStep 7: Config RA Minimum Interval with special character
+    Config RA Minimum Interval                                   ra_min=a@
+    Click Button SaveIPv6 LAN
+    Check Popup LAN IPv6 Config And Continue On Failure          popup=Popup RA Minimum Interval Invalid Should Be Visible    
+    ...                                                          argument1=a@
+
+    ### Step 8: Config RA Minimum Interval is same or greater than 0.75 times RA Maximum Interval
+    Log To Console                                               \nStep 8: Config RA Minimum Interval is same or greater than 0.75 times RA Maximum Interval
+
+    ## Step 8.1: Config RA Minimum Interval is same RA Maximum Interval
+    Log To Console                                               \nStep 8.1: Config RA Minimum Interval is same RA Maximum Interval
+    Config RA Minimum Interval                                   ra_min=280
+    Config RA Maximum Interval                                   ra_max=280
+    Click Button SaveIPv6 LAN
+    Check Popup LAN IPv6 Config And Continue On Failure          popup=Popup RA Minimum Interval should be lesser than 0.75 times RA Maximal Interval
+    ...                                                          argument1=280
+    ...                                                          argument2=280
+
+    ## Step 8.2: Config RA Minimum Interval is greater than 0.75 times RA Maximum Interval
+    Log To Console                                               \nStep 8.2: Config RA Minimum Interval is greater than 0.75 times RA Maximum Interval
+    Config RA Minimum Interval                                   ra_min=280
+    Config RA Maximum Interval                                   ra_max=300
+    Click Button SaveIPv6 LAN
+    Check Popup LAN IPv6 Config And Continue On Failure          popup=Popup RA Minimum Interval should be lesser than 0.75 times RA Maximal Interval
+    ...                                                          argument1=280
+    ...                                                          argument2=300
+
+    ## Step 8.3: Config RA Minimum Interval is greater than RA Maximum Interval
+    Log To Console                                               \nStep 8.3: Config RA Minimum Interval is greater than RA Maximum Interval
+    Config RA Minimum Interval                                   ra_min=280
+    Config RA Maximum Interval                                   ra_max=279
+    Click Button SaveIPv6 LAN
+    Check Popup LAN IPv6 Config And Continue On Failure          popup=Popup RA Maximal Interval is lesser than times RA Minimum Interval    
+    ...                                                          argument1=280
+    ...                                                          argument2=279
+
+    ### Step 9: Config RA Minimum Interval Correct Format
+    Log To Console                                               \nStep 9: Config RA Minimum Interval Correct Format
+    SL.Reload Page
+    SL.Select Frame                                              xpath=//frame[@name="contentfrm"]              
+    Open Network Settings LAN Page
+    Enable/Disable SLAAC                                         slaac=On 
+    Config RA Mode                                               ra_mode=Manually
+
+    ## Step 9.1: Config RA Minimum Interval = 3
+    Log To Console                                               \nStep 9.1: Config RA Minimum Interval = 3
+    Config RA Minimum Interval                                   ra_min=3
+    Click Button SaveIPv6 LAN
+    Verify RA Minimum Interval                                   ra_min=3    
+
+    ## Step 9.2: Config RA Minimum Interval = 400
+    Log To Console                                               \nStep 9.2: Config RA Minimum Interval = 400
+    Config RA Minimum Interval                                   ra_min=400
+    Click Button SaveIPv6 LAN
+    Verify RA Minimum Interval                                   ra_min=400 
+
+    ## Step 9.3: Config RA Minimum Interval = 1350
+    Log To Console                                               \nStep 9.3: Config RA Minimum Interval = 1350
+    Config RA Minimum Interval                                   ra_min=1350
+    Config RA Maximum Interval                                   ra_max=1800
+    Click Button SaveIPv6 LAN
+    Verify RA Minimum Interval                                   ra_min=1350 
+    Verify RA Maximum Interval                                   ra_max=1800 
+
+    [Teardown]                               Run Keyword And Ignore Error        MOD_LAN_04_TC_08_Teardown
+
+# *** Test Cases ***
+# MOD_LAN_04_TC_08
+#     MOD_LAN_04_TC_08
