@@ -11,12 +11,36 @@ ${COOKIE_VALUE}   session_value
 
 ###Login###
 Open Browser To Login Page
-    [Arguments]                               ${url}
-    ...                                       ${browser}=firefox
-    SL.Open Browser                           ${url}
-    ...                                       ${browser}
-    ...                                       ${ONT_BROWSER}
-    ...                                       options=add_argument("--ignore-certificate-errors")
+    # [Arguments]                               ${url}
+    # ...                                       ${browser}=firefox
+    # SL.Open Browser                           ${url}
+    # ...                                       ${browser}
+    # ...                                       ${ONT_BROWSER}
+    # ...                                       options=add_argument("--ignore-certificate-errors")
+
+    [Arguments]    ${url}    ${browser}=chrome
+    ${tmp_dir}=    Evaluate    __import__('tempfile').mkdtemp()
+    ${options}=    Evaluate    sys.modules['selenium.webdriver'].ChromeOptions()    sys
+    ${user_data_arg}=    Set Variable    --user-data-dir=${tmp_dir}
+
+    Call Method    ${options}    add_argument    ${user_data_arg}
+
+    Call Method    ${options}    add_argument    --headless
+    Call Method    ${options}    add_argument    --no-sandbox
+    Call Method    ${options}    add_argument    --disable-dev-shm-usage
+    Call Method    ${options}    add_argument    --disable-gpu
+   
+
+    SL.Open Browser    ${url}    ${browser}    options=${options}
+    Set Window Size    1920    1080
+    ${size}=    Get Window Size
+    Log    ${size}
+    # Capture Page Screenshot
+    Click Button    id:details-button
+    Click Link    id:proceed-link
+
+    Capture Page Screenshot
+
     SL.Wait Until Element Is Visible          xpath=//input[@id="username"]
     ...                                       timeout=20s
     ...                                       error=\nLogin Page Does Not Found!

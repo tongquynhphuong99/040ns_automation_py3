@@ -1,0 +1,1197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 7.3.2 (Python 3.10.18 on linux)" generated="2025-07-31T09:29:54.057887" rpa="false" schemaversion="5">
+<suite id="s1" name="TestSuite ModWan" source="/040ns_automation_py3/TestSuite_ModWan.robot">
+<test id="s1-t1" name="MOD_WAN_01_TC_01" line="30">
+<kw name="MOD_WAN_01_TC_01" owner="MOD_WAN_01_TC_01">
+<kw name="Set Test Message" owner="BuiltIn">
+<msg time="2025-07-31T09:29:54.315190" level="INFO" html="true">Set test message to:
+&lt;b&gt;MOD_WAN_01_TC_01&lt;/b&gt;</msg>
+<arg>*HTML* &lt;b&gt;MOD_WAN_01_TC_01&lt;/b&gt;</arg>
+<doc>Sets message for the current test case.</doc>
+<status status="PASS" start="2025-07-31T09:29:54.315087" elapsed="0.000150"/>
+</kw>
+<kw name="Log To Console" owner="BuiltIn">
+<arg>\nStep 1: Login to Browser</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="PASS" start="2025-07-31T09:29:54.315356" elapsed="0.000096"/>
+</kw>
+<kw name="Login To Browser" owner="SeleniumLoginLib">
+<kw name="Open Browser To Login Page" owner="SeleniumLoginLib">
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-07-31T09:29:54.316516" level="INFO">${tmp_dir} = /tmp/tmpdbt26ny_</msg>
+<var>${tmp_dir}</var>
+<arg>__import__('tempfile').mkdtemp()</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-07-31T09:29:54.316254" elapsed="0.000285"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2025-07-31T09:29:54.316823" level="INFO">${options} = &lt;selenium.webdriver.chrome.options.Options object at 0x7b1e7c08e140&gt;</msg>
+<var>${options}</var>
+<arg>sys.modules['selenium.webdriver'].ChromeOptions()</arg>
+<arg>sys</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2025-07-31T09:29:54.316657" elapsed="0.000185"/>
+</kw>
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2025-07-31T09:29:54.317082" level="INFO">${user_data_arg} = --user-data-dir=/tmp/tmpdbt26ny_</msg>
+<var>${user_data_arg}</var>
+<arg>--user-data-dir=${tmp_dir}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2025-07-31T09:29:54.316949" elapsed="0.000151"/>
+</kw>
+<kw name="Call Method" owner="BuiltIn">
+<arg>${options}</arg>
+<arg>add_argument</arg>
+<arg>${user_data_arg}</arg>
+<doc>Calls the named method of the given object with the provided arguments.</doc>
+<status status="PASS" start="2025-07-31T09:29:54.317200" elapsed="0.000102"/>
+</kw>
+<kw name="Call Method" owner="BuiltIn">
+<arg>${options}</arg>
+<arg>add_argument</arg>
+<arg>--headless</arg>
+<doc>Calls the named method of the given object with the provided arguments.</doc>
+<status status="PASS" start="2025-07-31T09:29:54.317401" elapsed="0.000132"/>
+</kw>
+<kw name="Call Method" owner="BuiltIn">
+<arg>${options}</arg>
+<arg>add_argument</arg>
+<arg>--no-sandbox</arg>
+<doc>Calls the named method of the given object with the provided arguments.</doc>
+<status status="PASS" start="2025-07-31T09:29:54.317633" elapsed="0.000081"/>
+</kw>
+<kw name="Call Method" owner="BuiltIn">
+<arg>${options}</arg>
+<arg>add_argument</arg>
+<arg>--disable-dev-shm-usage</arg>
+<doc>Calls the named method of the given object with the provided arguments.</doc>
+<status status="PASS" start="2025-07-31T09:29:54.317811" elapsed="0.000078"/>
+</kw>
+<kw name="Call Method" owner="BuiltIn">
+<arg>${options}</arg>
+<arg>add_argument</arg>
+<arg>--disable-gpu</arg>
+<doc>Calls the named method of the given object with the provided arguments.</doc>
+<status status="PASS" start="2025-07-31T09:29:54.317990" elapsed="0.000080"/>
+</kw>
+<kw name="Open Browser" owner="SL">
+<msg time="2025-07-31T09:29:54.318457" level="INFO">Opening browser 'chrome' to base url 'https://192.168.1.1/cgi-bin/login.asp'.</msg>
+<arg>${url}</arg>
+<arg>${browser}</arg>
+<arg>options=${options}</arg>
+<doc>Opens a new browser instance to the optional ``url``.</doc>
+<status status="PASS" start="2025-07-31T09:29:54.318195" elapsed="7.389718"/>
+</kw>
+<kw name="Set Window Size" owner="SL">
+<arg>1920</arg>
+<arg>1080</arg>
+<doc>Sets current windows size to given ``width`` and ``height``.</doc>
+<status status="PASS" start="2025-07-31T09:30:01.708331" elapsed="0.015272"/>
+</kw>
+<kw name="Get Window Size" owner="SL">
+<msg time="2025-07-31T09:30:01.726165" level="INFO">${size} = (1920, 1080)</msg>
+<var>${size}</var>
+<doc>Returns current window width and height as integers.</doc>
+<status status="PASS" start="2025-07-31T09:30:01.724019" elapsed="0.002214"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2025-07-31T09:30:01.726816" level="INFO">(1920, 1080)</msg>
+<arg>${size}</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2025-07-31T09:30:01.726559" elapsed="0.000318"/>
+</kw>
+<kw name="Click Button" owner="SL">
+<msg time="2025-07-31T09:30:01.727417" level="INFO">Clicking button 'id:details-button'.</msg>
+<arg>id:details-button</arg>
+<doc>Clicks the button identified by ``locator``.</doc>
+<status status="PASS" start="2025-07-31T09:30:01.727114" elapsed="0.049586"/>
+</kw>
+<kw name="Click Link" owner="SL">
+<msg time="2025-07-31T09:30:01.777423" level="INFO">Clicking link 'id:proceed-link'.</msg>
+<arg>id:proceed-link</arg>
+<doc>Clicks a link identified by ``locator``.</doc>
+<status status="PASS" start="2025-07-31T09:30:01.777103" elapsed="0.313889"/>
+</kw>
+<kw name="Capture Page Screenshot" owner="SL">
+<msg time="2025-07-31T09:30:02.181529" level="INFO" html="true">&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td colspan="3"&gt;&lt;a href="selenium-screenshot-2.png"&gt;&lt;img src="selenium-screenshot-2.png" width="800px"&gt;&lt;/a&gt;</msg>
+<doc>Takes a screenshot of the current page and embeds it into a log file.</doc>
+<status status="PASS" start="2025-07-31T09:30:02.091439" elapsed="0.090235"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SL">
+<arg>xpath=//input[@id="username"]</arg>
+<arg>timeout=20s</arg>
+<arg>error=\nLogin Page Does Not Found!</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-07-31T09:30:02.181951" elapsed="0.015498"/>
+</kw>
+<arg>url=${url}</arg>
+<arg>browser=${browser}</arg>
+<status status="PASS" start="2025-07-31T09:29:54.315987" elapsed="7.881598"/>
+</kw>
+<kw name="Input Username" owner="SeleniumLoginLib">
+<kw name="Wait Until Element Is Visible" owner="SL">
+<arg>xpath=//input[@id="username"]</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-07-31T09:30:02.198211" elapsed="0.007261"/>
+</kw>
+<kw name="Input Text" owner="SL">
+<msg time="2025-07-31T09:30:02.205950" level="INFO">Typing text 'admin' into text field 'xpath=//input[@id="username"]'.</msg>
+<arg>xpath=//input[@id="username"]</arg>
+<arg>${username}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-07-31T09:30:02.205699" elapsed="0.054297"/>
+</kw>
+<arg>username=${username}</arg>
+<status status="PASS" start="2025-07-31T09:30:02.197836" elapsed="0.062365"/>
+</kw>
+<kw name="Input User Password" owner="SeleniumLoginLib">
+<kw name="Wait Until Element Is Visible" owner="SL">
+<arg>xpath=//input[@id="password"]</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-07-31T09:30:02.261220" elapsed="0.011302"/>
+</kw>
+<kw name="Input Password" owner="SL">
+<msg time="2025-07-31T09:30:02.273324" level="INFO">Typing password into text field 'xpath=//input[@id="password"]'.</msg>
+<msg time="2025-07-31T09:30:02.290740" level="INFO">Temporally setting log level to: NONE</msg>
+<arg>xpath=//input[@id="password"]</arg>
+<arg>${password}</arg>
+<doc>Types the given password into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-07-31T09:30:02.272907" elapsed="0.041921"/>
+</kw>
+<arg>password=${password}</arg>
+<status status="PASS" start="2025-07-31T09:30:02.260604" elapsed="0.054441"/>
+</kw>
+<kw name="Submit Credentials" owner="SeleniumLoginLib">
+<kw name="Wait Until Element Is Visible" owner="SL">
+<arg>xpath=//button[@id="loginbutton"]</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-07-31T09:30:02.315849" elapsed="0.010732"/>
+</kw>
+<kw name="Click Button" owner="SL">
+<msg time="2025-07-31T09:30:02.327131" level="INFO">Clicking button 'xpath=//button[@id="loginbutton"]'.</msg>
+<arg>xpath=//button[@id="loginbutton"]</arg>
+<doc>Clicks the button identified by ``locator``.</doc>
+<status status="PASS" start="2025-07-31T09:30:02.326890" elapsed="0.037863"/>
+</kw>
+<status status="PASS" start="2025-07-31T09:30:02.315409" elapsed="0.049467"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-07-31T09:30:05.365378" level="INFO">Slept 3 seconds.</msg>
+<arg>3s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-07-31T09:30:02.365072" elapsed="3.000482"/>
+</kw>
+<arg>password=${ONT}[ONT_WEB_PASS]</arg>
+<status status="PASS" start="2025-07-31T09:29:54.315592" elapsed="11.050124"/>
+</kw>
+<kw name="Select Frame" owner="SL">
+<msg time="2025-07-31T09:30:05.366381" level="INFO">Selecting frame 'xpath=//frame[@name="contentfrm"]'.</msg>
+<arg>xpath=//frame[@name="contentfrm"]</arg>
+<doc>Sets frame identified by ``locator`` as the current frame.</doc>
+<status status="PASS" start="2025-07-31T09:30:05.366046" elapsed="0.021010"/>
+</kw>
+<kw name="Log To Console" owner="BuiltIn">
+<arg>\nStep 2: Open Config WAN Page</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="PASS" start="2025-07-31T09:30:05.387385" elapsed="0.000230"/>
+</kw>
+<kw name="Open Network Settings Wan Page" owner="SeleniumNetworkWANLib">
+<kw name="Click Element" owner="SL">
+<msg time="2025-07-31T09:30:05.388447" level="INFO">Clicking element 'xpath=//*[@id="net-wanset"]'.</msg>
+<arg>xpath=//*[@id="net-wanset"]</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-07-31T09:30:05.388272" elapsed="0.288111"/>
+</kw>
+<kw name="Wait Until Page Contains" owner="SL">
+<arg>WAN</arg>
+<arg>timeout=20s</arg>
+<arg>error=\nNetwork Settings WAN Configure Page Not Found</arg>
+<doc>Waits until ``text`` appears on the current page.</doc>
+<status status="PASS" start="2025-07-31T09:30:05.676859" elapsed="0.010415"/>
+</kw>
+<kw name="Page Should Contain" owner="SL">
+<msg time="2025-07-31T09:30:05.725955" level="INFO">Current page contains text 'WAN'.</msg>
+<arg>WAN</arg>
+<doc>Verifies that current page contains ``text``.</doc>
+<status status="PASS" start="2025-07-31T09:30:05.687670" elapsed="0.038397"/>
+</kw>
+<kw name="Select Frame" owner="SL">
+<msg time="2025-07-31T09:30:05.726470" level="INFO">Selecting frame 'xpath=//frame[@name="contentfrm"]'.</msg>
+<arg>xpath=//frame[@name="contentfrm"]</arg>
+<doc>Sets frame identified by ``locator`` as the current frame.</doc>
+<status status="PASS" start="2025-07-31T09:30:05.726278" elapsed="0.011505"/>
+</kw>
+<status status="PASS" start="2025-07-31T09:30:05.387880" elapsed="0.349993"/>
+</kw>
+<kw name="Maximize Browser Window" owner="SL">
+<doc>Maximizes current browser window.</doc>
+<status status="PASS" start="2025-07-31T09:30:05.738026" elapsed="0.013431"/>
+</kw>
+<kw name="Log To Console" owner="BuiltIn">
+<arg>\nStep 3: Config Enable WAN</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="PASS" start="2025-07-31T09:30:05.751720" elapsed="0.000192"/>
+</kw>
+<kw name="Log To Console" owner="BuiltIn">
+<arg>\nStep 3.1: Add WAN &amp; para of wan interface</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="PASS" start="2025-07-31T09:30:05.752068" elapsed="0.000122"/>
+</kw>
+<kw name="Add New Wan Service" owner="SeleniumNetworkWANLib">
+<kw name="Log To Console" owner="BuiltIn">
+<arg>\nAdd New WAN</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="PASS" start="2025-07-31T09:30:05.752654" elapsed="0.000106"/>
+</kw>
+<kw name="Scroll Element Into View" owner="SL">
+<arg>xpath=//*[@id="btnAddCnt"]</arg>
+<doc>Scrolls the element identified by ``locator`` into view.</doc>
+<status status="PASS" start="2025-07-31T09:30:05.752904" elapsed="0.277182"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SL">
+<arg>xpath=//*[@id="btnAddCnt"]</arg>
+<arg>timeout=20s</arg>
+<arg>error=\nCreate Button Does Not Found!</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-07-31T09:30:06.030476" elapsed="0.015634"/>
+</kw>
+<kw name="Click Element" owner="SL">
+<msg time="2025-07-31T09:30:06.046616" level="INFO">Clicking element 'xpath=//*[@id="btnAddCnt"]'.</msg>
+<arg>xpath=//*[@id="btnAddCnt"]</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-07-31T09:30:06.046384" elapsed="0.071391"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-07-31T09:30:08.118384" level="INFO">Slept 2 seconds.</msg>
+<arg>2s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-07-31T09:30:06.118047" elapsed="2.000523"/>
+</kw>
+<doc>Adding new WAN service by click Create button.</doc>
+<status status="PASS" start="2025-07-31T09:30:05.752401" elapsed="2.366329"/>
+</kw>
+<kw name="Select Enable/Disable Button" owner="SeleniumNetworkWANLib">
+<kw name="Wait Until Element Is Visible" owner="SL">
+<arg>xpath=//*[@id="cb_enblService"]</arg>
+<arg>timeout=10s</arg>
+<arg>error=\nChoose Status WAN Box Not Found</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-07-31T09:30:08.119706" elapsed="0.019728"/>
+</kw>
+<kw name="Log To Console" owner="BuiltIn">
+<arg>Select ${enable} WAN Service</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="PASS" start="2025-07-31T09:30:08.139799" elapsed="0.000344"/>
+</kw>
+<kw name="Execute Javascript" owner="SL">
+<msg time="2025-07-31T09:30:08.140814" level="INFO">Executing JavaScript:
+return document.querySelector("#cb_enblService").checked
+Without any arguments.</msg>
+<msg time="2025-07-31T09:30:08.144220" level="INFO">${status} = True</msg>
+<var>${status}</var>
+<arg>return document.querySelector("#cb_enblService").checked</arg>
+<doc>Executes the given JavaScript code with possible arguments.</doc>
+<status status="PASS" start="2025-07-31T09:30:08.140404" elapsed="0.003877"/>
+</kw>
+<kw name="Run Keyword If" owner="BuiltIn">
+<arg>'${enable}' == 'On' and '${status}' == 'False'</arg>
+<arg>SL.Execute Javascript</arg>
+<arg>document.querySelector("#cb_enblService").click();</arg>
+<arg>ELSE IF</arg>
+<arg>'${enable}' == 'Off' and '${status}' == 'True'</arg>
+<arg>SL.Execute Javascript</arg>
+<arg>document.querySelector("#cb_enblService").click();</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<status status="PASS" start="2025-07-31T09:30:08.144607" elapsed="0.000395"/>
+</kw>
+<arg>enable=On</arg>
+<doc>Select WAN Status Enable</doc>
+<status status="PASS" start="2025-07-31T09:30:08.119146" elapsed="0.025965"/>
+</kw>
+<kw name="Input VLAN ID" owner="SeleniumNetworkWANLib">
+<kw name="Wait Until Element Is Visible" owner="SL">
+<arg>xpath=//*[@id="vlan"]</arg>
+<arg>timeout=10s</arg>
+<arg>error=\nVLan Box Not Found</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-07-31T09:30:08.145764" elapsed="0.011594"/>
+</kw>
+<kw name="Log To Console" owner="BuiltIn">
+<arg>Input VLAN ID = '${vlan_id}'</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="PASS" start="2025-07-31T09:30:08.157668" elapsed="0.000304"/>
+</kw>
+<kw name="Input Text" owner="SL">
+<msg time="2025-07-31T09:30:08.158848" level="INFO">Typing text '11' into text field 'xpath=//*[@id="vlan"]'.</msg>
+<arg>xpath=//*[@id="vlan"]</arg>
+<arg>${vlan_id}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-07-31T09:30:08.158460" elapsed="0.047473"/>
+</kw>
+<arg>vlan_id=11</arg>
+<status status="PASS" start="2025-07-31T09:30:08.145364" elapsed="0.060702"/>
+</kw>
+<kw name="Click Button Save WAN" owner="SeleniumNetworkWANLib">
+<kw name="Wait Until Element Is Visible" owner="SL">
+<arg>xpath=//*[@id="btnOK"]</arg>
+<arg>timeout=10s</arg>
+<arg>error=\nSave Button Not Found</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-07-31T09:30:08.206596" elapsed="0.009390"/>
+</kw>
+<kw name="Click Button" owner="SL">
+<msg time="2025-07-31T09:30:08.216421" level="INFO">Clicking button 'xpath=//*[@id="btnOK"]'.</msg>
+<arg>xpath=//*[@id="btnOK"]</arg>
+<doc>Clicks the button identified by ``locator``.</doc>
+<status status="PASS" start="2025-07-31T09:30:08.216242" elapsed="0.467844"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-07-31T09:30:23.684971" level="INFO">Slept 15 seconds.</msg>
+<arg>15s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-07-31T09:30:08.684482" elapsed="15.000746"/>
+</kw>
+<status status="PASS" start="2025-07-31T09:30:08.206306" elapsed="15.479122"/>
+</kw>
+<kw name="Log To Console" owner="BuiltIn">
+<arg>\nStep 3.2: Verify Enable status WAN</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="PASS" start="2025-07-31T09:30:23.685802" elapsed="0.000361"/>
+</kw>
+<kw name="Wan Status Should Be Connected" owner="SeleniumStatusWANInfoLib">
+<kw name="Open WAN Summary Page" owner="SeleniumStatusWANInfoLib">
+<kw name="Click Element" owner="SL">
+<msg time="2025-07-31T09:30:23.687937" level="INFO">Clicking element 'xpath=//*[@id="status_deviceinfo"]'.</msg>
+<arg>xpath=//*[@id="status_deviceinfo"]</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-07-31T09:30:23.687681" elapsed="0.236364"/>
+</kw>
+<kw name="Click Element" owner="SL">
+<msg time="2025-07-31T09:30:23.925189" level="INFO">Clicking element 'xpath=//*[@id="sta-network"]'.</msg>
+<arg>xpath=//*[@id="sta-network"]</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-07-31T09:30:23.924555" elapsed="0.211838"/>
+</kw>
+<kw name="Wait Until Page Contains" owner="SL">
+<arg>IPv4 Connection</arg>
+<arg>timeout=20s</arg>
+<arg>error=\nWAN Info Page Not Found</arg>
+<doc>Waits until ``text`` appears on the current page.</doc>
+<status status="PASS" start="2025-07-31T09:30:24.136778" elapsed="0.011763"/>
+</kw>
+<kw name="Page Should Contain" owner="SL">
+<msg time="2025-07-31T09:30:24.206934" level="INFO">Current page contains text 'IPv4 Connection'.</msg>
+<arg>IPv4 Connection</arg>
+<doc>Verifies that current page contains ``text``.</doc>
+<status status="PASS" start="2025-07-31T09:30:24.148918" elapsed="0.058130"/>
+</kw>
+<kw name="Select Frame" owner="SL">
+<msg time="2025-07-31T09:30:24.207486" level="INFO">Selecting frame 'xpath=//frame[@name="contentfrm"]'.</msg>
+<arg>xpath=//frame[@name="contentfrm"]</arg>
+<doc>Sets frame identified by ``locator`` as the current frame.</doc>
+<status status="PASS" start="2025-07-31T09:30:24.207276" elapsed="0.010575"/>
+</kw>
+<doc>Open WAN Summary Page</doc>
+<status status="PASS" start="2025-07-31T09:30:23.687212" elapsed="0.530737"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-07-31T09:30:26.218489" level="INFO">Slept 2 seconds.</msg>
+<arg>2s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-07-31T09:30:24.218151" elapsed="2.000584"/>
+</kw>
+<kw name="Get Row Index" owner="SeleniumStatusWANInfoLib">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2025-07-31T09:30:26.220726" level="INFO">${index} = None</msg>
+<var>${index}</var>
+<arg>None</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2025-07-31T09:30:26.220432" elapsed="0.000346"/>
+</kw>
+<kw name="Set Selenium Speed" owner="SL">
+<arg>0.1</arg>
+<doc>Sets the delay that is waited after each Selenium command.</doc>
+<status status="PASS" start="2025-07-31T09:30:26.221057" elapsed="0.000240"/>
+</kw>
+<kw name="Get Column Index" owner="SeleniumStatusWANInfoLib">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2025-07-31T09:30:26.222101" level="INFO">${index} = None</msg>
+<var>${index}</var>
+<arg>None</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2025-07-31T09:30:26.221959" elapsed="0.000171"/>
+</kw>
+<kw name="Set Selenium Speed" owner="SL">
+<arg>0.1</arg>
+<doc>Sets the delay that is waited after each Selenium command.</doc>
+<status status="PASS" start="2025-07-31T09:30:26.222265" elapsed="0.000107"/>
+</kw>
+<for flavor="IN RANGE">
+<iter>
+<kw name="Run Keyword And Return Status" owner="BuiltIn">
+<kw name="Element Should Be Visible" owner="SL">
+<msg time="2025-07-31T09:30:26.442418" level="INFO">Element 'xpath=//*[@id="network_info"]/tbody/tr[1]/td[1]' is displayed.</msg>
+<arg>xpath=//*[@id="network_info"]/tbody/tr[1]/td[${i}]</arg>
+<doc>Verifies that the element identified by ``locator`` is visible.</doc>
+<status status="PASS" start="2025-07-31T09:30:26.223575" elapsed="0.219051"/>
+</kw>
+<msg time="2025-07-31T09:30:26.442903" level="INFO">${element_is_visible} = True</msg>
+<var>${element_is_visible}</var>
+<arg>SL.Element Should Be Visible</arg>
+<arg>xpath=//*[@id="network_info"]/tbody/tr[1]/td[${i}]</arg>
+<doc>Runs the given keyword with given arguments and returns the status as a Boolean value.</doc>
+<status status="PASS" start="2025-07-31T09:30:26.222711" elapsed="0.220237"/>
+</kw>
+<kw name="Exit For Loop If" owner="BuiltIn">
+<arg>'${element_is_visible}' == 'False'</arg>
+<doc>Stops executing the enclosing FOR loop if the ``condition`` is true.</doc>
+<status status="PASS" start="2025-07-31T09:30:26.443402" elapsed="0.000548"/>
+</kw>
+<kw name="Get Text" owner="SL">
+<msg time="2025-07-31T09:30:26.663703" level="INFO">${column_name_tmp} = Connection Name</msg>
+<var>${column_name_tmp}</var>
+<arg>xpath=//*[@id="network_info"]/tbody/tr[1]/td[${i}]</arg>
+<doc>Returns the text value of the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-07-31T09:30:26.444271" elapsed="0.219504"/>
+</kw>
+<kw name="Set Variable If" owner="BuiltIn">
+<msg time="2025-07-31T09:30:26.664516" level="INFO">${index} = 1</msg>
+<var>${index}</var>
+<arg>'${column_name_tmp}' == '${column_name}'</arg>
+<arg>${i}</arg>
+<doc>Sets variable based on the given condition.</doc>
+<status status="PASS" start="2025-07-31T09:30:26.664145" elapsed="0.000404"/>
+</kw>
+<kw name="Exit For Loop If" owner="BuiltIn">
+<msg time="2025-07-31T09:30:26.665025" level="INFO">Exiting for loop altogether.</msg>
+<arg>'${column_name_tmp}' == '${column_name}'</arg>
+<doc>Stops executing the enclosing FOR loop if the ``condition`` is true.</doc>
+<status status="PASS" start="2025-07-31T09:30:26.664737" elapsed="0.000372"/>
+</kw>
+<var name="${i}">1</var>
+<status status="PASS" start="2025-07-31T09:30:26.222584" elapsed="0.442582"/>
+</iter>
+<var>${i}</var>
+<value>1</value>
+<value>13</value>
+<status status="PASS" start="2025-07-31T09:30:26.222428" elapsed="0.442810"/>
+</for>
+<kw name="Set Selenium Speed" owner="SL">
+<arg>0.3</arg>
+<doc>Sets the delay that is waited after each Selenium command.</doc>
+<status status="PASS" start="2025-07-31T09:30:26.665460" elapsed="0.000223"/>
+</kw>
+<return>
+<value>${index}</value>
+<status status="PASS" start="2025-07-31T09:30:26.665753" elapsed="0.000055"/>
+</return>
+<msg time="2025-07-31T09:30:26.666021" level="INFO">${column_index_tmp} = 1</msg>
+<var>${column_index_tmp}</var>
+<arg>${column_name}</arg>
+<doc>Get column index base on column name.
+Input:
+1. column_name
+Return:
+1. Column index if found, else return 'None'</doc>
+<status status="PASS" start="2025-07-31T09:30:26.221625" elapsed="0.444421"/>
+</kw>
+<for flavor="IN RANGE">
+<iter>
+<kw name="Run Keyword And Return Status" owner="BuiltIn">
+<kw name="Element Should Be Visible" owner="SL">
+<msg time="2025-07-31T09:30:27.284876" level="INFO">Element 'xpath=//*[@id="network_info"]/tbody/tr[2]/td[2]' is displayed.</msg>
+<arg>xpath=//*[@id="network_info"]/tbody/tr[${row_i}]/td[2]</arg>
+<doc>Verifies that the element identified by ``locator`` is visible.</doc>
+<status status="PASS" start="2025-07-31T09:30:26.666639" elapsed="0.618720"/>
+</kw>
+<msg time="2025-07-31T09:30:27.285695" level="INFO">${element_is_visible} = True</msg>
+<var>${element_is_visible}</var>
+<arg>SL.Element Should Be Visible</arg>
+<arg>xpath=//*[@id="network_info"]/tbody/tr[${row_i}]/td[2]</arg>
+<doc>Runs the given keyword with given arguments and returns the status as a Boolean value.</doc>
+<status status="PASS" start="2025-07-31T09:30:26.666446" elapsed="0.619290"/>
+</kw>
+<kw name="Exit For Loop If" owner="BuiltIn">
+<arg>'${element_is_visible}' == 'False'</arg>
+<doc>Stops executing the enclosing FOR loop if the ``condition`` is true.</doc>
+<status status="PASS" start="2025-07-31T09:30:27.286418" elapsed="0.000697"/>
+</kw>
+<kw name="Exit For Loop If" owner="BuiltIn">
+<arg>'${element_is_visible}' == 'False'</arg>
+<doc>Stops executing the enclosing FOR loop if the ``condition`` is true.</doc>
+<status status="PASS" start="2025-07-31T09:30:27.287471" elapsed="0.000476"/>
+</kw>
+<kw name="Get Text" owner="SL">
+<msg time="2025-07-31T09:30:27.909916" level="INFO">${column_value_tmp} = 1_TR069_R_VID_4000</msg>
+<var>${column_value_tmp}</var>
+<arg>xpath=//*[@id="network_info"]/tbody/tr[${row_i}]/td[${column_index_tmp}]</arg>
+<doc>Returns the text value of the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-07-31T09:30:27.288231" elapsed="0.621834"/>
+</kw>
+<kw name="Set Variable If" owner="BuiltIn">
+<msg time="2025-07-31T09:30:27.910966" level="INFO">${index} = None</msg>
+<var>${index}</var>
+<arg>'${column_value}' in '${column_value_tmp}'</arg>
+<arg>${row_i}</arg>
+<doc>Sets variable based on the given condition.</doc>
+<status status="PASS" start="2025-07-31T09:30:27.910520" elapsed="0.000497"/>
+</kw>
+<kw name="Exit For Loop If" owner="BuiltIn">
+<arg>'${column_value}' in '${column_value_tmp}'</arg>
+<doc>Stops executing the enclosing FOR loop if the ``condition`` is true.</doc>
+<status status="PASS" start="2025-07-31T09:30:27.911243" elapsed="0.000352"/>
+</kw>
+<var name="${row_i}">2</var>
+<status status="PASS" start="2025-07-31T09:30:26.666287" elapsed="1.245364"/>
+</iter>
+<iter>
+<kw name="Run Keyword And Return Status" owner="BuiltIn">
+<kw name="Element Should Be Visible" owner="SL">
+<msg time="2025-07-31T09:30:28.532223" level="INFO">Element 'xpath=//*[@id="network_info"]/tbody/tr[3]/td[2]' is displayed.</msg>
+<arg>xpath=//*[@id="network_info"]/tbody/tr[${row_i}]/td[2]</arg>
+<doc>Verifies that the element identified by ``locator`` is visible.</doc>
+<status status="PASS" start="2025-07-31T09:30:27.912148" elapsed="0.620302"/>
+</kw>
+<msg time="2025-07-31T09:30:28.532744" level="INFO">${element_is_visible} = True</msg>
+<var>${element_is_visible}</var>
+<arg>SL.Element Should Be Visible</arg>
+<arg>xpath=//*[@id="network_info"]/tbody/tr[${row_i}]/td[2]</arg>
+<doc>Runs the given keyword with given arguments and returns the status as a Boolean value.</doc>
+<status status="PASS" start="2025-07-31T09:30:27.911934" elapsed="0.620856"/>
+</kw>
+<kw name="Exit For Loop If" owner="BuiltIn">
+<arg>'${element_is_visible}' == 'False'</arg>
+<doc>Stops executing the enclosing FOR loop if the ``condition`` is true.</doc>
+<status status="PASS" start="2025-07-31T09:30:28.533288" elapsed="0.000517"/>
+</kw>
+<kw name="Exit For Loop If" owner="BuiltIn">
+<arg>'${element_is_visible}' == 'False'</arg>
+<doc>Stops executing the enclosing FOR loop if the ``condition`` is true.</doc>
+<status status="PASS" start="2025-07-31T09:30:28.534218" elapsed="0.000564"/>
+</kw>
+<kw name="Get Text" owner="SL">
+<msg time="2025-07-31T09:30:29.161307" level="INFO">${column_value_tmp} = 2_INTERNET_R_VID_11</msg>
+<var>${column_value_tmp}</var>
+<arg>xpath=//*[@id="network_info"]/tbody/tr[${row_i}]/td[${column_index_tmp}]</arg>
+<doc>Returns the text value of the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-07-31T09:30:28.535291" elapsed="0.626087"/>
+</kw>
+<kw name="Set Variable If" owner="BuiltIn">
+<msg time="2025-07-31T09:30:29.161965" level="INFO">${index} = 3</msg>
+<var>${index}</var>
+<arg>'${column_value}' in '${column_value_tmp}'</arg>
+<arg>${row_i}</arg>
+<doc>Sets variable based on the given condition.</doc>
+<status status="PASS" start="2025-07-31T09:30:29.161688" elapsed="0.000306"/>
+</kw>
+<kw name="Exit For Loop If" owner="BuiltIn">
+<msg time="2025-07-31T09:30:29.162273" level="INFO">Exiting for loop altogether.</msg>
+<arg>'${column_value}' in '${column_value_tmp}'</arg>
+<doc>Stops executing the enclosing FOR loop if the ``condition`` is true.</doc>
+<status status="PASS" start="2025-07-31T09:30:29.162122" elapsed="0.000207"/>
+</kw>
+<var name="${row_i}">3</var>
+<status status="PASS" start="2025-07-31T09:30:27.911789" elapsed="1.250575"/>
+</iter>
+<var>${row_i}</var>
+<value>2</value>
+<value>20</value>
+<status status="PASS" start="2025-07-31T09:30:26.666111" elapsed="2.496293"/>
+</for>
+<kw name="Set Selenium Speed" owner="SL">
+<arg>0.3</arg>
+<doc>Sets the delay that is waited after each Selenium command.</doc>
+<status status="PASS" start="2025-07-31T09:30:29.162558" elapsed="0.000152"/>
+</kw>
+<return>
+<value>${index}</value>
+<status status="PASS" start="2025-07-31T09:30:29.162752" elapsed="0.000032"/>
+</return>
+<msg time="2025-07-31T09:30:29.162894" level="INFO">${row_index} = 3</msg>
+<var>${row_index}</var>
+<arg>column_name=Connection Name</arg>
+<arg>column_value=${vlan_id}</arg>
+<doc>Get row index base on column name and column value.
+Input:
+1. column_name
+2. column_value
+Return:
+1. Row index if found, else return 'None'</doc>
+<status status="PASS" start="2025-07-31T09:30:26.219533" elapsed="2.943379"/>
+</kw>
+<kw name="Get Cell Value" owner="SeleniumStatusWANInfoLib">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2025-07-31T09:30:29.163515" level="INFO">${cell_value} = None</msg>
+<var>${cell_value}</var>
+<arg>None</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2025-07-31T09:30:29.163415" elapsed="0.000117"/>
+</kw>
+<kw name="Get Column Index" owner="SeleniumStatusWANInfoLib">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2025-07-31T09:30:29.164009" level="INFO">${index} = None</msg>
+<var>${index}</var>
+<arg>None</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2025-07-31T09:30:29.163921" elapsed="0.000105"/>
+</kw>
+<kw name="Set Selenium Speed" owner="SL">
+<arg>0.1</arg>
+<doc>Sets the delay that is waited after each Selenium command.</doc>
+<status status="PASS" start="2025-07-31T09:30:29.164131" elapsed="0.000112"/>
+</kw>
+<for flavor="IN RANGE">
+<iter>
+<kw name="Run Keyword And Return Status" owner="BuiltIn">
+<kw name="Element Should Be Visible" owner="SL">
+<msg time="2025-07-31T09:30:29.380413" level="INFO">Element 'xpath=//*[@id="network_info"]/tbody/tr[1]/td[1]' is displayed.</msg>
+<arg>xpath=//*[@id="network_info"]/tbody/tr[1]/td[${i}]</arg>
+<doc>Verifies that the element identified by ``locator`` is visible.</doc>
+<status status="PASS" start="2025-07-31T09:30:29.164795" elapsed="0.215859"/>
+</kw>
+<msg time="2025-07-31T09:30:29.380994" level="INFO">${element_is_visible} = True</msg>
+<var>${element_is_visible}</var>
+<arg>SL.Element Should Be Visible</arg>
+<arg>xpath=//*[@id="network_info"]/tbody/tr[1]/td[${i}]</arg>
+<doc>Runs the given keyword with given arguments and returns the status as a Boolean value.</doc>
+<status status="PASS" start="2025-07-31T09:30:29.164653" elapsed="0.216465"/>
+</kw>
+<kw name="Exit For Loop If" owner="BuiltIn">
+<arg>'${element_is_visible}' == 'False'</arg>
+<doc>Stops executing the enclosing FOR loop if the ``condition`` is true.</doc>
+<status status="PASS" start="2025-07-31T09:30:29.381508" elapsed="0.000457"/>
+</kw>
+<kw name="Get Text" owner="SL">
+<msg time="2025-07-31T09:30:29.604828" level="INFO">${column_name_tmp} = Connection Name</msg>
+<var>${column_name_tmp}</var>
+<arg>xpath=//*[@id="network_info"]/tbody/tr[1]/td[${i}]</arg>
+<doc>Returns the text value of the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-07-31T09:30:29.382243" elapsed="0.222668"/>
+</kw>
+<kw name="Set Variable If" owner="BuiltIn">
+<msg time="2025-07-31T09:30:29.605719" level="INFO">${index} = None</msg>
+<var>${index}</var>
+<arg>'${column_name_tmp}' == '${column_name}'</arg>
+<arg>${i}</arg>
+<doc>Sets variable based on the given condition.</doc>
+<status status="PASS" start="2025-07-31T09:30:29.605306" elapsed="0.000455"/>
+</kw>
+<kw name="Exit For Loop If" owner="BuiltIn">
+<arg>'${column_name_tmp}' == '${column_name}'</arg>
+<doc>Stops executing the enclosing FOR loop if the ``condition`` is true.</doc>
+<status status="PASS" start="2025-07-31T09:30:29.606015" elapsed="0.000509"/>
+</kw>
+<var name="${i}">1</var>
+<status status="PASS" start="2025-07-31T09:30:29.164543" elapsed="0.442055"/>
+</iter>
+<iter>
+<kw name="Run Keyword And Return Status" owner="BuiltIn">
+<kw name="Element Should Be Visible" owner="SL">
+<msg time="2025-07-31T09:30:29.830845" level="INFO">Element 'xpath=//*[@id="network_info"]/tbody/tr[1]/td[2]' is displayed.</msg>
+<arg>xpath=//*[@id="network_info"]/tbody/tr[1]/td[${i}]</arg>
+<doc>Verifies that the element identified by ``locator`` is visible.</doc>
+<status status="PASS" start="2025-07-31T09:30:29.607468" elapsed="0.223573"/>
+</kw>
+<msg time="2025-07-31T09:30:29.831280" level="INFO">${element_is_visible} = True</msg>
+<var>${element_is_visible}</var>
+<arg>SL.Element Should Be Visible</arg>
+<arg>xpath=//*[@id="network_info"]/tbody/tr[1]/td[${i}]</arg>
+<doc>Runs the given keyword with given arguments and returns the status as a Boolean value.</doc>
+<status status="PASS" start="2025-07-31T09:30:29.607099" elapsed="0.224221"/>
+</kw>
+<kw name="Exit For Loop If" owner="BuiltIn">
+<arg>'${element_is_visible}' == 'False'</arg>
+<doc>Stops executing the enclosing FOR loop if the ``condition`` is true.</doc>
+<status status="PASS" start="2025-07-31T09:30:29.831637" elapsed="0.000412"/>
+</kw>
+<kw name="Get Text" owner="SL">
+<msg time="2025-07-31T09:30:30.053944" level="INFO">${column_name_tmp} = Status</msg>
+<var>${column_name_tmp}</var>
+<arg>xpath=//*[@id="network_info"]/tbody/tr[1]/td[${i}]</arg>
+<doc>Returns the text value of the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-07-31T09:30:29.832309" elapsed="0.221761"/>
+</kw>
+<kw name="Set Variable If" owner="BuiltIn">
+<msg time="2025-07-31T09:30:30.055118" level="INFO">${index} = 2</msg>
+<var>${index}</var>
+<arg>'${column_name_tmp}' == '${column_name}'</arg>
+<arg>${i}</arg>
+<doc>Sets variable based on the given condition.</doc>
+<status status="PASS" start="2025-07-31T09:30:30.054586" elapsed="0.000577"/>
+</kw>
+<kw name="Exit For Loop If" owner="BuiltIn">
+<msg time="2025-07-31T09:30:30.055808" level="INFO">Exiting for loop altogether.</msg>
+<arg>'${column_name_tmp}' == '${column_name}'</arg>
+<doc>Stops executing the enclosing FOR loop if the ``condition`` is true.</doc>
+<status status="PASS" start="2025-07-31T09:30:30.055424" elapsed="0.000501"/>
+</kw>
+<var name="${i}">2</var>
+<status status="PASS" start="2025-07-31T09:30:29.606806" elapsed="0.449207"/>
+</iter>
+<var>${i}</var>
+<value>1</value>
+<value>13</value>
+<status status="PASS" start="2025-07-31T09:30:29.164288" elapsed="0.891816"/>
+</for>
+<kw name="Set Selenium Speed" owner="SL">
+<arg>0.3</arg>
+<doc>Sets the delay that is waited after each Selenium command.</doc>
+<status status="PASS" start="2025-07-31T09:30:30.056442" elapsed="0.000296"/>
+</kw>
+<return>
+<value>${index}</value>
+<status status="PASS" start="2025-07-31T09:30:30.056831" elapsed="0.000049"/>
+</return>
+<msg time="2025-07-31T09:30:30.057058" level="INFO">${column_index_tmp} = 2</msg>
+<var>${column_index_tmp}</var>
+<arg>${column_name}</arg>
+<doc>Get column index base on column name.
+Input:
+1. column_name
+Return:
+1. Column index if found, else return 'None'</doc>
+<status status="PASS" start="2025-07-31T09:30:29.163717" elapsed="0.893370"/>
+</kw>
+<kw name="Return From Keyword If" owner="BuiltIn">
+<arg>'${row_index}' == 'None'</arg>
+<arg>None</arg>
+<doc>Returns from the enclosing user keyword if ``condition`` is true.</doc>
+<status status="PASS" start="2025-07-31T09:30:30.057296" elapsed="0.000179"/>
+</kw>
+<kw name="Get Text" owner="SL">
+<msg time="2025-07-31T09:30:30.678303" level="INFO">${cell_value_tmp} = Connecting </msg>
+<var>${cell_value_tmp}</var>
+<arg>xpath=//*[@id="network_info"]/tbody/tr[${row_index}]/td[${column_index_tmp}]</arg>
+<doc>Returns the text value of the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-07-31T09:30:30.057667" elapsed="0.620752"/>
+</kw>
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2025-07-31T09:30:30.679285" level="INFO">${cell_value} = Connecting </msg>
+<var>${cell_value}</var>
+<arg>${cell_value_tmp}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2025-07-31T09:30:30.678884" elapsed="0.000448"/>
+</kw>
+<return>
+<value>${cell_value}</value>
+<status status="PASS" start="2025-07-31T09:30:30.679440" elapsed="0.000085"/>
+</return>
+<msg time="2025-07-31T09:30:30.679735" level="INFO">${wan_status} = Connecting </msg>
+<var>${wan_status}</var>
+<arg>column_name=Status</arg>
+<arg>row_index=${row_index}</arg>
+<doc>Get value of cell base on column name and row index.
+If found, return cell value, else return 'None'
+Input:
+1. column_name
+2. row_index
+Return:
+1. cell_value</doc>
+<status status="PASS" start="2025-07-31T09:30:29.163129" elapsed="1.516636"/>
+</kw>
+<kw name="Log To Console" owner="BuiltIn">
+<arg>Wan ${vlan_id} Status: ${wan_status}</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="PASS" start="2025-07-31T09:30:30.679967" elapsed="0.000270"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${wan_status}</arg>
+<arg>Connect</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2025-07-31T09:30:30.680442" elapsed="0.000210"/>
+</kw>
+<arg>vlan_id=11</arg>
+<doc>Check WAN status whether it's connected, base on VLAN ID
+Input:
+1. vlan_id
+Return:
+Pass or Failed</doc>
+<status status="PASS" start="2025-07-31T09:30:23.686577" elapsed="6.994160"/>
+</kw>
+<kw name="Log To Console" owner="BuiltIn">
+<arg>\nStep 4: Delete WAN was created</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="PASS" start="2025-07-31T09:30:30.680897" elapsed="0.000148"/>
+</kw>
+<kw name="Open Network Settings Wan Page" owner="SeleniumNetworkWANLib">
+<kw name="Click Element" owner="SL">
+<msg time="2025-07-31T09:30:30.682042" level="INFO">Clicking element 'xpath=//*[@id="net-wanset"]'.</msg>
+<arg>xpath=//*[@id="net-wanset"]</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-07-31T09:30:30.681755" elapsed="0.912269"/>
+</kw>
+<kw name="Wait Until Page Contains" owner="SL">
+<arg>WAN</arg>
+<arg>timeout=20s</arg>
+<arg>error=\nNetwork Settings WAN Configure Page Not Found</arg>
+<doc>Waits until ``text`` appears on the current page.</doc>
+<status status="PASS" start="2025-07-31T09:30:31.594521" elapsed="0.312641"/>
+</kw>
+<kw name="Page Should Contain" owner="SL">
+<msg time="2025-07-31T09:30:34.692942" level="INFO">Current page contains text 'WAN'.</msg>
+<arg>WAN</arg>
+<doc>Verifies that current page contains ``text``.</doc>
+<status status="PASS" start="2025-07-31T09:30:31.907543" elapsed="2.785661"/>
+</kw>
+<kw name="Select Frame" owner="SL">
+<msg time="2025-07-31T09:30:34.693958" level="INFO">Selecting frame 'xpath=//frame[@name="contentfrm"]'.</msg>
+<arg>xpath=//frame[@name="contentfrm"]</arg>
+<doc>Sets frame identified by ``locator`` as the current frame.</doc>
+<status status="PASS" start="2025-07-31T09:30:34.693625" elapsed="0.627509"/>
+</kw>
+<status status="PASS" start="2025-07-31T09:30:30.681330" elapsed="4.640089"/>
+</kw>
+<kw name="Delete WAN" owner="SeleniumNetworkWANLib">
+<kw name="Log To Console" owner="BuiltIn">
+<arg>\nDelete WAN</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="PASS" start="2025-07-31T09:30:35.322643" elapsed="0.000237"/>
+</kw>
+<kw name="Get Row Index" owner="SeleniumNetworkWANLib">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2025-07-31T09:30:35.324056" level="INFO">${index} = None</msg>
+<var>${index}</var>
+<arg>None</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2025-07-31T09:30:35.323862" elapsed="0.000232"/>
+</kw>
+<kw name="Set Selenium Speed" owner="SL">
+<arg>0.1</arg>
+<doc>Sets the delay that is waited after each Selenium command.</doc>
+<status status="PASS" start="2025-07-31T09:30:35.324288" elapsed="0.000216"/>
+</kw>
+<kw name="Get Column Index" owner="SeleniumNetworkWANLib">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2025-07-31T09:30:35.326153" level="INFO">${index} = None</msg>
+<var>${index}</var>
+<arg>None</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2025-07-31T09:30:35.325660" elapsed="0.000540"/>
+</kw>
+<kw name="Set Selenium Speed" owner="SL">
+<arg>0.1</arg>
+<doc>Sets the delay that is waited after each Selenium command.</doc>
+<status status="PASS" start="2025-07-31T09:30:35.326408" elapsed="0.000192"/>
+</kw>
+<for flavor="IN RANGE">
+<iter>
+<kw name="Run Keyword And Return Status" owner="BuiltIn">
+<kw name="Element Should Be Visible" owner="SL">
+<msg time="2025-07-31T09:30:35.547182" level="INFO">Element 'xpath=//*[@id="WanInfoTable"]/tbody/tr[1]/td[2]' is displayed.</msg>
+<arg>xpath=//*[@id="WanInfoTable"]/tbody/tr[1]/td[${i}]</arg>
+<doc>Verifies that the element identified by ``locator`` is visible.</doc>
+<status status="PASS" start="2025-07-31T09:30:35.327257" elapsed="0.220132"/>
+</kw>
+<msg time="2025-07-31T09:30:35.547651" level="INFO">${element_is_visible} = True</msg>
+<var>${element_is_visible}</var>
+<arg>SL.Element Should Be Visible</arg>
+<arg>xpath=//*[@id="WanInfoTable"]/tbody/tr[1]/td[${i}]</arg>
+<doc>Runs the given keyword with given arguments and returns the status as a Boolean value.</doc>
+<status status="PASS" start="2025-07-31T09:30:35.327039" elapsed="0.220648"/>
+</kw>
+<kw name="Exit For Loop If" owner="BuiltIn">
+<arg>'${element_is_visible}' == 'False'</arg>
+<doc>Stops executing the enclosing FOR loop if the ``condition`` is true.</doc>
+<status status="PASS" start="2025-07-31T09:30:35.548072" elapsed="0.000530"/>
+</kw>
+<kw name="Get Text" owner="SL">
+<msg time="2025-07-31T09:30:35.770375" level="INFO">${column_name_tmp} = Connection Name</msg>
+<var>${column_name_tmp}</var>
+<arg>xpath=//*[@id="WanInfoTable"]/tbody/tr[1]/td[${i}]</arg>
+<doc>Returns the text value of the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-07-31T09:30:35.548950" elapsed="0.221484"/>
+</kw>
+<kw name="Set Variable If" owner="BuiltIn">
+<msg time="2025-07-31T09:30:35.770949" level="INFO">${index} = None</msg>
+<var>${index}</var>
+<arg>'${column_name_tmp}' == '${column_name}'</arg>
+<arg>${i}</arg>
+<doc>Sets variable based on the given condition.</doc>
+<status status="PASS" start="2025-07-31T09:30:35.770699" elapsed="0.000271"/>
+</kw>
+<kw name="Exit For Loop If" owner="BuiltIn">
+<arg>'${column_name_tmp}' == '${column_name}'</arg>
+<doc>Stops executing the enclosing FOR loop if the ``condition`` is true.</doc>
+<status status="PASS" start="2025-07-31T09:30:35.771099" elapsed="0.000189"/>
+</kw>
+<var name="${i}">2</var>
+<status status="PASS" start="2025-07-31T09:30:35.326861" elapsed="0.444460"/>
+</iter>
+<iter>
+<kw name="Run Keyword And Return Status" owner="BuiltIn">
+<kw name="Element Should Be Visible" owner="SL">
+<msg time="2025-07-31T09:30:35.987614" level="INFO">Element 'xpath=//*[@id="WanInfoTable"]/tbody/tr[1]/td[3]' is displayed.</msg>
+<arg>xpath=//*[@id="WanInfoTable"]/tbody/tr[1]/td[${i}]</arg>
+<doc>Verifies that the element identified by ``locator`` is visible.</doc>
+<status status="PASS" start="2025-07-31T09:30:35.771686" elapsed="0.216126"/>
+</kw>
+<msg time="2025-07-31T09:30:35.988089" level="INFO">${element_is_visible} = True</msg>
+<var>${element_is_visible}</var>
+<arg>SL.Element Should Be Visible</arg>
+<arg>xpath=//*[@id="WanInfoTable"]/tbody/tr[1]/td[${i}]</arg>
+<doc>Runs the given keyword with given arguments and returns the status as a Boolean value.</doc>
+<status status="PASS" start="2025-07-31T09:30:35.771529" elapsed="0.216616"/>
+</kw>
+<kw name="Exit For Loop If" owner="BuiltIn">
+<arg>'${element_is_visible}' == 'False'</arg>
+<doc>Stops executing the enclosing FOR loop if the ``condition`` is true.</doc>
+<status status="PASS" start="2025-07-31T09:30:35.988481" elapsed="0.000444"/>
+</kw>
+<kw name="Get Text" owner="SL">
+<msg time="2025-07-31T09:30:36.206891" level="INFO">${column_name_tmp} = Way of getting IP</msg>
+<var>${column_name_tmp}</var>
+<arg>xpath=//*[@id="WanInfoTable"]/tbody/tr[1]/td[${i}]</arg>
+<doc>Returns the text value of the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-07-31T09:30:35.989234" elapsed="0.217767"/>
+</kw>
+<kw name="Set Variable If" owner="BuiltIn">
+<msg time="2025-07-31T09:30:36.208011" level="INFO">${index} = None</msg>
+<var>${index}</var>
+<arg>'${column_name_tmp}' == '${column_name}'</arg>
+<arg>${i}</arg>
+<doc>Sets variable based on the given condition.</doc>
+<status status="PASS" start="2025-07-31T09:30:36.207496" elapsed="0.000556"/>
+</kw>
+<kw name="Exit For Loop If" owner="BuiltIn">
+<arg>'${column_name_tmp}' == '${column_name}'</arg>
+<doc>Stops executing the enclosing FOR loop if the ``condition`` is true.</doc>
+<status status="PASS" start="2025-07-31T09:30:36.208332" elapsed="0.000425"/>
+</kw>
+<var name="${i}">3</var>
+<status status="PASS" start="2025-07-31T09:30:35.771429" elapsed="0.437408"/>
+</iter>
+<iter>
+<kw name="Run Keyword And Return Status" owner="BuiltIn">
+<kw name="Element Should Be Visible" owner="SL">
+<msg time="2025-07-31T09:30:36.434338" level="INFO">Element 'xpath=//*[@id="WanInfoTable"]/tbody/tr[1]/td[4]' is displayed.</msg>
+<arg>xpath=//*[@id="WanInfoTable"]/tbody/tr[1]/td[${i}]</arg>
+<doc>Verifies that the element identified by ``locator`` is visible.</doc>
+<status status="PASS" start="2025-07-31T09:30:36.209609" elapsed="0.224999"/>
+</kw>
+<msg time="2025-07-31T09:30:36.434938" level="INFO">${element_is_visible} = True</msg>
+<var>${element_is_visible}</var>
+<arg>SL.Element Should Be Visible</arg>
+<arg>xpath=//*[@id="WanInfoTable"]/tbody/tr[1]/td[${i}]</arg>
+<doc>Runs the given keyword with given arguments and returns the status as a Boolean value.</doc>
+<status status="PASS" start="2025-07-31T09:30:36.209350" elapsed="0.225643"/>
+</kw>
+<kw name="Exit For Loop If" owner="BuiltIn">
+<arg>'${element_is_visible}' == 'False'</arg>
+<doc>Stops executing the enclosing FOR loop if the ``condition`` is true.</doc>
+<status status="PASS" start="2025-07-31T09:30:36.435402" elapsed="0.000502"/>
+</kw>
+<kw name="Get Text" owner="SL">
+<msg time="2025-07-31T09:30:36.659779" level="INFO">${column_name_tmp} = VLAN/Priority</msg>
+<var>${column_name_tmp}</var>
+<arg>xpath=//*[@id="WanInfoTable"]/tbody/tr[1]/td[${i}]</arg>
+<doc>Returns the text value of the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-07-31T09:30:36.436215" elapsed="0.223657"/>
+</kw>
+<kw name="Set Variable If" owner="BuiltIn">
+<msg time="2025-07-31T09:30:36.660854" level="INFO">${index} = 4</msg>
+<var>${index}</var>
+<arg>'${column_name_tmp}' == '${column_name}'</arg>
+<arg>${i}</arg>
+<doc>Sets variable based on the given condition.</doc>
+<status status="PASS" start="2025-07-31T09:30:36.660356" elapsed="0.000545"/>
+</kw>
+<kw name="Exit For Loop If" owner="BuiltIn">
+<msg time="2025-07-31T09:30:36.661572" level="INFO">Exiting for loop altogether.</msg>
+<arg>'${column_name_tmp}' == '${column_name}'</arg>
+<doc>Stops executing the enclosing FOR loop if the ``condition`` is true.</doc>
+<status status="PASS" start="2025-07-31T09:30:36.661174" elapsed="0.000508"/>
+</kw>
+<var name="${i}">4</var>
+<status status="PASS" start="2025-07-31T09:30:36.209102" elapsed="0.452660"/>
+</iter>
+<var>${i}</var>
+<value>2</value>
+<value>7</value>
+<status status="PASS" start="2025-07-31T09:30:35.326670" elapsed="1.335175"/>
+</for>
+<kw name="Set Selenium Speed" owner="SL">
+<arg>0.3</arg>
+<doc>Sets the delay that is waited after each Selenium command.</doc>
+<status status="PASS" start="2025-07-31T09:30:36.662160" elapsed="0.000223"/>
+</kw>
+<return>
+<value>${index}</value>
+<status status="PASS" start="2025-07-31T09:30:36.662452" elapsed="0.000060"/>
+</return>
+<msg time="2025-07-31T09:30:36.662688" level="INFO">${column_index_tmp} = 4</msg>
+<var>${column_index_tmp}</var>
+<arg>${column_name}</arg>
+<doc>Get column index base on column name.
+Input:
+1. column_name
+Return:
+1. Column index if found, else return 'None'</doc>
+<status status="PASS" start="2025-07-31T09:30:35.325068" elapsed="1.337651"/>
+</kw>
+<for flavor="IN RANGE">
+<iter>
+<kw name="Run Keyword And Return Status" owner="BuiltIn">
+<kw name="Element Should Be Visible" owner="SL">
+<msg time="2025-07-31T09:30:37.288816" level="INFO">Element 'xpath=//*[@id="WanInfoTable"]/tbody/tr[2]/td[4]' is displayed.</msg>
+<arg>xpath=//*[@id="WanInfoTable"]/tbody/tr[${row_i}]/td[4]</arg>
+<doc>Verifies that the element identified by ``locator`` is visible.</doc>
+<status status="PASS" start="2025-07-31T09:30:36.663592" elapsed="0.625435"/>
+</kw>
+<msg time="2025-07-31T09:30:37.289264" level="INFO">${element_is_visible} = True</msg>
+<var>${element_is_visible}</var>
+<arg>SL.Element Should Be Visible</arg>
+<arg>xpath=//*[@id="WanInfoTable"]/tbody/tr[${row_i}]/td[4]</arg>
+<doc>Runs the given keyword with given arguments and returns the status as a Boolean value.</doc>
+<status status="PASS" start="2025-07-31T09:30:36.663340" elapsed="0.625961"/>
+</kw>
+<kw name="Exit For Loop If" owner="BuiltIn">
+<arg>'${element_is_visible}' == 'False'</arg>
+<doc>Stops executing the enclosing FOR loop if the ``condition`` is true.</doc>
+<status status="PASS" start="2025-07-31T09:30:37.289613" elapsed="0.000458"/>
+</kw>
+<kw name="Get Text" owner="SL">
+<msg time="2025-07-31T09:30:37.916852" level="INFO">${column_value_tmp} = 4000/0</msg>
+<var>${column_value_tmp}</var>
+<arg>xpath=//*[@id="WanInfoTable"]/tbody/tr[${row_i}]/td[${column_index_tmp}]</arg>
+<doc>Returns the text value of the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-07-31T09:30:37.290390" elapsed="0.626542"/>
+</kw>
+<kw name="Set Variable If" owner="BuiltIn">
+<msg time="2025-07-31T09:30:37.917846" level="INFO">${index} = None</msg>
+<var>${index}</var>
+<arg>'${column_value}' in '${column_value_tmp}'</arg>
+<arg>${row_i}</arg>
+<doc>Sets variable based on the given condition.</doc>
+<status status="PASS" start="2025-07-31T09:30:37.917373" elapsed="0.000527"/>
+</kw>
+<kw name="Exit For Loop If" owner="BuiltIn">
+<arg>'${column_value}' in '${column_value_tmp}'</arg>
+<doc>Stops executing the enclosing FOR loop if the ``condition`` is true.</doc>
+<status status="PASS" start="2025-07-31T09:30:37.918300" elapsed="0.000359"/>
+</kw>
+<var name="${row_i}">2</var>
+<status status="PASS" start="2025-07-31T09:30:36.663125" elapsed="1.255609"/>
+</iter>
+<iter>
+<kw name="Run Keyword And Return Status" owner="BuiltIn">
+<kw name="Element Should Be Visible" owner="SL">
+<msg time="2025-07-31T09:30:38.543783" level="INFO">Element 'xpath=//*[@id="WanInfoTable"]/tbody/tr[3]/td[4]' is displayed.</msg>
+<arg>xpath=//*[@id="WanInfoTable"]/tbody/tr[${row_i}]/td[4]</arg>
+<doc>Verifies that the element identified by ``locator`` is visible.</doc>
+<status status="PASS" start="2025-07-31T09:30:37.919557" elapsed="0.624457"/>
+</kw>
+<msg time="2025-07-31T09:30:38.544492" level="INFO">${element_is_visible} = True</msg>
+<var>${element_is_visible}</var>
+<arg>SL.Element Should Be Visible</arg>
+<arg>xpath=//*[@id="WanInfoTable"]/tbody/tr[${row_i}]/td[4]</arg>
+<doc>Runs the given keyword with given arguments and returns the status as a Boolean value.</doc>
+<status status="PASS" start="2025-07-31T09:30:37.919210" elapsed="0.625330"/>
+</kw>
+<kw name="Exit For Loop If" owner="BuiltIn">
+<arg>'${element_is_visible}' == 'False'</arg>
+<doc>Stops executing the enclosing FOR loop if the ``condition`` is true.</doc>
+<status status="PASS" start="2025-07-31T09:30:38.544949" elapsed="0.000478"/>
+</kw>
+<kw name="Get Text" owner="SL">
+<msg time="2025-07-31T09:30:39.167312" level="INFO">${column_value_tmp} = 11/0</msg>
+<var>${column_value_tmp}</var>
+<arg>xpath=//*[@id="WanInfoTable"]/tbody/tr[${row_i}]/td[${column_index_tmp}]</arg>
+<doc>Returns the text value of the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-07-31T09:30:38.545688" elapsed="0.621726"/>
+</kw>
+<kw name="Set Variable If" owner="BuiltIn">
+<msg time="2025-07-31T09:30:39.168992" level="INFO">${index} = 3</msg>
+<var>${index}</var>
+<arg>'${column_value}' in '${column_value_tmp}'</arg>
+<arg>${row_i}</arg>
+<doc>Sets variable based on the given condition.</doc>
+<status status="PASS" start="2025-07-31T09:30:39.168304" elapsed="0.000747"/>
+</kw>
+<kw name="Exit For Loop If" owner="BuiltIn">
+<msg time="2025-07-31T09:30:39.169646" level="INFO">Exiting for loop altogether.</msg>
+<arg>'${column_value}' in '${column_value_tmp}'</arg>
+<doc>Stops executing the enclosing FOR loop if the ``condition`` is true.</doc>
+<status status="PASS" start="2025-07-31T09:30:39.169349" elapsed="0.000421"/>
+</kw>
+<var name="${row_i}">3</var>
+<status status="PASS" start="2025-07-31T09:30:37.918944" elapsed="1.250893"/>
+</iter>
+<var>${row_i}</var>
+<value>2</value>
+<value>20</value>
+<status status="PASS" start="2025-07-31T09:30:36.662873" elapsed="2.507035"/>
+</for>
+<kw name="Set Selenium Speed" owner="SL">
+<arg>0.3</arg>
+<doc>Sets the delay that is waited after each Selenium command.</doc>
+<status status="PASS" start="2025-07-31T09:30:39.170181" elapsed="0.000246"/>
+</kw>
+<return>
+<value>${index}</value>
+<status status="PASS" start="2025-07-31T09:30:39.170509" elapsed="0.000056"/>
+</return>
+<msg time="2025-07-31T09:30:39.170760" level="INFO">${row_index_tmp} = 3</msg>
+<var>${row_index_tmp}</var>
+<arg>${column_name}</arg>
+<arg>${row_name}</arg>
+<doc>Get row index base on column name and column value.
+Input:
+1. column_name
+2. column_value
+Return:
+1. Row index if found, else return 'None'</doc>
+<status status="PASS" start="2025-07-31T09:30:35.323349" elapsed="3.847444"/>
+</kw>
+<kw name="Click Element" owner="SL">
+<msg time="2025-07-31T09:30:39.171475" level="INFO">Clicking element 'xpath=//*[@id="WanInfoTable"]/tbody/tr[3]/td[6]'.</msg>
+<arg>xpath=//*[@id="WanInfoTable"]/tbody/tr[${row_index_tmp}]/td[6]</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-07-31T09:30:39.170998" elapsed="0.700717"/>
+</kw>
+<arg>column_name=VLAN/Priority</arg>
+<arg>row_name=11</arg>
+<status status="PASS" start="2025-07-31T09:30:35.321947" elapsed="4.549976"/>
+</kw>
+<kw name="Popup Delete WAN" owner="SeleniumNetworkWANLib">
+<kw name="Handle Alert" owner="SL">
+<msg time="2025-07-31T09:30:39.873146" level="INFO">HANDLE::&lt;class 'datetime.timedelta'&gt;::0:00:10</msg>
+<msg time="2025-07-31T09:30:40.790308" level="INFO">${popup_message} = Are you sure to delete the WAN connection?</msg>
+<var>${popup_message}</var>
+<arg>timeout=10s</arg>
+<doc>Handles the current alert and returns its message.</doc>
+<status status="PASS" start="2025-07-31T09:30:39.872845" elapsed="0.917560"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${popup_message}</arg>
+<arg>Are you sure to delete the WAN connection?</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2025-07-31T09:30:40.790857" elapsed="0.000443"/>
+</kw>
+<doc>Handle popup Delete WAN</doc>
+<status status="PASS" start="2025-07-31T09:30:39.872346" elapsed="0.919104"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-07-31T09:30:45.792112" level="INFO">Slept 5 seconds.</msg>
+<arg>5s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-07-31T09:30:40.791687" elapsed="5.000699"/>
+</kw>
+<kw name="Log To Console" owner="BuiltIn">
+<arg>\nStep 5: Config Disable WAN</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="PASS" start="2025-07-31T09:30:45.792774" elapsed="0.000267"/>
+</kw>
+<kw name="Log To Console" owner="BuiltIn">
+<arg>\nStep 5.1: Add WAN &amp; para of wan interface</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="PASS" start="2025-07-31T09:30:45.793272" elapsed="0.000171"/>
+</kw>
+<kw name="Add New Wan Service" owner="SeleniumNetworkWANLib">
+<kw name="Log To Console" owner="BuiltIn">
+<arg>\nAdd New WAN</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="PASS" start="2025-07-31T09:30:45.794167" elapsed="0.000182"/>
+</kw>
+<kw name="Scroll Element Into View" owner="SL">
+<arg>xpath=//*[@id="btnAddCnt"]</arg>
+<doc>Scrolls the element identified by ``locator`` into view.</doc>
